@@ -1,0 +1,44 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "builtin/generated",
+		"textures": {
+			"layer0": "thermalinnovation:items/magnet/magnet_0"
+		},
+		"transform": "forge:default-tool"
+	},
+	"variants": {
+		"type": {
+			"standard0": {
+				"textures": {
+					"layer0": "thermalinnovation:items/magnet/magnet_0"
+				}
+			},
+			"standard1": {
+				"textures": {
+					"layer0": "thermalinnovation:items/magnet/magnet_1"
+				}
+			},
+			"standard2": {
+				"textures": {
+					"layer0": "thermalinnovation:items/magnet/magnet_2"
+				}
+			},
+			"standard3": {
+				"textures": {
+					"layer0": "thermalinnovation:items/magnet/magnet_3"
+				}
+			},
+			"standard4": {
+				"textures": {
+					"layer0": "thermalinnovation:items/magnet/magnet_4"
+				}
+			},
+			"creative": {
+				"textures": {
+					"layer0": "thermalinnovation:items/magnet/magnet_c"
+				}
+			}
+		}
+	}
+}
