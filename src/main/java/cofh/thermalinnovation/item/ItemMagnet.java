@@ -100,36 +100,44 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
 
-		if (CoreUtils.isFakePlayer(entity) || entity.isSneaking() || getMode(stack) <= 0) {
-			return;
-		}
 		if (world.getTotalWorldTime() % CoreProps.TIME_CONSTANT_QUARTER != 0) {
 			return;
 		}
+		if (!(entity instanceof EntityPlayer) || CoreUtils.isFakePlayer(entity) || entity.isSneaking() || getMode(stack) <= 0) {
+			return;
+		}
+		EntityPlayer player = (EntityPlayer) entity;
+
 		boolean empowered = isEmpowered(stack);
 		int radius = empowered ? getRadius(stack) * 2 : getRadius(stack);
 		int radSq = radius * radius;
 
-		AxisAlignedBB area = new AxisAlignedBB(entity.getPosition().add(-radius, -radius, -radius), entity.getPosition().add(1 + radius, 1 + radius, 1 + radius));
+		AxisAlignedBB area = new AxisAlignedBB(player.getPosition().add(-radius, -radius, -radius), player.getPosition().add(1 + radius, 1 + radius, 1 + radius));
 		List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, area, EntitySelectors.IS_ALIVE);
 		ItemFilterWrapper wrapper = new ItemFilterWrapper(stack, getFilterSize(stack));
 
 		if (ServerHelper.isClientWorld(world)) {
 			for (EntityItem item : items) {
-				if (item.getPositionVector().squareDistanceTo(entity.getPositionVector()) <= radSq && wrapper.getFilter().matches(item.getItem())) {
+				if (item.getEntityData().getBoolean(CONVEYOR_COMPAT)) {
+					continue;
+				}
+				if (item.getPositionVector().squareDistanceTo(player.getPositionVector()) <= radSq && wrapper.getFilter().matches(item.getItem())) {
 					world.spawnParticle(EnumParticleTypes.REDSTONE, item.posX, item.posY, item.posZ, 0, 0, 0, 0);
 				}
 			}
 		} else {
 			for (EntityItem item : items) {
-				if (item.getThrower() != null && item.getThrower().equals(entity.getName()) && item.age < 2 * CoreProps.TIME_CONSTANT) {
-					// do nothing
-				} else if (item.getPositionVector().squareDistanceTo(entity.getPositionVector()) <= radSq && wrapper.getFilter().matches(item.getItem())) {
-					item.setPosition(entity.posX, entity.posY, entity.posZ);
-					item.setPickupDelay(0);
+				if (item.getEntityData().getBoolean(CONVEYOR_COMPAT)) {
+					continue;
+				}
+				if (item.getThrower() == null || !item.getThrower().equals(player.getName()) || item.age >= 2 * CoreProps.TIME_CONSTANT) {
+					if (item.getPositionVector().squareDistanceTo(player.getPositionVector()) <= radSq && wrapper.getFilter().matches(item.getItem())) {
+						item.setPosition(player.posX, player.posY, player.posZ);
+						item.setPickupDelay(0);
+					}
 				}
 			}
-			if (empowered) {
+			if (!player.capabilities.isCreativeMode && empowered) {
 				extractEnergy(stack, ENERGY_PER_USE, false);
 			}
 		}
@@ -156,13 +164,13 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 		}
 		if (player.isSneaking()) {
 			player.openGui(ThermalInnovation.instance, GuiHandler.MAGNET_FILTER_ID, world, 0, 0, 0);
-		} else if (getEnergyStored(stack) >= ENERGY_PER_USE * 10 || player.capabilities.isCreativeMode) {
+		} else if (getEnergyStored(stack) >= ENERGY_PER_USE || player.capabilities.isCreativeMode) {
 			RayTraceResult traceResult = RayTracer.retrace(player, 64);
 			if (traceResult == null || traceResult.typeOfHit != RayTraceResult.Type.BLOCK) {
 				return ActionResult.newResult(EnumActionResult.PASS, stack);
 			}
 			boolean empowered = isEmpowered(stack);
-			int radius = (empowered ? getRadius(stack) * 2 : getRadius(stack)) / 2;
+			int radius = (empowered ? getRadius(stack) * 2 : getRadius(stack));
 			int radSq = radius * radius;
 
 			AxisAlignedBB area = new AxisAlignedBB(traceResult.getBlockPos().add(-radius, -radius, -radius), traceResult.getBlockPos().add(1 + radius, 1 + radius, 1 + radius));
@@ -187,7 +195,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 			stack.setAnimationsToGo(5);
 			player.world.playSound(null, player.getPosition(), TFSounds.magnetUse, SoundCategory.PLAYERS, 0.4F, 1.0F);
 			if (!player.capabilities.isCreativeMode) {
-				extractEnergy(stack, ENERGY_PER_USE * 10, false);
+				extractEnergy(stack, ENERGY_PER_PULSE, false);
 			}
 		}
 		return new ActionResult<>(EnumActionResult.SUCCESS, stack);
@@ -239,7 +247,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 
 	public boolean isEmpowered(ItemStack stack) {
 
-		return getMode(stack) == 2 && getEnergyStored(stack) >= ENERGY_PER_USE;
+		return getMode(stack) == 2 && getEnergyStored(stack) >= ENERGY_PER_PULSE;
 	}
 
 	public static boolean isCreative(ItemStack stack) {
@@ -383,9 +391,12 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 
 	private static TIntObjectHashMap<TypeEntry> typeMap = new TIntObjectHashMap<>();
 
+	public static final String CONVEYOR_COMPAT = "PreventRemoteMovement";
+
 	public static final int CAPACITY_BASE = 50000;
 	public static final int XFER_BASE = 1000;
-	public static final int ENERGY_PER_USE = 50;
+	public static final int ENERGY_PER_PULSE = 50;
+	public static final int ENERGY_PER_USE = 250;
 
 	public static final int[] CAPACITY = { 1, 3, 6, 10, 15 };
 	public static final int[] XFER = { 1, 4, 9, 16, 25 };
