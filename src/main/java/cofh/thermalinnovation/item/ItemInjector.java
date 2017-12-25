@@ -1,0 +1,499 @@
+package cofh.thermalinnovation.item;
+
+import cofh.api.fluid.IFluidContainerItem;
+import cofh.api.item.IMultiModeItem;
+import cofh.api.item.INBTCopyIngredient;
+import cofh.core.init.CoreEnchantments;
+import cofh.core.init.CoreProps;
+import cofh.core.item.IEnchantableItem;
+import cofh.core.item.ItemMulti;
+import cofh.core.key.KeyBindingItemMultiMode;
+import cofh.core.util.CoreUtils;
+import cofh.core.util.capabilities.FluidContainerItemWrapper;
+import cofh.core.util.core.IInitializer;
+import cofh.core.util.helpers.ChatHelper;
+import cofh.core.util.helpers.ItemHelper;
+import cofh.core.util.helpers.ServerHelper;
+import cofh.core.util.helpers.StringHelper;
+import cofh.thermalfoundation.fluid.FluidPotion;
+import cofh.thermalfoundation.init.TFFluids;
+import cofh.thermalinnovation.ThermalInnovation;
+import gnu.trove.map.hash.TIntObjectHashMap;
+import net.minecraft.client.renderer.color.IItemColor;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.item.EnumRarity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.potion.PotionType;
+import net.minecraft.potion.PotionUtils;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
+import java.util.List;
+
+public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeItem, IFluidContainerItem, IEnchantableItem, IItemColor, INBTCopyIngredient {
+
+    public ItemInjector() {
+
+        super("thermalinnovation");
+        setUnlocalizedName("injector");
+        setCreativeTab(ThermalInnovation.tabCommon);
+
+        setMaxStackSize(1);
+        setNoRepair();
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+
+        if (StringHelper.displayShiftForDetail && !StringHelper.isShiftKeyDown()) {
+            tooltip.add(StringHelper.shiftForDetails());
+        }
+        if (!StringHelper.isShiftKeyDown()) {
+            return;
+        }
+
+        tooltip.add(StringHelper.getInfoText("info.thermalinnovation.injector.a"));
+        tooltip.add(StringHelper.localizeFormat("info.thermalinnovation.injector.b." + getMode(stack), StringHelper.getKeyName(KeyBindingItemMultiMode.INSTANCE.getKey())));
+
+        FluidStack fluid = getFluid(stack);
+        if (fluid != null) {
+            String color = StringHelper.LIGHT_GRAY;
+
+            if (fluid.getFluid().getRarity() == EnumRarity.UNCOMMON) {
+                color = StringHelper.YELLOW;
+            } else if (fluid.getFluid().getRarity() == EnumRarity.RARE) {
+                color = StringHelper.BRIGHT_BLUE;
+            } else if (fluid.getFluid().getRarity() == EnumRarity.EPIC) {
+                color = StringHelper.PINK;
+            }
+            tooltip.add(StringHelper.localize("info.cofh.fluid") + ": " + color + fluid.getFluid().getLocalizedName(fluid) + StringHelper.LIGHT_GRAY);
+
+            if (ItemHelper.getItemDamage(stack) == CREATIVE) {
+                tooltip.add(StringHelper.localize("info.cofh.infiniteSource"));
+            } else {
+                tooltip.add(StringHelper.localize("info.cofh.level") + ": " + StringHelper.formatNumber(fluid.amount) + " / " + StringHelper.formatNumber(getCapacity(stack)) + " mB");
+            }
+
+            tooltip.add("");
+            tooltip.add(StringHelper.localize("info.thermalinnovation.injector.d"));
+            addPotionTooltip(fluid.tag, tooltip);
+        } else {
+            tooltip.add(StringHelper.localize("info.cofh.fluid") + ": " + StringHelper.localize("info.cofh.empty"));
+
+            if (ItemHelper.getItemDamage(stack) == CREATIVE) {
+                tooltip.add(StringHelper.localize("info.cofh.infiniteSource"));
+            } else {
+                tooltip.add(StringHelper.localize("info.cofh.level") + ": 0 / " + StringHelper.formatNumber(getCapacity(stack)) + " mB");
+            }
+        }
+    }
+
+    @Override
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+
+        if (isInCreativeTab(tab)) {
+            for (int metadata : itemList) {
+                items.add(new ItemStack(this, 1, metadata));
+            }
+        }
+    }
+
+    @Override
+    public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
+
+        if (!stack.hasTagCompound()) {
+            return;
+        }
+        if (getMode(stack) == 0) {
+            return;
+        }
+        if (!(entity instanceof EntityLivingBase) || CoreUtils.isFakePlayer(entity) || ServerHelper.isClientWorld(world)) {
+            return;
+        }
+        if (world.getTotalWorldTime() % CoreProps.TIME_CONSTANT != 0) {
+            return;
+        }
+
+        EntityLivingBase living = (EntityLivingBase)entity;
+        FluidStack fluid = getFluid(stack);
+        if (fluid != null && fluid.amount >= MB_PER_CYCLE) {
+            boolean drain = false;
+            for (PotionEffect effect : PotionUtils.getEffectsFromTag(fluid.tag)) {
+
+                PotionEffect active = living.getActivePotionMap().get(effect.getPotion());
+                if(active != null && active.getDuration() >= 40) {
+                    continue;
+                }
+                if (effect.getPotion().isInstant()) {
+                    effect.getPotion().affectEntity(null, null, (EntityLivingBase) entity, effect.getAmplifier(), 0.5D);
+                }
+                else {
+                    PotionEffect clone = new PotionEffect(effect.getPotion(), effect.getDuration() / 4, effect.getAmplifier(), effect.getIsAmbient(), false);
+                    living.addPotionEffect(clone);
+                }
+                drain = true;
+            }
+            drain(stack, MB_PER_CYCLE, drain);
+        }
+    }
+
+    @Override
+    public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
+
+        FluidStack fluid = getFluid(stack);
+        if(fluid != null && fluid.amount >= MB_PER_USE) {
+            for(PotionEffect effect : PotionUtils.getEffectsFromTag(fluid.tag)) {
+                if (effect.getPotion().isInstant()) {
+                    effect.getPotion().affectEntity(player, player, (EntityLivingBase)entity, effect.getAmplifier(), 0.5D);
+                } else {
+                    PotionEffect clone = new PotionEffect(effect.getPotion(), effect.getDuration() / 2, effect.getAmplifier(), effect.getIsAmbient(), true);
+                    ((EntityLivingBase)entity).addPotionEffect(clone);
+                }
+            }
+            drain(stack, MB_PER_USE, true);
+        }
+
+        return false;
+    }
+
+    @SideOnly(Side.CLIENT)
+    private static void addPotionTooltip(NBTTagCompound potionTag, List<String> lores) {
+        List<PotionEffect> list = PotionUtils.getEffectsFromTag(potionTag);
+
+        if (list.isEmpty()) {
+            String s = StringHelper.localize("effect.none").trim();
+            lores.add(TextFormatting.GRAY + s);
+        } else {
+            for (PotionEffect potioneffect : list) {
+                String s1 = StringHelper.localize(potioneffect.getEffectName()).trim();
+                Potion potion = potioneffect.getPotion();
+
+                if (potioneffect.getAmplifier() > 0) {
+                    s1 = s1 + " " + StringHelper.localize("potion.potency." + potioneffect.getAmplifier()).trim();
+                }
+
+                if (potion.isBadEffect()) {
+                    lores.add(TextFormatting.RED + s1);
+                } else {
+                    lores.add(TextFormatting.BLUE + s1);
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+
+        return !oldStack.equals(newStack) && (slotChanged || !ItemHelper.areItemStacksEqualIgnoreTags(oldStack, newStack, "Fluid"));
+    }
+
+    @Override
+    public int getRGBDurabilityForDisplay(ItemStack stack) {
+
+        return CoreProps.RGB_DURABILITY_WATER;
+    }
+
+    @Override
+    public double getDurabilityForDisplay(ItemStack stack) {
+
+        FluidStack fluid = getFluid(stack);
+        if(fluid == null) {
+            return 1.0D;
+        }
+
+        return 1.0D - ((double) fluid.amount / (double) getCapacity(stack));
+    }
+
+    public boolean showDurabilityBar(ItemStack stack) {
+
+        return ItemHelper.getItemDamage(stack) != CREATIVE;
+    }
+
+    @Override
+    public boolean isFull3D() {
+
+        return true;
+    }
+
+    @Override
+    public int getItemEnchantability(ItemStack stack) {
+
+        return 10;
+    }
+
+    @Override
+    public boolean isEnchantable(ItemStack stack) {
+
+        return ItemHelper.getItemDamage(stack) != CREATIVE;
+    }
+
+    /* IEnchantableItem */
+    @Override
+    public boolean canEnchant(ItemStack stack, Enchantment enchantment) {
+
+        return enchantment == CoreEnchantments.holding;
+    }
+
+    /* IMultiModeItem */
+    @Override
+    public int getNumModes(ItemStack stack) {
+
+        return 2;
+    }
+
+    @Override
+    public void onModeChange(EntityPlayer player, ItemStack stack) {
+
+        int mode = getMode(stack);
+        player.world.playSound(null, player.getPosition(), mode == 0 ? SoundEvents.ITEM_BUCKET_EMPTY : SoundEvents.ITEM_BUCKET_FILL, SoundCategory.PLAYERS, 0.4F, 0.8F + 0.4F * getMode(stack));
+        ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentTranslation("info.thermalinnovation.injector.c." + getMode(stack)));
+    }
+
+    /* IItemColor */
+    @Override
+    public int colorMultiplier(ItemStack stack, int tintIndex) {
+
+        FluidStack fluid = getFluid(stack);
+        if(fluid != null && tintIndex == 1) {
+            return FluidPotion.getPotionColor(fluid);
+        }
+
+        return 0xFFFFFF;
+    }
+
+    /* IFluidContainerItem */
+    @Override
+    public FluidStack drain(ItemStack container, int maxDrain, boolean doDrain) {
+
+        if (container.getTagCompound() == null) {
+            container.setTagCompound(new NBTTagCompound());
+        }
+        if (!container.getTagCompound().hasKey("Fluid") || maxDrain == 0) {
+            return null;
+        }
+        FluidStack stack = FluidStack.loadFluidStackFromNBT(container.getTagCompound().getCompoundTag("Fluid"));
+
+        if (stack == null) {
+            return null;
+        }
+        int drained = Math.min(stack.amount, maxDrain);
+
+        if (doDrain && ItemHelper.getItemDamage(container) != CREATIVE) {
+            if (maxDrain >= stack.amount) {
+                container.getTagCompound().removeTag("Fluid");
+                return stack;
+            }
+            NBTTagCompound fluidTag = container.getTagCompound().getCompoundTag("Fluid");
+            fluidTag.setInteger("Amount", fluidTag.getInteger("Amount") - drained);
+            container.getTagCompound().setTag("Fluid", fluidTag);
+        }
+        stack.amount = drained;
+        return stack;
+    }
+
+    @Override
+    public int fill(ItemStack container, FluidStack resource, boolean doFill) {
+
+        if (container.getTagCompound() == null) {
+            container.setTagCompound(new NBTTagCompound());
+        }
+        if (resource == null) {
+            return 0;
+        }
+        if(resource.getFluid() != TFFluids.fluidPotion) {
+            return 0;
+        }
+
+        int capacity = getCapacity(container);
+
+        if (ItemHelper.getItemDamage(container) == CREATIVE) {
+            if (doFill) {
+                NBTTagCompound fluidTag = resource.writeToNBT(new NBTTagCompound());
+                fluidTag.setInteger("Amount", capacity - Fluid.BUCKET_VOLUME);
+                container.getTagCompound().setTag("Fluid", fluidTag);
+            }
+            return resource.amount;
+        }
+        if (!doFill) {
+            if (!container.getTagCompound().hasKey("Fluid")) {
+                return Math.min(capacity, resource.amount);
+            }
+            FluidStack stack = FluidStack.loadFluidStackFromNBT(container.getTagCompound().getCompoundTag("Fluid"));
+
+            if (stack == null) {
+                return Math.min(capacity, resource.amount);
+            }
+            if (!stack.isFluidEqual(resource)) {
+                return 0;
+            }
+            return Math.min(capacity - stack.amount, resource.amount);
+        }
+        if (!container.getTagCompound().hasKey("Fluid")) {
+            NBTTagCompound fluidTag = resource.writeToNBT(new NBTTagCompound());
+
+            if (capacity < resource.amount) {
+                fluidTag.setInteger("Amount", capacity);
+                container.getTagCompound().setTag("Fluid", fluidTag);
+                return capacity;
+            }
+            fluidTag.setInteger("Amount", resource.amount);
+            container.getTagCompound().setTag("Fluid", fluidTag);
+            return resource.amount;
+        }
+        NBTTagCompound fluidTag = container.getTagCompound().getCompoundTag("Fluid");
+        FluidStack stack = FluidStack.loadFluidStackFromNBT(fluidTag);
+
+        if (!stack.isFluidEqual(resource)) {
+            return 0;
+        }
+        int filled = capacity - stack.amount;
+
+        if (resource.amount < filled) {
+            stack.amount += resource.amount;
+            filled = resource.amount;
+        } else {
+            stack.amount = capacity;
+        }
+        container.getTagCompound().setTag("Fluid", stack.writeToNBT(fluidTag));
+        return filled;
+    }
+
+    @Override
+    public FluidStack getFluid(ItemStack container) {
+
+        if (container.getTagCompound() == null) {
+            container.setTagCompound(new NBTTagCompound());
+        }
+        if (!container.getTagCompound().hasKey("Fluid")) {
+            return null;
+        }
+        return FluidStack.loadFluidStackFromNBT(container.getTagCompound().getCompoundTag("Fluid"));
+    }
+
+    @Override
+    public int getCapacity(ItemStack stack) {
+
+        if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
+            return 0;
+        }
+        int capacity = typeMap.get(ItemHelper.getItemDamage(stack)).capacity;
+        int enchant = EnchantmentHelper.getEnchantmentLevel(CoreEnchantments.holding, stack);
+
+        return capacity + capacity * enchant / 2;
+    }
+
+    /* CAPABILITIES */
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
+
+        return new FluidContainerItemWrapper(stack, this);
+    }
+
+    /* IInitializer */
+    @Override
+    public boolean initialize() {
+
+        config();
+
+        injectorBasic = addEntryItem(0, "standard0", CAPACITY[0], EnumRarity.COMMON);
+        injectorHardened = addEntryItem(1, "standard1", CAPACITY[1], EnumRarity.COMMON);
+        injectorReinforced = addEntryItem(2, "standard2", CAPACITY[2], EnumRarity.UNCOMMON);
+        injectorSignalum = addEntryItem(3, "standard3", CAPACITY[3], EnumRarity.UNCOMMON);
+        injectorResonant = addEntryItem(4, "standard4", CAPACITY[4], EnumRarity.RARE);
+
+        injectorCreative = addEntryItem(CREATIVE, "creative", CAPACITY[4], EnumRarity.EPIC);
+
+        ThermalInnovation.proxy.addIModelRegister(this);
+
+        return true;
+    }
+
+    @Override
+    public boolean register() {
+
+        if (!enable) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static void config() {
+
+        String category = "Item.Injector";
+        String comment;
+
+        int capacity = CAPACITY_BASE;
+        comment = "Adjust this value to change the amount of Fluid (in mb) stored by a Basic Potion Injector. This base value will scale with item level.";
+        capacity = ThermalInnovation.CONFIG.getConfiguration().getInt("BaseCapacity", category, capacity, capacity / 5, capacity * 5, comment);
+
+        for (int i = 0; i < CAPACITY.length; i++) {
+            CAPACITY[i] *= capacity;
+        }
+    }
+
+    /* ENTRY */
+    public class TypeEntry {
+
+        public final String name;
+
+        public final int capacity;
+
+        TypeEntry(String name, int capacity) {
+
+            this.name = name;
+            this.capacity = capacity;
+        }
+    }
+
+    private void addEntry(int metadata, String name, int capacity) {
+
+        typeMap.put(metadata, new TypeEntry(name, capacity));
+    }
+
+    private ItemStack addEntryItem(int metadata, String name, int capacity, EnumRarity rarity) {
+
+        addEntry(metadata, name, capacity);
+        return addItem(metadata, name, rarity);
+    }
+
+    private static TIntObjectHashMap<TypeEntry> typeMap = new TIntObjectHashMap<>();
+
+    public static final int CAPACITY_BASE = 1000;
+    public static final int MB_PER_CYCLE = 50;
+    public static final int MB_PER_USE = 250;
+    public static final int CREATIVE = 32000;
+
+    public static final int[] CAPACITY = { 1, 3, 6, 10, 15 };
+
+    public static boolean enable = true;
+
+    /* REFERENCES */
+    public static ItemStack injectorBasic;
+    public static ItemStack injectorHardened;
+    public static ItemStack injectorReinforced;
+    public static ItemStack injectorSignalum;
+    public static ItemStack injectorResonant;
+
+    public static ItemStack injectorCreative;
+}

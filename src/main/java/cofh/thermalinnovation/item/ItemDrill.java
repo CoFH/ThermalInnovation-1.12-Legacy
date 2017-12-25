@@ -66,7 +66,7 @@ public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeIt
 		super("thermalinnovation");
 
 		setUnlocalizedName("drill");
-		setCreativeTab(ThermalFoundation.tabUtils);
+		setCreativeTab(ThermalInnovation.tabCommon);
 
 		setHasSubtypes(true);
 		setMaxStackSize(1);
