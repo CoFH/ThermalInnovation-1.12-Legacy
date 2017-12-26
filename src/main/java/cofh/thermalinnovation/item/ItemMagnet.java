@@ -41,7 +41,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 		super("thermalinnovation");
 
 		setUnlocalizedName("magnet");
-		setCreativeTab(ThermalFoundation.tabUtils);
+		setCreativeTab(ThermalInnovation.tabCommon);
 
 		setHasSubtypes(true);
 		setMaxStackSize(1);

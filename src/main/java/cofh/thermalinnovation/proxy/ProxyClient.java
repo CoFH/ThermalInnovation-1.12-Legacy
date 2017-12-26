@@ -1,6 +1,8 @@
 package cofh.thermalinnovation.proxy;
 
 import cofh.core.render.IModelRegister;
+import cofh.thermalinnovation.init.TIItems;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -26,6 +28,8 @@ public class ProxyClient extends Proxy {
 	public void initialize(FMLInitializationEvent event) {
 
 		super.initialize(event);
+
+		Minecraft.getMinecraft().getItemColors().registerItemColorHandler(TIItems.itemInjector, TIItems.itemInjector);
 	}
 
 	@Override
