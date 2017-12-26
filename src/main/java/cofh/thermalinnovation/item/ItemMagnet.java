@@ -10,7 +10,6 @@ import cofh.core.util.RayTracer;
 import cofh.core.util.core.IInitializer;
 import cofh.core.util.filter.ItemFilterWrapper;
 import cofh.core.util.helpers.*;
-import cofh.thermalfoundation.ThermalFoundation;
 import cofh.thermalfoundation.init.TFSounds;
 import cofh.thermalinnovation.ThermalInnovation;
 import cofh.thermalinnovation.gui.GuiHandler;
@@ -63,18 +62,8 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 		tooltip.add(StringHelper.localize("info.thermalinnovation.magnet.a.1"));
 		tooltip.add(StringHelper.getNoticeText("info.thermalinnovation.magnet.a.2"));
 		tooltip.add(StringHelper.localizeFormat("info.thermalinnovation.magnet.b." + getMode(stack), StringHelper.getKeyName(KeyBindingItemMultiMode.INSTANCE.getKey())));
+		tooltip.add(StringHelper.ORANGE + StringHelper.localize("info.cofh.radius") + ": " + radius + StringHelper.END);
 
-		switch (getMode(stack)) {
-			case 0:
-				tooltip.add(StringHelper.localize("info.cofh.radius") + ": " + radius);
-				break;
-			case 1:
-				tooltip.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.radius") + ": " + radius + StringHelper.END);
-				break;
-			case 2:
-				tooltip.add(StringHelper.BRIGHT_BLUE + StringHelper.localize("info.cofh.radius") + ": " + radius + StringHelper.END);
-				break;
-		}
 		if (ItemHelper.getItemDamage(stack) == CREATIVE) {
 			tooltip.add(StringHelper.localize("info.cofh.charge") + ": 1.21G RF");
 		} else {
@@ -341,11 +330,11 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 		enable = ThermalInnovation.CONFIG.get(category, "Enable", true);
 
 		int capacity = CAPACITY_BASE;
-		comment = "Adjust this value to change the amount of Energy (in RF) stored by a Basic Flux Magnet. This base value will scale with item level.";
+		comment = "Adjust this value to change the amount of Energy (in RF) stored by a Basic Fluxomagnet. This base value will scale with item level.";
 		capacity = ThermalInnovation.CONFIG.getConfiguration().getInt("BaseCapacity", category, capacity, capacity / 5, capacity * 5, comment);
 
 		int xfer = XFER_BASE;
-		comment = "Adjust this value to change the amount of Energy (in RF/t) that can be received by a Basic Flux Magnet. This base value will scale with item level.";
+		comment = "Adjust this value to change the amount of Energy (in RF/t) that can be received by a Basic Fluxomagnet. This base value will scale with item level.";
 		xfer = ThermalInnovation.CONFIG.getConfiguration().getInt("BaseReceive", category, xfer, xfer / 10, xfer * 10, comment);
 
 		for (int i = 0; i < CAPACITY.length; i++) {

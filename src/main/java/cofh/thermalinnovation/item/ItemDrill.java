@@ -8,7 +8,6 @@ import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.RayTracer;
 import cofh.core.util.core.IInitializer;
 import cofh.core.util.helpers.*;
-import cofh.thermalfoundation.ThermalFoundation;
 import cofh.thermalinnovation.ThermalInnovation;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
@@ -412,7 +411,7 @@ public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeIt
 			return 0;
 		}
 		int unbreakingLevel = MathHelper.clamp(EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack), 0, 10);
-		if (MathHelper.RANDOM.nextInt(2 + unbreakingLevel) < 2) {
+		if (MathHelper.RANDOM.nextInt(2 + unbreakingLevel) >= 2) {
 			return 0;
 		}
 		return extractEnergy(stack, count * ENERGY_PER_USE, simulate);
