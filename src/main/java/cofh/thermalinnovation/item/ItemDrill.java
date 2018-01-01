@@ -518,10 +518,10 @@ public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeIt
 		World world = player.getEntityWorld();
 		int radius = getMode(stack);
 
-		if (!canHarvestBlock(world.getBlockState(pos), stack) || radius <= 0) {
+		RayTraceResult traceResult = RayTracer.retrace(player);
+		if (traceResult == null || !canHarvestBlock(world.getBlockState(pos), stack)) {
 			return ImmutableList.copyOf(area);
 		}
-		RayTraceResult traceResult = RayTracer.retrace(player);
 		BlockPos harvestPos;
 
 		int x = pos.getX();
