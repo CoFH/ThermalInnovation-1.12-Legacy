@@ -49,7 +49,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeItem, IFluidContainerItem, IEnchantableItem, IItemColor, INBTCopyIngredient {
+public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeItem, IFluidContainerItem, IEnchantableItem, INBTCopyIngredient {
 
 	public ItemInjector() {
 
@@ -258,7 +258,6 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 	}
 
 	/* IItemColor */
-	@Override
 	public int colorMultiplier(ItemStack stack, int tintIndex) {
 
 		FluidStack fluid = getFluid(stack);
