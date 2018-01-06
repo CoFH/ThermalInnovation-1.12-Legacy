@@ -19,7 +19,6 @@ import cofh.thermalfoundation.fluid.FluidPotion;
 import cofh.thermalfoundation.init.TFFluids;
 import cofh.thermalinnovation.ThermalInnovation;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;

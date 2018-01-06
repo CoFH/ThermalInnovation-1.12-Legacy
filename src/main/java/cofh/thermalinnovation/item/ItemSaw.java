@@ -178,9 +178,9 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 
 		float refStrength = state.getPlayerRelativeBlockHardness(player, world, pos);
 		if (refStrength != 0.0F) {
-			RayTraceResult traceResult = RayTracer.retrace(player);
+			RayTraceResult traceResult = RayTracer.retrace(player, false);
 
-			if (traceResult == null) {
+			if (traceResult == null || traceResult.sideHit == null) {
 				return false;
 			}
 			BlockPos adjPos;
@@ -506,8 +506,8 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 		World world = player.getEntityWorld();
 		int radius = getMode(stack);
 
-		RayTraceResult traceResult = RayTracer.retrace(player);
-		if (traceResult == null || !canHarvestBlock(world.getBlockState(pos), stack)) {
+		RayTraceResult traceResult = RayTracer.retrace(player, false);
+		if (traceResult == null || traceResult.sideHit == null || !canHarvestBlock(world.getBlockState(pos), stack)) {
 			return ImmutableList.copyOf(area);
 		}
 		BlockPos harvestPos;
