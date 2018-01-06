@@ -2,6 +2,7 @@ package cofh.thermalinnovation.init;
 
 import cofh.core.util.core.IInitializer;
 import cofh.thermalinnovation.item.ItemDrill;
+import cofh.thermalinnovation.item.ItemIlluminator;
 import cofh.thermalinnovation.item.ItemInjector;
 import cofh.thermalinnovation.item.ItemMagnet;
 import net.minecraft.item.crafting.IRecipe;
@@ -24,10 +25,12 @@ public class TIItems {
 		itemDrill = new ItemDrill();
 		itemMagnet = new ItemMagnet();
 		itemInjector = new ItemInjector();
+		itemIlluminator = new ItemIlluminator();
 
 		initList.add(itemDrill);
 		initList.add(itemMagnet);
 		initList.add(itemInjector);
+		initList.add(itemIlluminator);
 
 		for (IInitializer init : initList) {
 			init.initialize();
@@ -50,5 +53,6 @@ public class TIItems {
 	public static ItemDrill itemDrill;
 	public static ItemMagnet itemMagnet;
 	public static ItemInjector itemInjector;
+	public static ItemIlluminator itemIlluminator;
 
 }
