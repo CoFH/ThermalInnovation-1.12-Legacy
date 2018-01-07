@@ -9,12 +9,17 @@ import cofh.core.item.IEnchantableItem;
 import cofh.core.item.ItemMulti;
 import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.CoreUtils;
+import cofh.core.util.RayTracer;
 import cofh.core.util.capabilities.FluidContainerItemWrapper;
 import cofh.core.util.core.IInitializer;
 import cofh.core.util.helpers.*;
+import cofh.thermalfoundation.fluid.BlockFluidGlowstone;
 import cofh.thermalfoundation.init.TFFluids;
 import cofh.thermalinnovation.ThermalInnovation;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockGlowstone;
+import net.minecraft.block.SoundType;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
@@ -29,10 +34,10 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -75,16 +80,7 @@ public class ItemIlluminator extends ItemMulti implements IInitializer, IMultiMo
 
         FluidStack fluid = getFluid(stack);
         if (fluid != null) {
-            String color = StringHelper.LIGHT_GRAY;
-
-            if (fluid.getFluid().getRarity() == EnumRarity.UNCOMMON) {
-                color = StringHelper.YELLOW;
-            } else if (fluid.getFluid().getRarity() == EnumRarity.RARE) {
-                color = StringHelper.BRIGHT_BLUE;
-            } else if (fluid.getFluid().getRarity() == EnumRarity.EPIC) {
-                color = StringHelper.PINK;
-            }
-            tooltip.add(StringHelper.localize("info.cofh.fluid") + ": " + color + fluid.getFluid().getLocalizedName(fluid) + StringHelper.LIGHT_GRAY);
+            tooltip.add(StringHelper.localize("info.cofh.fluid") + ": " + StringHelper.YELLOW + fluid.getFluid().getLocalizedName(fluid) + StringHelper.LIGHT_GRAY);
 
             if (ItemHelper.getItemDamage(stack) == CREATIVE) {
                 tooltip.add(StringHelper.localize("info.cofh.infiniteSource"));
@@ -127,14 +123,41 @@ public class ItemIlluminator extends ItemMulti implements IInitializer, IMultiMo
                         continue;
 
                     int light = world.getLightFromNeighbors(target);
-                    if(light < minLight && canPlaceLight(target, world)) {
-                        world.setBlockState(target, Blocks.GLOWSTONE.getDefaultState());
+                    if(light <= minLight && canPlaceLight(entity, target, world)) {
+                        world.setBlockState(target, LIGHT.getDefaultState());
+                        SoundType sound = LIGHT.getSoundType();
+                        world.playSound(null, target, sound.getPlaceSound(), SoundCategory.BLOCKS, sound.getVolume(), sound.getPitch());
                         drain(stack, MB_PER_SOURCE, true);
                         return;
                     }
                 }
             }
         }
+    }
+
+    @Override
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+
+        if (CoreUtils.isFakePlayer(player)) {
+            return EnumActionResult.FAIL;
+        }
+
+        ItemStack stack = player.getHeldItem(hand);
+
+        if(world.getBlockState(pos).getBlock() instanceof BlockGlowstone) {
+            if(getFluidAmount(stack) + 100 >= getCapacity(stack)) {
+                return EnumActionResult.FAIL;
+            }
+
+            if(ServerHelper.isServerWorld(world)) {
+                world.destroyBlock(pos, false);
+                fill(stack, new FluidStack(TFFluids.fluidGlowstone, MB_PER_SOURCE), true);
+            }
+        } else {
+            return EnumActionResult.PASS;
+        }
+
+        return EnumActionResult.SUCCESS;
     }
 
     @Override
@@ -221,13 +244,19 @@ public class ItemIlluminator extends ItemMulti implements IInitializer, IMultiMo
         return fluid == null ? 0 : fluid.amount;
     }
 
-    public boolean canPlaceLight(BlockPos pos, World world) {
+    public boolean canPlaceLight(Entity user, BlockPos pos, World world) {
 
         boolean ret = false;
         for(EnumFacing facing : EnumFacing.values()) {
             if(!world.isAirBlock(pos.offset(facing)))
                 ret = true;
         }
+
+        RayTraceResult res = world.rayTraceBlocks(user.getPositionVector(), new Vec3d(pos), false, true, false);
+        if(res != null) {
+            ret = false;
+        }
+
         return ret;
     }
 
@@ -466,6 +495,8 @@ public class ItemIlluminator extends ItemMulti implements IInitializer, IMultiMo
 
     public static final int[] CAPACITY = { 1, 3, 6, 10, 15 };
     public static final int[] RANGE = { 4, 6, 8, 10, 12 };
+
+    public static final Block LIGHT = Blocks.GLOWSTONE;
 
     public static int minLight = 8;
     public static boolean enable = true;
