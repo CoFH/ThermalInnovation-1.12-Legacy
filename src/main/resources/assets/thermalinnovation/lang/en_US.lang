@@ -7,11 +7,9 @@ info.thermalinnovation.magnet.a.0=Attracts items to the wielder.
 info.thermalinnovation.magnet.a.1=Use to attract items at the target location.
 info.thermalinnovation.magnet.a.2=Use while sneaking to configure.
 info.thermalinnovation.magnet.b.0=§bPress (%s) to enable attraction.§r
-info.thermalinnovation.magnet.b.1=§bPress (%s) for empowered attraction.§r
-info.thermalinnovation.magnet.b.2=§ePress (%s) to disable attraction.§r
+info.thermalinnovation.magnet.b.1=§ePress (%s) to disable attraction.§r
 info.thermalinnovation.magnet.c.0=Attraction Disabled
 info.thermalinnovation.magnet.c.1=Attraction Enabled
-info.thermalinnovation.magnet.c.2=Attraction Empowered
 
 info.thermalinnovation.injector.a.0=Stores and injects potions. Can infuse the wielder.
 info.thermalinnovation.injector.a.1=Use on an Entity to inject the contained potion.

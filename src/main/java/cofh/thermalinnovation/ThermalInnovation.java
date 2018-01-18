@@ -29,7 +29,7 @@ import java.io.File;
 public class ThermalInnovation {
 
 	public static final String MOD_ID = "thermalinnovation";
-	public static final String MOD_NAME = "Thermal innovation";
+	public static final String MOD_NAME = "Thermal Innovation";
 
 	public static final String VERSION = "0.1.0";
 	public static final String VERSION_MAX = "1.0.0";

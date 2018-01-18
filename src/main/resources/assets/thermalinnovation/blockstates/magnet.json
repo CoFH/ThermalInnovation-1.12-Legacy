@@ -5,7 +5,7 @@
 		"textures": {
 			"layer0": "thermalinnovation:items/magnet/magnet_0"
 		},
-		"transform": "forge:default-tool"
+		"transform": "forge:default-item"
 	},
 	"variants": {
 		"type": {

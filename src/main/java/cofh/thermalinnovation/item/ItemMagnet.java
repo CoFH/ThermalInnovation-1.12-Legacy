@@ -20,7 +20,6 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
@@ -32,6 +31,8 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.List;
+
+import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
 
 public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeItem {
 
@@ -56,7 +57,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 		if (!StringHelper.isShiftKeyDown()) {
 			return;
 		}
-		int radius = isEmpowered(stack) ? getRadius(stack) * 2 : getRadius(stack);
+		int radius = getRadius(stack);
 
 		tooltip.add(StringHelper.getInfoText("info.thermalinnovation.magnet.a.0"));
 		tooltip.add(StringHelper.localize("info.thermalinnovation.magnet.a.1"));
@@ -97,8 +98,10 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 		}
 		EntityPlayer player = (EntityPlayer) entity;
 
-		boolean empowered = isEmpowered(stack);
-		int radius = empowered ? getRadius(stack) * 2 : getRadius(stack);
+		if (getEnergyStored(stack) < ENERGY_PER_ITEM && !player.capabilities.isCreativeMode) {
+			return;
+		}
+		int radius = getRadius(stack);
 		int radSq = radius * radius;
 
 		AxisAlignedBB area = new AxisAlignedBB(player.getPosition().add(-radius, -radius, -radius), player.getPosition().add(1 + radius, 1 + radius, 1 + radius));
@@ -115,6 +118,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 				}
 			}
 		} else {
+			int itemCount = 0;
 			for (EntityItem item : items) {
 				if (item.getEntityData().getBoolean(CONVEYOR_COMPAT)) {
 					continue;
@@ -123,11 +127,12 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 					if (item.getPositionVector().squareDistanceTo(player.getPositionVector()) <= radSq && wrapper.getFilter().matches(item.getItem())) {
 						item.setPosition(player.posX, player.posY, player.posZ);
 						item.setPickupDelay(0);
+						itemCount++;
 					}
 				}
 			}
-			if (!player.capabilities.isCreativeMode && empowered) {
-				extractEnergy(stack, ENERGY_PER_USE, false);
+			if (!player.capabilities.isCreativeMode) {
+				extractEnergy(stack, ENERGY_PER_ITEM * itemCount, false);
 			}
 		}
 	}
@@ -158,8 +163,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 			if (traceResult == null || traceResult.typeOfHit != RayTraceResult.Type.BLOCK) {
 				return ActionResult.newResult(EnumActionResult.PASS, stack);
 			}
-			boolean empowered = isEmpowered(stack);
-			int radius = (empowered ? getRadius(stack) * 2 : getRadius(stack));
+			int radius = getRadius(stack);
 			int radSq = radius * radius;
 
 			AxisAlignedBB area = new AxisAlignedBB(traceResult.getBlockPos().add(-radius, -radius, -radius), traceResult.getBlockPos().add(1 + radius, 1 + radius, 1 + radius));
@@ -173,19 +177,21 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 					}
 				}
 			} else {
+				int itemCount = 0;
 				for (EntityItem item : items) {
 					if (item.getPositionVector().squareDistanceTo(traceResult.hitVec) <= radSq && wrapper.getFilter().matches(item.getItem())) {
 						item.setPosition(player.posX, player.posY, player.posZ);
 						item.setPickupDelay(0);
+						itemCount++;
 					}
+				}
+				if (!player.capabilities.isCreativeMode) {
+					extractEnergy(stack, ENERGY_PER_USE + ENERGY_PER_ITEM * itemCount, false);
 				}
 			}
 			player.swingArm(hand);
 			stack.setAnimationsToGo(5);
 			player.world.playSound(null, player.getPosition(), TFSounds.magnetUse, SoundCategory.PLAYERS, 0.4F, 1.0F);
-			if (!player.capabilities.isCreativeMode) {
-				extractEnergy(stack, ENERGY_PER_PULSE, false);
-			}
 		}
 		return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 	}
@@ -234,11 +240,6 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 		return typeMap.get(ItemHelper.getItemDamage(stack)).level + 4;
 	}
 
-	public boolean isEmpowered(ItemStack stack) {
-
-		return getMode(stack) == 2 && getEnergyStored(stack) >= ENERGY_PER_PULSE;
-	}
-
 	public static boolean isCreative(ItemStack stack) {
 
 		return ItemHelper.getItemDamage(stack) == CREATIVE;
@@ -258,25 +259,11 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 	}
 
 	/* IMultiModeItem */
-	@Override
-	public int getNumModes(ItemStack stack) {
-
-		return 3;
-	}
 
 	@Override
 	public void onModeChange(EntityPlayer player, ItemStack stack) {
 
-		int mode = getMode(stack);
-		switch (mode) {
-			case 0:
-			case 1:
-				player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.4F, 0.8F + 0.4F * getMode(stack));
-				break;
-			case 2:
-				player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_LIGHTNING_THUNDER, SoundCategory.PLAYERS, 0.4F, 1.0F);
-				break;
-		}
+		player.world.playSound(null, player.getPosition(), TFSounds.magnetUse, SoundCategory.PLAYERS, 0.4F, 0.8F + 0.4F * getMode(stack));
 		ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentTranslation("info.thermalinnovation.magnet.c." + getMode(stack)));
 	}
 
@@ -292,7 +279,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 		magnetSignalum = addEntryItem(3, "standard3", 3, EnumRarity.UNCOMMON);
 		magnetResonant = addEntryItem(4, "standard4", 4, EnumRarity.RARE);
 
-		magnetCreative = addEntryItem(CREATIVE, "creative", 0, 0, 4, EnumRarity.EPIC);
+		magnetCreative = addEntryItem(CREATIVE, "creative", CAPACITY[4], 0, 4, EnumRarity.EPIC);
 
 		ThermalInnovation.proxy.addIModelRegister(this);
 
@@ -307,15 +294,14 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 		}
 		// @formatter:off
 
-//		addShapedRecipe(magnetBasic,
-//				" R ",
-//				"IXI",
-//				"RYR",
-//				'I', "ingotLead",
-//				'R', "dustRedstone",
-//				'X', "ingotCopper",
-//				'Y', "dustSulfur"
-//		);
+		addShapedRecipe(magnetBasic,
+				"R R",
+				"IRI",
+				"XIX",
+				'I', "ingotIron",
+				'R', "dustRedstone",
+				'X', "ingotLead"
+		);
 
 		// @formatter:on
 
@@ -382,9 +368,9 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 
 	public static final String CONVEYOR_COMPAT = "PreventRemoteMovement";
 
-	public static final int CAPACITY_BASE = 50000;
+	public static final int CAPACITY_BASE = 20000;
 	public static final int XFER_BASE = 1000;
-	public static final int ENERGY_PER_PULSE = 50;
+	public static final int ENERGY_PER_ITEM = 25;
 	public static final int ENERGY_PER_USE = 250;
 
 	public static final int[] CAPACITY = { 1, 3, 6, 10, 15 };

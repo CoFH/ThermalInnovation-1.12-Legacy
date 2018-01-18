@@ -587,7 +587,7 @@ public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeIt
 		drillSignalum = addEntryItem(3, "standard3", EnumRarity.UNCOMMON);
 		drillResonant = addEntryItem(4, "standard4", EnumRarity.RARE);
 
-		drillCreative = addEntryItem(CREATIVE, "creative", HARVEST_LEVEL[4], EFFICIENCY[4], ATTACK_DAMAGE[4], ENCHANTABILITY[4], 0, 0, MAX_RADIUS[4], EnumRarity.EPIC);
+		drillCreative = addEntryItem(CREATIVE, "creative", HARVEST_LEVEL[4], EFFICIENCY[4], ATTACK_DAMAGE[4], ENCHANTABILITY[4], CAPACITY[4], 0, MAX_RADIUS[4], EnumRarity.EPIC);
 
 		ThermalInnovation.proxy.addIModelRegister(this);
 
@@ -684,7 +684,7 @@ public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeIt
 
 	private static TIntObjectHashMap<TypeEntry> typeMap = new TIntObjectHashMap<>();
 
-	public static final int CAPACITY_BASE = 50000;
+	public static final int CAPACITY_BASE = 20000;
 	public static final int XFER_BASE = 1000;
 	public static final int ENERGY_PER_USE = 200;
 

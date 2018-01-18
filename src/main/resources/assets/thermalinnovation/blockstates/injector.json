@@ -3,12 +3,84 @@
 	"defaults": {
 		"model": "builtin/generated",
 		"textures": {
-			"layer0": "thermalinnovation:items/injector/injector_0",
-			"layer1": "thermalinnovation:items/injector/injector_overlay"
+			"layer0": "thermalinnovation:items/injector/injector_0"
 		},
-		"transform": "forge:default-tool"
+		"transform": {
+			"thirdperson_righthand": {
+				"rotation": [{
+					"y": 90},{
+					"z": 23
+				}],
+				"translation": [ 0, -0.15, 0 ],
+				"scale": [ 0.85, 0.85, 0.85 ]
+			},
+			"thirdperson_lefthand": {
+				"rotation": [{
+					"y": -90},{
+					"z": -23
+				}],
+				"translation": [ 0, -0.15, 0 ],
+				"scale": [ 0.85, 0.85, 0.85 ]
+			},
+			"firstperson_righthand": {
+				"rotation": [{
+					"y": -90},{
+					"z": 55
+				}],
+				"translation": [ 0, 0.25, 0.1 ],
+				"scale": [ 0.68, 0.68, 0.68 ]
+			},
+			"firstperson_lefthand": {
+				"rotation": [{
+					"y": 90},{
+					"z": -55
+				}],
+				"translation": [ 0, 0.25, 0.1 ],
+				"scale": [ 0.68, 0.68, 0.68 ]
+			}
+		}
 	},
 	"variants": {
+		"fill": {
+			"0": {
+
+			},
+			"1": {
+				"textures": {
+					"layer1": "thermalinnovation:items/injector/injector_overlay_1"
+				}
+			},
+			"2": {
+				"textures": {
+					"layer1": "thermalinnovation:items/injector/injector_overlay_2"
+				}
+			},
+			"3": {
+				"textures": {
+					"layer1": "thermalinnovation:items/injector/injector_overlay_3"
+				}
+			},
+			"4": {
+				"textures": {
+					"layer1": "thermalinnovation:items/injector/injector_overlay_4"
+				}
+			},
+			"5": {
+				"textures": {
+					"layer1": "thermalinnovation:items/injector/injector_overlay_5"
+				}
+			},
+			"6": {
+				"textures": {
+					"layer1": "thermalinnovation:items/injector/injector_overlay_6"
+				}
+			},
+			"7": {
+				"textures": {
+					"layer1": "thermalinnovation:items/injector/injector_overlay_7"
+				}
+			}
+		},
 		"type": {
 			"standard0": {
 				"textures": {

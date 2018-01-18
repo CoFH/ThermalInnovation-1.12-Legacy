@@ -35,7 +35,7 @@ public class TIProps {
 			@SideOnly (Side.CLIENT)
 			public ItemStack getIconItemStack() {
 
-				ItemStack iconStack = new ItemStack(TIItems.itemDrill, 1, 1);
+				ItemStack iconStack = new ItemStack(TIItems.itemMagnet, 1, 1);
 				iconStack.setTagCompound(new NBTTagCompound());
 				iconStack.getTagCompound().setBoolean("CreativeTab", true);
 

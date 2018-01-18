@@ -11,14 +11,13 @@ import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.CoreUtils;
 import cofh.core.util.capabilities.FluidContainerItemWrapper;
 import cofh.core.util.core.IInitializer;
-import cofh.core.util.helpers.ChatHelper;
-import cofh.core.util.helpers.ItemHelper;
-import cofh.core.util.helpers.ServerHelper;
-import cofh.core.util.helpers.StringHelper;
+import cofh.core.util.helpers.*;
 import cofh.thermalfoundation.fluid.FluidPotion;
 import cofh.thermalfoundation.init.TFFluids;
 import cofh.thermalinnovation.ThermalInnovation;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
@@ -26,6 +25,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
@@ -39,6 +39,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -47,6 +48,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
+
+import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
 
 public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeItem, IFluidContainerItem, IEnchantableItem, INBTCopyIngredient {
 
@@ -192,7 +196,7 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 	@Override
 	public int getRGBDurabilityForDisplay(ItemStack stack) {
 
-		return CoreProps.RGB_DURABILITY_WATER;
+		return colorMultiplier(stack, 1);
 	}
 
 	@Override
@@ -220,6 +224,11 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 		return fluid == null ? 0 : fluid.amount;
 	}
 
+	public int getScaledFluidStored(ItemStack stack, int scale) {
+
+		return MathHelper.round((long) getFluidAmount(stack) * scale / getCapacity(stack));
+	}
+
 	@SideOnly (Side.CLIENT)
 	private static void addPotionTooltip(NBTTagCompound potionTag, List<String> lores) {
 
@@ -239,6 +248,20 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 				} else {
 					lores.add(TextFormatting.BLUE + s1);
 				}
+			}
+		}
+	}
+
+	/* IModelRegister */
+	@Override
+	@SideOnly (Side.CLIENT)
+	public void registerModels() {
+
+		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("fill=%s,type=%s", MathHelper.clamp(getFluidAmount(stack) > 0 ? 1 + getScaledFluidStored(stack, 7) : 0, 0, 7), typeMap.get(ItemHelper.getItemDamage(stack)).name)));
+
+		for (Map.Entry<Integer, ItemEntry> entry : itemMap.entrySet()) {
+			for (int fill = 0; fill < 8; fill++) {
+				ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("fill=%s,type=%s", fill, entry.getValue().name)));
 			}
 		}
 	}
@@ -425,6 +448,16 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 		}
 		// @formatter:off
 
+		addShapedRecipe(injectorBasic,
+				" I ",
+				"XBX",
+				"BRB",
+				'B', Items.GLASS_BOTTLE,
+				'I', "ingotIron",
+				'R', "dustGlowstone",
+				'X', "ingotLead"
+		);
+
 		// @formatter:on
 
 		return true;
@@ -436,7 +469,7 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 		String comment;
 
 		int capacity = CAPACITY_BASE;
-		comment = "Adjust this value to change the amount of Fluid (in mb) stored by a Basic Potion Injector. This base value will scale with item level.";
+		comment = "Adjust this value to change the amount of Fluid (in mb) stored by a Basic Hypoinfuser. This base value will scale with item level.";
 		capacity = ThermalInnovation.CONFIG.getConfiguration().getInt("BaseCapacity", category, capacity, capacity / 5, capacity * 5, comment);
 
 		for (int i = 0; i < CAPACITY.length; i++) {
