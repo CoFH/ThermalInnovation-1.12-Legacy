@@ -1,0 +1,70 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "builtin/generated",
+    "textures": {
+      "layer0": "thermalinnovation:items/illuminator/illuminator_0",
+      "layer1": "thermalinnovation:items/illuminator/illuminator_empty",
+      "layer2": "thermalinnovation:items/illuminator/illuminator_fan_inactive"
+    },
+    "transform": "forge:default-tool"
+  },
+  "variants": {
+    "mode": {
+      "0": {
+        "textures": {
+          "layer2": "thermalinnovation:items/illuminator/illuminator_fan_inactive"
+        }
+      },
+      "1": {
+        "textures": {
+          "layer2": "thermalinnovation:items/illuminator/illuminator_fan_active"
+        }
+      }
+    },
+    "tank": {
+      "filled": {
+        "textures": {
+          "layer1": "thermalinnovation:items/illuminator/illuminator_filled"
+        }
+      },
+      "empty": {
+        "textures": {
+          "layer1": "thermalinnovation:items/illuminator/illuminator_empty"
+        }
+      }
+    },
+    "type": {
+      "standard0": {
+        "textures": {
+          "layer0": "thermalinnovation:items/illuminator/illuminator_0"
+        }
+      },
+      "standard1": {
+        "textures": {
+          "layer0": "thermalinnovation:items/illuminator/illuminator_1"
+        }
+      },
+      "standard2": {
+        "textures": {
+          "layer0": "thermalinnovation:items/illuminator/illuminator_2"
+        }
+      },
+      "standard3": {
+        "textures": {
+          "layer0": "thermalinnovation:items/illuminator/illuminator_3"
+        }
+      },
+      "standard4": {
+        "textures": {
+          "layer0": "thermalinnovation:items/illuminator/illuminator_4"
+        }
+      },
+      "creative": {
+        "textures": {
+          "layer0": "thermalinnovation:items/illuminator/illuminator_c"
+        }
+      }
+    }
+  }
+}

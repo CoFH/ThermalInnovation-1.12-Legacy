@@ -19,6 +19,13 @@ info.thermalinnovation.injector.c.0=Auto-Infuse Disabled
 info.thermalinnovation.injector.c.1=Auto-Infuse Enabled
 info.thermalinnovation.injector.d=Effects:
 
+info.thermalinnovation.illuminator.a.0=Uses Energized Glowstone to illuminate the area.
+info.thermalinnovation.illuminator.a.1=Range: %s
+info.thermalinnovation.illuminator.b.0=§bPress (%s) to enable.§r
+info.thermalinnovation.illuminator.b.1=§ePress (%s) to disable.§r
+info.thermalinnovation.illuminator.c.0=Disabled
+info.thermalinnovation.illuminator.c.1=Enabled
+
 item.thermalinnovation.drill.creative.name=NYI Drill (Creative)
 item.thermalinnovation.drill.standard0.name=NYI Drill (Basic)
 item.thermalinnovation.drill.standard1.name=NYI Drill (Hardened)
@@ -40,5 +47,12 @@ item.thermalinnovation.injector.standard1.name=Hypoinfuser (Hardened)
 item.thermalinnovation.injector.standard2.name=Hypoinfuser (Reinforced)
 item.thermalinnovation.injector.standard3.name=Hypoinfuser (Signalum)
 item.thermalinnovation.injector.standard4.name=Hypoinfuser (Resonant)
+
+item.thermalinnovation.illuminator.creative.name=Portable Illuminator (Creative)
+item.thermalinnovation.illuminator.standard0.name=Portable Illuminator (Basic)
+item.thermalinnovation.illuminator.standard1.name=Portable Illuminator (Hardened)
+item.thermalinnovation.illuminator.standard2.name=Portable Illuminator (Reinforced)
+item.thermalinnovation.illuminator.standard3.name=Portable Illuminator (Signalum)
+item.thermalinnovation.illuminator.standard4.name=Portable Illuminator (Resonant)
 
 itemGroup.thermalinnovation.creativeTab=Thermal Innovation
