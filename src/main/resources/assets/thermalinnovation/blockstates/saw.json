@@ -3,7 +3,7 @@
 	"defaults": {
 		"model": "builtin/generated",
 		"textures": {
-			"layer0": "thermalinnovation:items/drill/drill_0"
+			"layer0": "thermalinnovation:items/saw/saw_0"
 		},
 		"transform": {
 			"thirdperson_righthand": {
@@ -46,12 +46,12 @@
 		"state": {
 			"charged": {
 				"textures": {
-					"layer1": "thermalinnovation:items/drill/drill_charged"
+					"layer1": "thermalinnovation:items/saw/saw_charged"
 				}
 			},
 			"active": {
 				"textures": {
-					"layer1": "thermalinnovation:items/drill/drill_active"
+					"layer1": "thermalinnovation:items/saw/saw_active"
 				},
 				"transform": {
 					"thirdperson_righthand": {
@@ -97,32 +97,32 @@
 		"type": {
 			"standard0": {
 				"textures": {
-					"layer0": "thermalinnovation:items/drill/drill_0"
+					"layer0": "thermalinnovation:items/saw/saw_0"
 				}
 			},
 			"standard1": {
 				"textures": {
-					"layer0": "thermalinnovation:items/drill/drill_1"
+					"layer0": "thermalinnovation:items/saw/saw_1"
 				}
 			},
 			"standard2": {
 				"textures": {
-					"layer0": "thermalinnovation:items/drill/drill_2"
+					"layer0": "thermalinnovation:items/saw/saw_2"
 				}
 			},
 			"standard3": {
 				"textures": {
-					"layer0": "thermalinnovation:items/drill/drill_3"
+					"layer0": "thermalinnovation:items/saw/saw_3"
 				}
 			},
 			"standard4": {
 				"textures": {
-					"layer0": "thermalinnovation:items/drill/drill_4"
+					"layer0": "thermalinnovation:items/saw/saw_4"
 				}
 			},
 			"creative": {
 				"textures": {
-					"layer0": "thermalinnovation:items/drill/drill_c"
+					"layer0": "thermalinnovation:items/saw/saw_c"
 				}
 			}
 		}

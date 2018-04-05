@@ -8,6 +8,7 @@ import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.RayTracer;
 import cofh.core.util.core.IInitializer;
 import cofh.core.util.helpers.*;
+import cofh.thermalfoundation.item.ItemMaterial;
 import cofh.thermalinnovation.ThermalInnovation;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
@@ -19,6 +20,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
@@ -45,12 +48,18 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
 
 public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeItem, IAOEBreakItem {
 
@@ -95,6 +104,15 @@ public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeIt
 	}
 
 	@Override
+	public ItemStack setDefaultTag(ItemStack stack, int energy) {
+
+		EnergyHelper.setDefaultEnergyTag(stack, energy);
+		stack.getTagCompound().setInteger("Mode", getNumModes(stack) - 1);
+
+		return stack;
+	}
+
+	@Override
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 
 		if (StringHelper.displayShiftForDetail && !StringHelper.isShiftKeyDown()) {
@@ -106,8 +124,10 @@ public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeIt
 		int radius = getMode(stack) * 2 + 1;
 
 		tooltip.add(StringHelper.getInfoText("info.thermalinnovation.drill.a.0"));
-		tooltip.add(StringHelper.localize("info.cofh.area") + ": " + radius + "x" + radius);
 
+		if (radius > 1) {
+			tooltip.add(StringHelper.localize("info.cofh.area") + ": " + radius + "x" + radius);
+		}
 		if (getNumModes(stack) > 1) {
 			tooltip.add(StringHelper.localizeFormat("info.thermalinnovation.drill.b.0", StringHelper.getKeyName(KeyBindingItemMultiMode.INSTANCE.getKey())));
 		}
@@ -124,10 +144,10 @@ public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeIt
 		if (isInCreativeTab(tab)) {
 			for (int metadata : itemList) {
 				if (metadata != CREATIVE) {
-					items.add(EnergyHelper.setDefaultEnergyTag(new ItemStack(this, 1, metadata), 0));
-					items.add(EnergyHelper.setDefaultEnergyTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+					items.add(setDefaultTag(new ItemStack(this, 1, metadata), 0));
+					items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
 				} else {
-					items.add(EnergyHelper.setDefaultEnergyTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+					items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
 				}
 			}
 		}
@@ -269,13 +289,7 @@ public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeIt
 	@Override
 	public boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack) {
 
-		return !oldStack.equals(newStack) && (getEnergyStored(oldStack) > 0 != getEnergyStored(newStack) > 0 || isActive(oldStack) != isActive(newStack));
-	}
-
-	@Override
-	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-
-		return !oldStack.equals(newStack) && (slotChanged || getEnergyStored(oldStack) > 0 != getEnergyStored(newStack) > 0 || isActive(oldStack) != isActive(newStack));
+		return !oldStack.equals(newStack) && (getEnergyStored(oldStack) > 0 != getEnergyStored(newStack) > 0);
 	}
 
 	@Override
@@ -315,10 +329,10 @@ public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeIt
 
 		if (slot == EntityEquipmentSlot.MAINHAND) {
 			if (getEnergyStored(stack) >= ENERGY_PER_USE) {
-				multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", -2.8F, 0));
+				multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", -2.2F, 0));
 				multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", getAttackDamage(stack), 0));
 			} else {
-				multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", -2.8F, 0));
+				multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", -2.2F, 0));
 				multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", 1, 0));
 			}
 		}
@@ -338,6 +352,10 @@ public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeIt
 		IBlockState state = world.getBlockState(pos);
 		Block block = state.getBlock();
 
+		// only effective materials
+		if (!(toolClasses.contains(state.getBlock().getHarvestTool(state)) || canHarvestBlock(state, player.getHeldItemMainhand()))) {
+			return false;
+		}
 		if (!ForgeHooks.canHarvestBlock(block, player, world, pos)) {
 			return false;
 		}
@@ -433,12 +451,12 @@ public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeIt
 		return typeMap.get(ItemHelper.getItemDamage(stack)).enchantability;
 	}
 
-	public int getMaxRadius(int metadata) {
+	public int getMaxRadius(ItemStack stack) {
 
-		if (!typeMap.containsKey(metadata)) {
+		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
 			return 0;
 		}
-		return typeMap.get(metadata).maxRadius;
+		return typeMap.get(ItemHelper.getItemDamage(stack)).maxRadius;
 	}
 
 	public int getHarvestLevel(ItemStack stack) {
@@ -475,39 +493,44 @@ public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeIt
 
 	public void setActive(ItemStack stack, EntityLivingBase living) {
 
-		stack.getTagCompound().setLong("Active", living.world.getTotalWorldTime() + 10);
+		stack.getTagCompound().setLong("Active", living.world.getTotalWorldTime() + 20);
 	}
 
 	/* IModelRegister */
-	//	@Override
-	//	@SideOnly (Side.CLIENT)
-	//	public void registerModels() {
-	//
-	//		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("type=%s,water=%s", typeMap.get(ItemHelper.getItemDamage(stack)).name, this.getEnergyStored(stack) > 0 ? isActive(stack) ? "tipped" : "level" : "empty")));
-	//
-	//		String[] waterStates = { "level", "tipped", "empty" };
-	//
-	//		for (Map.Entry<Integer, ItemEntry> entry : itemMap.entrySet()) {
-	//			for (int i = 0; i < 3; i++) {
-	//				ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("type=%s,water=%s", entry.getValue().name, waterStates[i])));
-	//			}
-	//		}
-	//	}
+	@Override
+	@SideOnly (Side.CLIENT)
+	public void registerModels() {
+
+		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("state=%s,type=%s", this.getEnergyStored(stack) > 0 ? isActive(stack) ? "active" : "charged" : "drained", typeMap.get(ItemHelper.getItemDamage(stack)).name)));
+
+		String[] states = { "charged", "active", "drained" };
+
+		for (Map.Entry<Integer, ItemEntry> entry : itemMap.entrySet()) {
+			for (int i = 0; i < 3; i++) {
+				ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("state=%s,type=%s", states[i], entry.getValue().name)));
+			}
+		}
+	}
 
 	/* IMultiModeItem */
 	@Override
 	public int getNumModes(ItemStack stack) {
 
-		return getMaxRadius(ItemHelper.getItemDamage(stack)) + 1;
+		return getMaxRadius(stack) + 1;
 	}
 
 	@Override
 	public void onModeChange(EntityPlayer player, ItemStack stack) {
 
-		player.world.playSound(null, player.getPosition(), SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.PLAYERS, 0.6F, 1.0F - 0.1F * getMode(stack));
+		player.world.playSound(null, player.getPosition(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 0.6F, 1.0F - 0.1F * getMode(stack));
 
 		int radius = getMode(stack) * 2 + 1;
-		ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentString(StringHelper.localize("info.cofh.area") + ": " + radius + "x" + radius));
+
+		if (radius > 1) {
+			ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentString(StringHelper.localize("info.cofh.area") + ": " + radius + "x" + radius));
+		} else {
+			ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentString(StringHelper.localize("info.cofh.noAOE")));
+		}
 	}
 
 	/* IAOEBreakItem */
@@ -602,15 +625,16 @@ public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeIt
 		}
 		// @formatter:off
 
-//		addShapedRecipe(drillBasic,
-//				" R ",
-//				"IXI",
-//				"RYR",
-//				'I', "ingotLead",
-//				'R', "dustRedstone",
-//				'X', "ingotCopper",
-//				'Y', "dustSulfur"
-//		);
+		addShapedRecipe(drillBasic,
+				" X ",
+				"ICI",
+				"RYR",
+				'C', "blockCopper",
+				'I', "gearLead",
+				'R', "dustRedstone",
+				'X', "blockIron",
+				'Y', ItemMaterial.powerCoilGold
+		);
 
 		// @formatter:on
 
@@ -625,11 +649,11 @@ public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeIt
 		enable = ThermalInnovation.CONFIG.get(category, "Enable", true);
 
 		int capacity = CAPACITY_BASE;
-		comment = "Adjust this value to change the amount of Energy (in RF) stored by a Basic Flux Drill. This base value will scale with item level.";
+		comment = "Adjust this value to change the amount of Energy (in RF) stored by a Basic Fluxbore. This base value will scale with item level.";
 		capacity = ThermalInnovation.CONFIG.getConfiguration().getInt("BaseCapacity", category, capacity, capacity / 5, capacity * 5, comment);
 
 		int xfer = XFER_BASE;
-		comment = "Adjust this value to change the amount of Energy (in RF/t) that can be received by a Basic Flux Drill. This base value will scale with item level.";
+		comment = "Adjust this value to change the amount of Energy (in RF/t) that can be received by a Basic Fluxbore. This base value will scale with item level.";
 		xfer = ThermalInnovation.CONFIG.getConfiguration().getInt("BaseReceive", category, xfer, xfer / 10, xfer * 10, comment);
 
 		for (int i = 0; i < CAPACITY.length; i++) {

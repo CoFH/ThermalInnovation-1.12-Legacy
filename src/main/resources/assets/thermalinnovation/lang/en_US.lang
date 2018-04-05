@@ -19,12 +19,15 @@ info.thermalinnovation.injector.c.0=Auto-Infuse Disabled
 info.thermalinnovation.injector.c.1=Auto-Infuse Enabled
 info.thermalinnovation.injector.d=Effects:
 
-item.thermalinnovation.drill.creative.name=NYI Drill (Creative)
-item.thermalinnovation.drill.standard0.name=NYI Drill (Basic)
-item.thermalinnovation.drill.standard1.name=NYI Drill (Hardened)
-item.thermalinnovation.drill.standard2.name=NYI Drill (Reinforced)
-item.thermalinnovation.drill.standard3.name=NYI Drill (Signalum)
-item.thermalinnovation.drill.standard4.name=NYI Drill (Resonant)
+info.thermalinnovation.saw.a.0=Cuts blocks using Redstone Flux.
+info.thermalinnovation.saw.b.0=§ePress (%s) to adjust the area.§r
+
+item.thermalinnovation.drill.creative.name=Fluxbore (Creative)
+item.thermalinnovation.drill.standard0.name=Fluxbore (Basic)
+item.thermalinnovation.drill.standard1.name=Fluxbore (Hardened)
+item.thermalinnovation.drill.standard2.name=Fluxbore (Reinforced)
+item.thermalinnovation.drill.standard3.name=Fluxbore (Signalum)
+item.thermalinnovation.drill.standard4.name=Fluxbore (Resonant)
 
 item.thermalinnovation.magnet.creative.name=Fluxomagnet (Creative)
 item.thermalinnovation.magnet.name=Fluxomagnet
@@ -40,5 +43,12 @@ item.thermalinnovation.injector.standard1.name=Hypoinfuser (Hardened)
 item.thermalinnovation.injector.standard2.name=Hypoinfuser (Reinforced)
 item.thermalinnovation.injector.standard3.name=Hypoinfuser (Signalum)
 item.thermalinnovation.injector.standard4.name=Hypoinfuser (Resonant)
+
+item.thermalinnovation.saw.creative.name=Fluxsaw (Creative)
+item.thermalinnovation.saw.standard0.name=Fluxsaw (Basic)
+item.thermalinnovation.saw.standard1.name=Fluxsaw (Hardened)
+item.thermalinnovation.saw.standard2.name=Fluxsaw (Reinforced)
+item.thermalinnovation.saw.standard3.name=Fluxsaw (Signalum)
+item.thermalinnovation.saw.standard4.name=Fluxsaw (Resonant)
 
 itemGroup.thermalinnovation.creativeTab=Thermal Innovation

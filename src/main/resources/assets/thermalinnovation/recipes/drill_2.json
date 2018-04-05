@@ -1,0 +1,30 @@
+{
+	"type": "thermalinnovation:upgrade_shaped",
+	"result": {
+		"item": "thermalinnovation:drill",
+		"data": 2
+	},
+	"pattern": [
+		" R ",
+		"IXI",
+		"RGR"
+	],
+	"key": {
+		"G": {
+			"type": "forge:ore_dict",
+			"ore": "gearElectrum"
+		},
+		"I": {
+			"type": "forge:ore_dict",
+			"ore": "ingotElectrum"
+		},
+		"R": {
+			"type": "forge:ore_dict",
+			"ore": "gemDiamond"
+		},
+		"X": {
+			"item": "thermalinnovation:drill",
+			"data": 1
+		}
+	}
+}

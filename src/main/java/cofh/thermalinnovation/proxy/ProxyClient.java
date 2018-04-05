@@ -17,8 +17,6 @@ public class ProxyClient extends Proxy {
 
 		super.preInit(event);
 
-		// MinecraftForge.EVENT_BUS.register(EventHandlerPlayer.INSTANCE);
-
 		for (IModelRegister register : modelList) {
 			register.registerModels();
 		}

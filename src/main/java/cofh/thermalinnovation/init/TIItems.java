@@ -4,6 +4,7 @@ import cofh.core.util.core.IInitializer;
 import cofh.thermalinnovation.item.ItemDrill;
 import cofh.thermalinnovation.item.ItemInjector;
 import cofh.thermalinnovation.item.ItemMagnet;
+import cofh.thermalinnovation.item.ItemSaw;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -22,10 +23,12 @@ public class TIItems {
 	public static void preInit() {
 
 		itemDrill = new ItemDrill();
+		itemSaw = new ItemSaw();
 		itemMagnet = new ItemMagnet();
 		itemInjector = new ItemInjector();
 
 		initList.add(itemDrill);
+		initList.add(itemSaw);
 		initList.add(itemMagnet);
 		initList.add(itemInjector);
 
@@ -48,6 +51,7 @@ public class TIItems {
 
 	/* REFERENCES */
 	public static ItemDrill itemDrill;
+	public static ItemSaw itemSaw;
 	public static ItemMagnet itemMagnet;
 	public static ItemInjector itemInjector;
 

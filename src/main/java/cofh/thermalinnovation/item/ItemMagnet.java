@@ -138,12 +138,6 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 	}
 
 	@Override
-	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-
-		return !oldStack.equals(newStack) && (slotChanged || getEnergyStored(oldStack) > 0 != getEnergyStored(newStack) > 0);
-	}
-
-	@Override
 	public int getItemEnchantability(ItemStack stack) {
 
 		return 10;
@@ -237,12 +231,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
 			return 0;
 		}
-		return typeMap.get(ItemHelper.getItemDamage(stack)).level + 4;
-	}
-
-	public static boolean isCreative(ItemStack stack) {
-
-		return ItemHelper.getItemDamage(stack) == CREATIVE;
+		return typeMap.get(ItemHelper.getItemDamage(stack)).level + 6;
 	}
 
 	public static int getLevel(ItemStack stack) {
@@ -259,7 +248,6 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 	}
 
 	/* IMultiModeItem */
-
 	@Override
 	public void onModeChange(EntityPlayer player, ItemStack stack) {
 
