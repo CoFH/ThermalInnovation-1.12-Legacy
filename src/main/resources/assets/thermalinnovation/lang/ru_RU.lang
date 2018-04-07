@@ -1,0 +1,54 @@
+#ru_RU by kellixon
+
+info.thermalinnovation.drill.a.0=Добывает блоки, используя Redstone Flux.
+info.thermalinnovation.drill.b.0=§eНажмите (%s) для настройки области.§r
+
+info.thermalinnovation.magnet.a.0=Притягивает предметы к владельцу.
+info.thermalinnovation.magnet.a.1=Используйте для притягивания предметов в целевом местоположении.
+info.thermalinnovation.magnet.a.2=Используйте, пока сидите, чтобы настроить.
+info.thermalinnovation.magnet.b.0=§bНажмите (%s), чтобы включить притягивание.§r
+info.thermalinnovation.magnet.b.1=§eНажмите (%s), чтобы отключить притягивание.§r
+info.thermalinnovation.magnet.c.0=Притягивание отключено
+info.thermalinnovation.magnet.c.1=Притягивание включено
+
+info.thermalinnovation.injector.a.0=Хранит и вводит зелья. Может влить во владельца.
+info.thermalinnovation.injector.a.1=Используйте на сущности, чтобы ввести содержащееся зелье.
+info.thermalinnovation.injector.b.0=§bНажмите (%s), чтобы включить авто-вливание.§r
+info.thermalinnovation.injector.b.1=§eНажмите (%s), чтобы отключить авто-вливание.§r
+info.thermalinnovation.injector.c.0=Авто-вливание отключено
+info.thermalinnovation.injector.c.1=Авто-вливание включено
+info.thermalinnovation.injector.d=Эффекты:
+
+info.thermalinnovation.saw.a.0=Режет блоки, используя Redstone Flux.
+info.thermalinnovation.saw.b.0=§eНажмите (%s) для настройки области.§r
+
+item.thermalinnovation.drill.creative.name=Флаксобур (творческий)
+item.thermalinnovation.drill.standard0.name=Флаксобур (основной)
+item.thermalinnovation.drill.standard1.name=Флаксобур (усиленный)
+item.thermalinnovation.drill.standard2.name=Флаксобур (укрепленный)
+item.thermalinnovation.drill.standard3.name=Флаксобур (синаловый)
+item.thermalinnovation.drill.standard4.name=Флаксобур (резонирующий)
+
+item.thermalinnovation.magnet.creative.name=Флаксомагнит (творческий)
+item.thermalinnovation.magnet.name=Флаксомагнит
+item.thermalinnovation.magnet.standard0.name=Флаксомагнит (основной)
+item.thermalinnovation.magnet.standard1.name=Флаксомагнит (усиленный)
+item.thermalinnovation.magnet.standard2.name=Флаксомагнит (укрепленный)
+item.thermalinnovation.magnet.standard3.name=Флаксомагнит (синаловый)
+item.thermalinnovation.magnet.standard4.name=Флаксомагнит (резонирующий)
+
+item.thermalinnovation.injector.creative.name=Шприц (творческий)
+item.thermalinnovation.injector.standard0.name=Шприц (основной)
+item.thermalinnovation.injector.standard1.name=Шприц (усиленный)
+item.thermalinnovation.injector.standard2.name=Шприц (укрепленный)
+item.thermalinnovation.injector.standard3.name=Шприц (синаловый)
+item.thermalinnovation.injector.standard4.name=Шприц (резонирующий)
+
+item.thermalinnovation.saw.creative.name=Флаксопила (творческий)
+item.thermalinnovation.saw.standard0.name=Флаксопила (основной)
+item.thermalinnovation.saw.standard1.name=Флаксопила (усиленный)
+item.thermalinnovation.saw.standard2.name=Флаксопила (укрепленный)
+item.thermalinnovation.saw.standard3.name=Флаксопила (синаловый)
+item.thermalinnovation.saw.standard4.name=Флаксопила (резонирующий)
+
+itemGroup.thermalinnovation.creativeTab=Thermal Innovation
