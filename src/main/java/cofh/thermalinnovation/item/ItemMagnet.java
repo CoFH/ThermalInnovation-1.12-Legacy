@@ -356,7 +356,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 
 	public static final String CONVEYOR_COMPAT = "PreventRemoteMovement";
 
-	public static final int CAPACITY_BASE = 20000;
+	public static final int CAPACITY_BASE = 40000;
 	public static final int XFER_BASE = 1000;
 	public static final int ENERGY_PER_ITEM = 25;
 	public static final int ENERGY_PER_USE = 250;
