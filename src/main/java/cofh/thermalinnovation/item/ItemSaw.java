@@ -138,16 +138,16 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
 
-		if (isInCreativeTab(tab)) {
-			for (int metadata : itemList) {
-				if (metadata != CREATIVE) {
-					items.add(setDefaultTag(new ItemStack(this, 1, metadata), 0));
-					items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
-				} else {
-					items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
-				}
-			}
-		}
+//		if (isInCreativeTab(tab)) {
+//			for (int metadata : itemList) {
+//				if (metadata != CREATIVE) {
+//					items.add(setDefaultTag(new ItemStack(this, 1, metadata), 0));
+//					items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+//				} else {
+//					items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+//				}
+//			}
+//		}
 	}
 
 	@Override
@@ -380,6 +380,39 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 	}
 
 	/* HELPERS */
+	@Override
+	protected int getCapacity(ItemStack stack) {
+
+		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
+			return 0;
+		}
+		int capacity = typeMap.get(ItemHelper.getItemDamage(stack)).capacity;
+		int enchant = EnchantmentHelper.getEnchantmentLevel(CoreEnchantments.holding, stack);
+
+		return capacity + capacity * enchant / 2;
+	}
+
+	@Override
+	protected int getReceive(ItemStack stack) {
+
+		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
+			return 0;
+		}
+		return typeMap.get(ItemHelper.getItemDamage(stack)).recv;
+	}
+
+	protected int useEnergy(ItemStack stack, int count, boolean simulate) {
+
+		if (ItemHelper.getItemDamage(stack) == CREATIVE) {
+			return 0;
+		}
+		int unbreakingLevel = MathHelper.clamp(EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack), 0, 10);
+		if (MathHelper.RANDOM.nextInt(2 + unbreakingLevel) >= 2) {
+			return 0;
+		}
+		return extractEnergy(stack, count * ENERGY_PER_USE, simulate);
+	}
+
 	protected boolean harvestBlock(World world, BlockPos pos, EntityPlayer player) {
 
 		if (world.isAirBlock(pos)) {
@@ -440,39 +473,6 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 			Minecraft.getMinecraft().getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, pos, Minecraft.getMinecraft().objectMouseOver.sideHit));
 		}
 		return true;
-	}
-
-	@Override
-	protected int getCapacity(ItemStack stack) {
-
-		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
-			return 0;
-		}
-		int capacity = typeMap.get(ItemHelper.getItemDamage(stack)).capacity;
-		int enchant = EnchantmentHelper.getEnchantmentLevel(CoreEnchantments.holding, stack);
-
-		return capacity + capacity * enchant / 2;
-	}
-
-	@Override
-	protected int getReceive(ItemStack stack) {
-
-		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
-			return 0;
-		}
-		return typeMap.get(ItemHelper.getItemDamage(stack)).recv;
-	}
-
-	protected int useEnergy(ItemStack stack, int count, boolean simulate) {
-
-		if (ItemHelper.getItemDamage(stack) == CREATIVE) {
-			return 0;
-		}
-		int unbreakingLevel = MathHelper.clamp(EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack), 0, 10);
-		if (MathHelper.RANDOM.nextInt(2 + unbreakingLevel) >= 2) {
-			return 0;
-		}
-		return extractEnergy(stack, count * ENERGY_PER_USE, simulate);
 	}
 
 	public int getBaseCapacity(int metadata) {
@@ -685,16 +685,16 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 		}
 		// @formatter:off
 
-		addShapedRecipe(sawBasic,
-				" X ",
-				"ICI",
-				"RYR",
-				'C', "blockCopper",
-				'I', "gearLead",
-				'R', "dustRedstone",
-				'X', "gearIron",
-				'Y', ItemMaterial.powerCoilGold
-		);
+//		addShapedRecipe(sawBasic,
+//				" X ",
+//				"ICI",
+//				"RYR",
+//				'C', "blockCopper",
+//				'I', "gearLead",
+//				'R', "dustRedstone",
+//				'X', "gearIron",
+//				'Y', ItemMaterial.powerCoilGold
+//		);
 
 		// @formatter:on
 
@@ -768,7 +768,7 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 
 	private static TIntObjectHashMap<TypeEntry> typeMap = new TIntObjectHashMap<>();
 
-	public static final int CAPACITY_BASE = 20000;
+	public static final int CAPACITY_BASE = 40000;
 	public static final int XFER_BASE = 1000;
 	public static final int ENERGY_PER_USE = 200;
 
@@ -781,7 +781,7 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 	public static final int[] XFER = { 1, 4, 9, 16, 25 };
 	public static final int[] MAX_RADIUS = { 0, 1, 1, 2, 2 };
 
-	public static boolean enable = true;
+	public static boolean enable = false;
 
 	/* REFERENCES */
 	public static ItemStack sawBasic;

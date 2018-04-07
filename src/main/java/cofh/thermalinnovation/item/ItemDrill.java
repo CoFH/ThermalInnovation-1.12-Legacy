@@ -1,6 +1,7 @@
 package cofh.thermalinnovation.item;
 
 import cofh.api.item.IMultiModeItem;
+import cofh.api.item.INBTCopyIngredient;
 import cofh.core.init.CoreEnchantments;
 import cofh.core.item.IAOEBreakItem;
 import cofh.core.item.ItemMultiRF;
@@ -32,6 +33,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
@@ -61,7 +63,7 @@ import java.util.Set;
 
 import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
 
-public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeItem, IAOEBreakItem {
+public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeItem, IAOEBreakItem, INBTCopyIngredient {
 
 	protected final TLinkedHashSet<String> toolClasses = new TLinkedHashSet<>();
 	protected final Set<String> immutableClasses = java.util.Collections.unmodifiableSet(toolClasses);
@@ -340,6 +342,39 @@ public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeIt
 	}
 
 	/* HELPERS */
+	@Override
+	protected int getCapacity(ItemStack stack) {
+
+		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
+			return 0;
+		}
+		int capacity = typeMap.get(ItemHelper.getItemDamage(stack)).capacity;
+		int enchant = EnchantmentHelper.getEnchantmentLevel(CoreEnchantments.holding, stack);
+
+		return capacity + capacity * enchant / 2;
+	}
+
+	@Override
+	protected int getReceive(ItemStack stack) {
+
+		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
+			return 0;
+		}
+		return typeMap.get(ItemHelper.getItemDamage(stack)).recv;
+	}
+
+	protected int useEnergy(ItemStack stack, int count, boolean simulate) {
+
+		if (ItemHelper.getItemDamage(stack) == CREATIVE) {
+			return 0;
+		}
+		int unbreakingLevel = MathHelper.clamp(EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack), 0, 10);
+		if (MathHelper.RANDOM.nextInt(2 + unbreakingLevel) >= 2) {
+			return 0;
+		}
+		return extractEnergy(stack, count * ENERGY_PER_USE, simulate);
+	}
+
 	protected boolean harvestBlock(World world, BlockPos pos, EntityPlayer player) {
 
 		if (world.isAirBlock(pos)) {
@@ -400,39 +435,6 @@ public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeIt
 			Minecraft.getMinecraft().getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, pos, Minecraft.getMinecraft().objectMouseOver.sideHit));
 		}
 		return true;
-	}
-
-	@Override
-	protected int getCapacity(ItemStack stack) {
-
-		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
-			return 0;
-		}
-		int capacity = typeMap.get(ItemHelper.getItemDamage(stack)).capacity;
-		int enchant = EnchantmentHelper.getEnchantmentLevel(CoreEnchantments.holding, stack);
-
-		return capacity + capacity * enchant / 2;
-	}
-
-	@Override
-	protected int getReceive(ItemStack stack) {
-
-		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
-			return 0;
-		}
-		return typeMap.get(ItemHelper.getItemDamage(stack)).recv;
-	}
-
-	protected int useEnergy(ItemStack stack, int count, boolean simulate) {
-
-		if (ItemHelper.getItemDamage(stack) == CREATIVE) {
-			return 0;
-		}
-		int unbreakingLevel = MathHelper.clamp(EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack), 0, 10);
-		if (MathHelper.RANDOM.nextInt(2 + unbreakingLevel) >= 2) {
-			return 0;
-		}
-		return extractEnergy(stack, count * ENERGY_PER_USE, simulate);
 	}
 
 	public int getBaseCapacity(int metadata) {
@@ -629,7 +631,7 @@ public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeIt
 				" X ",
 				"ICI",
 				"RYR",
-				'C', "blockCopper",
+				'C', Blocks.PISTON,
 				'I', "gearLead",
 				'R', "dustRedstone",
 				'X', "blockIron",
@@ -708,7 +710,7 @@ public class ItemDrill extends ItemMultiRF implements IInitializer, IMultiModeIt
 
 	private static TIntObjectHashMap<TypeEntry> typeMap = new TIntObjectHashMap<>();
 
-	public static final int CAPACITY_BASE = 20000;
+	public static final int CAPACITY_BASE = 40000;
 	public static final int XFER_BASE = 1000;
 	public static final int ENERGY_PER_USE = 200;
 

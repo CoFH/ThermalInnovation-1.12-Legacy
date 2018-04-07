@@ -503,7 +503,7 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 
 	private static TIntObjectHashMap<TypeEntry> typeMap = new TIntObjectHashMap<>();
 
-	public static final int CAPACITY_BASE = 1000;
+	public static final int CAPACITY_BASE = 2000;
 	public static final int MB_PER_CYCLE = 50;
 	public static final int MB_PER_USE = 250;
 	public static final int CREATIVE = 32000;

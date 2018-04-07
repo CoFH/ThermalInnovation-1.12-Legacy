@@ -1,6 +1,7 @@
 package cofh.thermalinnovation.item;
 
 import cofh.api.item.IMultiModeItem;
+import cofh.api.item.INBTCopyIngredient;
 import cofh.core.init.CoreEnchantments;
 import cofh.core.init.CoreProps;
 import cofh.core.item.ItemMultiRF;
@@ -34,7 +35,7 @@ import java.util.List;
 
 import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
 
-public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeItem {
+public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeItem, INBTCopyIngredient {
 
 	public ItemMagnet() {
 
@@ -356,7 +357,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 
 	public static final String CONVEYOR_COMPAT = "PreventRemoteMovement";
 
-	public static final int CAPACITY_BASE = 20000;
+	public static final int CAPACITY_BASE = 40000;
 	public static final int XFER_BASE = 1000;
 	public static final int ENERGY_PER_ITEM = 25;
 	public static final int ENERGY_PER_USE = 250;
