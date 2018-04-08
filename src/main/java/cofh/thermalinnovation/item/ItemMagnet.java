@@ -1,5 +1,7 @@
 package cofh.thermalinnovation.item;
 
+import baubles.api.BaubleType;
+import baubles.api.IBauble;
 import cofh.api.item.IMultiModeItem;
 import cofh.core.init.CoreEnchantments;
 import cofh.core.init.CoreProps;
@@ -18,6 +20,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
@@ -28,13 +31,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
 
-public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeItem {
+@Optional.Interface (iface = "baubles.api.IBauble", modid = "baubles")
+public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeItem, IBauble {
 
 	public ItemMagnet() {
 
@@ -255,6 +260,71 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 		ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentTranslation("info.thermalinnovation.magnet.c." + getMode(stack)));
 	}
 
+	/* IBauble */
+	@Override
+	public BaubleType getBaubleType(ItemStack itemstack) {
+
+		return BaubleType.TRINKET;
+	}
+
+	@Override
+	public void onWornTick(ItemStack itemstack, EntityLivingBase player) {
+
+		World world = player.world;
+
+		if (world.getTotalWorldTime() % CoreProps.TIME_CONSTANT_QUARTER != 0) {
+			return;
+		}
+		if (!(player instanceof EntityPlayer) || CoreUtils.isFakePlayer(player) || player.isSneaking() || getMode(itemstack) <= 0) {
+			return;
+		}
+		EntityPlayer castPlayer = (EntityPlayer) player;
+
+		if (getEnergyStored(itemstack) < ENERGY_PER_ITEM && !castPlayer.capabilities.isCreativeMode) {
+			return;
+		}
+		int radius = getRadius(itemstack);
+		int radSq = radius * radius;
+
+		AxisAlignedBB area = new AxisAlignedBB(player.getPosition().add(-radius, -radius, -radius), player.getPosition().add(1 + radius, 1 + radius, 1 + radius));
+		List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, area, EntitySelectors.IS_ALIVE);
+		ItemFilterWrapper wrapper = new ItemFilterWrapper(itemstack, getFilterSize(itemstack));
+
+		if (ServerHelper.isClientWorld(world)) {
+			for (EntityItem item : items) {
+				if (item.getEntityData().getBoolean(CONVEYOR_COMPAT)) {
+					continue;
+				}
+				if (item.getPositionVector().squareDistanceTo(player.getPositionVector()) <= radSq && wrapper.getFilter().matches(item.getItem())) {
+					world.spawnParticle(EnumParticleTypes.REDSTONE, item.posX, item.posY, item.posZ, 0, 0, 0, 0);
+				}
+			}
+		} else {
+			int itemCount = 0;
+			for (EntityItem item : items) {
+				if (item.getEntityData().getBoolean(CONVEYOR_COMPAT)) {
+					continue;
+				}
+				if (item.getThrower() == null || !item.getThrower().equals(player.getName()) || item.age >= 2 * CoreProps.TIME_CONSTANT) {
+					if (item.getPositionVector().squareDistanceTo(player.getPositionVector()) <= radSq && wrapper.getFilter().matches(item.getItem())) {
+						item.setPosition(player.posX, player.posY, player.posZ);
+						item.setPickupDelay(0);
+						itemCount++;
+					}
+				}
+			}
+			if (!castPlayer.capabilities.isCreativeMode) {
+				extractEnergy(itemstack, ENERGY_PER_ITEM * itemCount, false);
+			}
+		}
+	}
+
+	@Override
+	public boolean willAutoSync(ItemStack itemstack, EntityLivingBase player) {
+
+		return true;
+	}
+
 	/* IInitializer */
 	@Override
 	public boolean initialize() {
@@ -281,7 +351,6 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 			return false;
 		}
 		// @formatter:off
-
 		addShapedRecipe(magnetBasic,
 				"R R",
 				"IRI",
@@ -290,9 +359,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 				'R', "dustRedstone",
 				'X', "ingotLead"
 		);
-
 		// @formatter:on
-
 		return true;
 	}
 

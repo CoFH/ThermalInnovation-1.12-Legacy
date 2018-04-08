@@ -1,0 +1,30 @@
+{
+	"type": "thermalinnovation:upgrade_shaped",
+	"result": {
+		"item": "thermalinnovation:saw",
+		"data": 4
+	},
+	"pattern": [
+		" R ",
+		"IXI",
+		"RGR"
+	],
+	"key": {
+		"G": {
+			"type": "forge:ore_dict",
+			"ore": "gearEnderium"
+		},
+		"I": {
+			"type": "forge:ore_dict",
+			"ore": "ingotEnderium"
+		},
+		"R": {
+			"type": "forge:ore_dict",
+			"ore": "ingotLumium"
+		},
+		"X": {
+			"item": "thermalinnovation:saw",
+			"data": 3
+		}
+	}
+}

@@ -5,7 +5,10 @@ import cofh.core.init.CoreEnchantments;
 import cofh.core.item.ItemMultiRF;
 import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.core.IInitializer;
-import cofh.core.util.helpers.*;
+import cofh.core.util.helpers.ChatHelper;
+import cofh.core.util.helpers.ItemHelper;
+import cofh.core.util.helpers.MathHelper;
+import cofh.core.util.helpers.StringHelper;
 import cofh.thermalinnovation.ThermalInnovation;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -41,19 +44,6 @@ public class ItemPump extends ItemMultiRF implements IInitializer, IMultiModeIte
 
 		setUnlocalizedName("pump");
 		setCreativeTab(ThermalInnovation.tabCommon);
-
-		setHasSubtypes(true);
-		setMaxStackSize(1);
-		setNoRepair();
-	}
-
-	@Override
-	public ItemStack setDefaultTag(ItemStack stack, int energy) {
-
-		EnergyHelper.setDefaultEnergyTag(stack, energy);
-		stack.getTagCompound().setInteger("Mode", getNumModes(stack) - 1);
-
-		return stack;
 	}
 
 	@Override
@@ -225,7 +215,6 @@ public class ItemPump extends ItemMultiRF implements IInitializer, IMultiModeIte
 			return false;
 		}
 		// @formatter:off
-
 //		addShapedRecipe(pumpBasic,
 //				"R R",
 //				"IRI",
@@ -234,9 +223,7 @@ public class ItemPump extends ItemMultiRF implements IInitializer, IMultiModeIte
 //				'R', "dustRedstone",
 //				'X', "ingotLead"
 //		);
-
 		// @formatter:on
-
 		return true;
 	}
 
@@ -304,6 +291,7 @@ public class ItemPump extends ItemMultiRF implements IInitializer, IMultiModeIte
 
 	public static final int[] CAPACITY = { 1, 3, 6, 10, 15 };
 	public static final int[] XFER = { 1, 4, 9, 16, 25 };
+	public static final int[] MAX_RADIUS = { 0, 1, 1, 2, 2 };
 
 	public static boolean enable = true;
 

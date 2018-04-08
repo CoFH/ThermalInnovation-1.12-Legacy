@@ -1,0 +1,30 @@
+{
+	"type": "thermalinnovation:upgrade_shaped",
+	"result": {
+		"item": "thermalinnovation:saw",
+		"data": 3
+	},
+	"pattern": [
+		" R ",
+		"IXI",
+		"RGR"
+	],
+	"key": {
+		"G": {
+			"type": "forge:ore_dict",
+			"ore": "gearSignalum"
+		},
+		"I": {
+			"type": "forge:ore_dict",
+			"ore": "ingotSignalum"
+		},
+		"R": {
+			"type": "forge:ore_dict",
+			"ore": "blockGlassHardened"
+		},
+		"X": {
+			"item": "thermalinnovation:saw",
+			"data": 2
+		}
+	}
+}

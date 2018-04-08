@@ -1,5 +1,7 @@
 package cofh.thermalinnovation.item;
 
+import baubles.api.BaubleType;
+import baubles.api.IBauble;
 import cofh.api.fluid.IFluidContainerItem;
 import cofh.api.item.IMultiModeItem;
 import cofh.api.item.INBTCopyIngredient;
@@ -33,9 +35,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionUtils;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.util.*;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -43,6 +43,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -52,7 +53,8 @@ import java.util.Map;
 
 import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
 
-public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeItem, IFluidContainerItem, IEnchantableItem, INBTCopyIngredient {
+@Optional.Interface (iface = "baubles.api.IBauble", modid = "baubles")
+public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeItem, IFluidContainerItem, IEnchantableItem, INBTCopyIngredient, IBauble {
 
 	public ItemInjector() {
 
@@ -77,6 +79,7 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 		}
 		tooltip.add(StringHelper.getInfoText("info.thermalinnovation.injector.a.0"));
 		tooltip.add(StringHelper.localize("info.thermalinnovation.injector.a.1"));
+		tooltip.add(StringHelper.getNoticeText("info.thermalinnovation.injector.a.2"));
 		tooltip.add(StringHelper.localizeFormat("info.thermalinnovation.injector.b." + getMode(stack), StringHelper.getKeyName(KeyBindingItemMultiMode.INSTANCE.getKey())));
 
 		FluidStack fluid = getFluid(stack);
@@ -215,6 +218,32 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 	public int getItemEnchantability(ItemStack stack) {
 
 		return 10;
+	}
+
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+
+		ItemStack stack = player.getHeldItem(hand);
+
+		if (player.isSneaking()) {
+			if (ServerHelper.isServerWorld(world)) {
+				FluidStack fluid = getFluid(stack);
+				if (fluid != null && fluid.amount >= MB_PER_USE) {
+					for (PotionEffect effect : PotionUtils.getEffectsFromTag(fluid.tag)) {
+						if (effect.getPotion().isInstant()) {
+							effect.getPotion().affectEntity(null, null, player, effect.getAmplifier(), 1.0D);
+						} else {
+							PotionEffect potion = new PotionEffect(effect.getPotion(), effect.getDuration(), effect.getAmplifier(), effect.getIsAmbient(), false);
+							player.addPotionEffect(potion);
+						}
+					}
+					drain(stack, MB_PER_USE, true);
+				}
+			}
+			player.swingArm(hand);
+			return new ActionResult<>(EnumActionResult.FAIL, stack);
+		}
+		return new ActionResult<>(EnumActionResult.PASS, stack);
 	}
 
 	/* HELPERS */
@@ -414,6 +443,52 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 		return enchantment == CoreEnchantments.holding;
 	}
 
+	/* IBauble */
+	@Override
+	public BaubleType getBaubleType(ItemStack itemstack) {
+
+		return BaubleType.TRINKET;
+	}
+
+	@Override
+	public void onWornTick(ItemStack itemstack, EntityLivingBase player) {
+
+		World world = player.world;
+
+		if (ServerHelper.isClientWorld(world) || world.getTotalWorldTime() % CoreProps.TIME_CONSTANT != 0) {
+			return;
+		}
+		if (CoreUtils.isFakePlayer(player) || getMode(itemstack) == 0) {
+			return;
+		}
+		FluidStack fluid = getFluid(itemstack);
+		if (fluid != null && fluid.amount >= MB_PER_CYCLE) {
+			boolean used = false;
+			for (PotionEffect effect : PotionUtils.getEffectsFromTag(fluid.tag)) {
+				PotionEffect active = player.getActivePotionMap().get(effect.getPotion());
+				if (active != null && active.getDuration() >= 40) {
+					continue;
+				}
+				if (effect.getPotion().isInstant()) {
+					effect.getPotion().affectEntity(null, null, player, effect.getAmplifier(), 0.5D);
+				} else {
+					PotionEffect potion = new PotionEffect(effect.getPotion(), effect.getDuration() / 4, effect.getAmplifier(), effect.getIsAmbient(), false);
+					player.addPotionEffect(potion);
+				}
+				used = true;
+			}
+			if (used) {
+				drain(itemstack, MB_PER_CYCLE, true);
+			}
+		}
+	}
+
+	@Override
+	public boolean willAutoSync(ItemStack itemstack, EntityLivingBase player) {
+
+		return true;
+	}
+
 	/* CAPABILITIES */
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
@@ -447,7 +522,6 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 			return false;
 		}
 		// @formatter:off
-
 		addShapedRecipe(injectorBasic,
 				" I ",
 				"XBX",
@@ -457,9 +531,7 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 				'R', "dustGlowstone",
 				'X', "ingotLead"
 		);
-
 		// @formatter:on
-
 		return true;
 	}
 

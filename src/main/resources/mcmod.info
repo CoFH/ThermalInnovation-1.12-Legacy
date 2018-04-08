@@ -2,7 +2,7 @@
 	{
 		"modid": "thermalinnovation",
 		"name": "Thermal Innovation",
-		"description": "Thermal technology marches on. Adds Thermal-style tools and equipment!",
+		"description": "Thermal Technology marches on. Adds Thermal-style tools and equipment!",
 		"version": "${version}",
 		"credits": "Team CoFH",
 		"logoFile": "assets/thermalinnovation/textures/logo.png",

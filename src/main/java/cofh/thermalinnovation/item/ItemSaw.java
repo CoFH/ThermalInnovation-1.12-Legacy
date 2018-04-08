@@ -3,23 +3,18 @@ package cofh.thermalinnovation.item;
 import cofh.api.item.IMultiModeItem;
 import cofh.core.init.CoreEnchantments;
 import cofh.core.item.IAOEBreakItem;
-import cofh.core.item.ItemMultiRF;
 import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.RayTracer;
 import cofh.core.util.core.IInitializer;
 import cofh.core.util.helpers.*;
-import cofh.thermalfoundation.item.ItemMaterial;
 import cofh.thermalinnovation.ThermalInnovation;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.set.hash.THashSet;
-import gnu.trove.set.hash.TLinkedHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
@@ -32,7 +27,6 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
@@ -41,17 +35,14 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.client.CPacketPlayerDigging;
-import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -60,17 +51,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
-
-public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem, IAOEBreakItem {
-
-	protected final TLinkedHashSet<String> toolClasses = new TLinkedHashSet<>();
-	protected final Set<String> immutableClasses = java.util.Collections.unmodifiableSet(toolClasses);
-
-	protected THashSet<Block> effectiveBlocks = new THashSet<>();
-	protected THashSet<Material> effectiveMaterials = new THashSet<>();
+public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiModeItem, IAOEBreakItem {
 
 	public ItemSaw() {
 
@@ -78,10 +60,6 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 
 		setUnlocalizedName("saw");
 		setCreativeTab(ThermalInnovation.tabCommon);
-
-		setHasSubtypes(true);
-		setMaxStackSize(1);
-		setNoRepair();
 
 		toolClasses.add("axe");
 		toolClasses.add("sword");
@@ -96,15 +74,6 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 	}
 
 	@Override
-	public ItemStack setDefaultTag(ItemStack stack, int energy) {
-
-		EnergyHelper.setDefaultEnergyTag(stack, energy);
-		stack.getTagCompound().setInteger("Mode", getNumModes(stack) - 1);
-
-		return stack;
-	}
-
-	@Override
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 
 		if (StringHelper.displayShiftForDetail && !StringHelper.isShiftKeyDown()) {
@@ -113,21 +82,10 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 		if (!StringHelper.isShiftKeyDown()) {
 			return;
 		}
-		int radius = 1 + (getMode(stack) > 0 ? 2 : 0);
-		int depth = 1 + (getMode(stack) > 1 ? 2 : 0);
-
 		tooltip.add(StringHelper.getInfoText("info.thermalinnovation.saw.a.0"));
+		tooltip.add(StringHelper.localize("info.thermalinnovation.saw.c." + getMode(stack)));
+		tooltip.add(StringHelper.localizeFormat("info.thermalinnovation.saw.b.0", StringHelper.getKeyName(KeyBindingItemMultiMode.INSTANCE.getKey())));
 
-		if (radius > 1) {
-			if (depth > 1) {
-				tooltip.add(StringHelper.localize("info.cofh.area") + ": " + radius + "x" + radius + "x" + depth);
-			} else {
-				tooltip.add(StringHelper.localize("info.cofh.area") + ": " + radius + "x" + radius);
-			}
-		}
-		if (getNumModes(stack) > 1) {
-			tooltip.add(StringHelper.localizeFormat("info.thermalinnovation.saw.b.0", StringHelper.getKeyName(KeyBindingItemMultiMode.INSTANCE.getKey())));
-		}
 		if (ItemHelper.getItemDamage(stack) == CREATIVE) {
 			tooltip.add(StringHelper.localize("info.cofh.charge") + ": 1.21G RF");
 		} else {
@@ -138,16 +96,16 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
 
-//		if (isInCreativeTab(tab)) {
-//			for (int metadata : itemList) {
-//				if (metadata != CREATIVE) {
-//					items.add(setDefaultTag(new ItemStack(this, 1, metadata), 0));
-//					items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
-//				} else {
-//					items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
-//				}
-//			}
-//		}
+		if (isInCreativeTab(tab)) {
+			for (int metadata : itemList) {
+				if (metadata != CREATIVE) {
+					items.add(setDefaultTag(new ItemStack(this, 1, metadata), 0));
+					items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+				} else {
+					items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+				}
+			}
+		}
 	}
 
 	@Override
@@ -167,25 +125,6 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
 
 		return enchantment.type.canEnchantItem(stack.getItem()) || enchantment.canApply(new ItemStack(Items.IRON_AXE));
-	}
-
-	@Override
-	public boolean canHarvestBlock(IBlockState state, ItemStack stack) {
-
-		return getHarvestLevel(stack) >= state.getBlock().getHarvestLevel(state) && getDestroySpeed(stack, state) > 1.0F;
-	}
-
-	@Override
-	public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-
-		useEnergy(stack, 2, true);
-		return true;
-	}
-
-	@Override
-	public boolean isEnchantable(ItemStack stack) {
-
-		return true;
 	}
 
 	@Override
@@ -239,84 +178,30 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 			if (traceResult == null || traceResult.sideHit == null) {
 				return false;
 			}
-			BlockPos adjPos;
-			IBlockState adjState;
-			float strength;
-			int count = 0;
+			int count = 1;
+			int mode = getMode(stack);
 
-			int x = pos.getX();
-			int y = pos.getY();
-			int z = pos.getZ();
-
-			int radius = getMode(stack) > 0 ? 1 : 0;
-			int depth = getMode(stack) > 1 ? 2 : 0;
-			int depth_min = depth;
-			int depth_max = 0;
-
-			switch (traceResult.sideHit) {
-				case DOWN:
-					depth_min = 0;
-					depth_max = depth;
-				case UP:
-					for (int i = x - radius; i <= x + radius; i++) {
-						for (int j = y - depth_min; j <= y + depth_max; j++) {
-							for (int k = z - radius; k <= z + radius; k++) {
-								adjPos = new BlockPos(i, j, k);
-								adjState = world.getBlockState(adjPos);
-								strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-								if (strength > 0F && refStrength / strength <= 10F) {
-									if (harvestBlock(world, adjPos, player)) {
-										count++;
-									}
-								}
-							}
-						}
-					}
+			switch (mode) {
+				case SINGLE:
 					break;
-				case NORTH:
-					depth_min = 0;
-					depth_max = depth;
-				case SOUTH:
-					for (int i = x - radius; i <= x + radius; i++) {
-						for (int j = y - radius; j <= y + radius; j++) {
-							for (int k = z - depth_min; k <= z + depth_max; k++) {
-								adjPos = new BlockPos(i, j, k);
-								adjState = world.getBlockState(adjPos);
-								strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-								if (strength > 0F && refStrength / strength <= 10F) {
-									if (harvestBlock(world, adjPos, player)) {
-										count++;
-									}
-								}
-							}
-						}
-					}
+				case TUNNEL2:
+					count += breakTunnel2(player, world, pos, traceResult, refStrength);
 					break;
-				case WEST:
-					depth_min = 0;
-					depth_max = depth;
-				case EAST:
-					for (int i = x - depth_min; i <= x + depth_max; i++) {
-						for (int j = y - radius; j <= y + radius; j++) {
-							for (int k = z - radius; k <= z + radius; k++) {
-								adjPos = new BlockPos(i, j, k);
-								adjState = world.getBlockState(adjPos);
-								strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-								if (strength > 0F && refStrength / strength <= 10F) {
-									if (harvestBlock(world, adjPos, player)) {
-										count++;
-									}
-								}
-							}
-						}
-					}
+				case AREA3:
+					count += breakArea3(player, world, pos, traceResult, refStrength);
+					break;
+				case CUBE3:
+					count += breakCube3(player, world, pos, traceResult, refStrength);
+					break;
+				case AREA5:
+					count += breakArea5(player, world, pos, traceResult, refStrength);
 					break;
 			}
 			if (count > 0 && !player.capabilities.isCreativeMode) {
 				useEnergy(stack, count, false);
 			}
 		}
-		return true;
+		return false;
 	}
 
 	@Override
@@ -333,15 +218,6 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 	}
 
 	@Override
-	public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState) {
-
-		if (!getToolClasses(stack).contains(toolClass)) {
-			return -1;
-		}
-		return getHarvestLevel(stack);
-	}
-
-	@Override
 	public int getItemEnchantability(ItemStack stack) {
 
 		return getEnchantability(stack);
@@ -350,16 +226,10 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 	@Override
 	public float getDestroySpeed(ItemStack stack, IBlockState state) {
 
-		if (getEnergyStored(stack) < ENERGY_PER_USE) {
+		if (getEnergyStored(stack) < energyPerUse) {
 			return 1.0F;
 		}
-		return (effectiveMaterials.contains(state.getMaterial()) || effectiveBlocks.contains(state)) ? getEfficiency(stack) - 2.0F * getMode(stack) : 1.0F;
-	}
-
-	@Override
-	public Set<String> getToolClasses(ItemStack stack) {
-
-		return toolClasses.isEmpty() ? super.getToolClasses(stack) : immutableClasses;
+		return (effectiveMaterials.contains(state.getMaterial()) || effectiveBlocks.contains(state)) ? getEfficiency(stack) - MODE_EFF[getMode(stack)] : 1.0F;
 	}
 
 	@Override
@@ -368,12 +238,12 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 		Multimap<String, AttributeModifier> multimap = HashMultimap.create();
 
 		if (slot == EntityEquipmentSlot.MAINHAND) {
-			if (getEnergyStored(stack) >= ENERGY_PER_USE) {
-				multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", -2.2F, 0));
+			if (getEnergyStored(stack) >= energyPerUse) {
+				multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", -2.0F, 0));
 				multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", getAttackDamage(stack), 0));
 			} else {
-				multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", -2.2F, 0));
-				multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", 1, 0));
+				multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", -3.2F, 0));
+				multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", 0, 0));
 			}
 		}
 		return multimap;
@@ -401,80 +271,6 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 		return typeMap.get(ItemHelper.getItemDamage(stack)).recv;
 	}
 
-	protected int useEnergy(ItemStack stack, int count, boolean simulate) {
-
-		if (ItemHelper.getItemDamage(stack) == CREATIVE) {
-			return 0;
-		}
-		int unbreakingLevel = MathHelper.clamp(EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack), 0, 10);
-		if (MathHelper.RANDOM.nextInt(2 + unbreakingLevel) >= 2) {
-			return 0;
-		}
-		return extractEnergy(stack, count * ENERGY_PER_USE, simulate);
-	}
-
-	protected boolean harvestBlock(World world, BlockPos pos, EntityPlayer player) {
-
-		if (world.isAirBlock(pos)) {
-			return false;
-		}
-		EntityPlayerMP playerMP = null;
-		if (player instanceof EntityPlayerMP) {
-			playerMP = (EntityPlayerMP) player;
-		}
-		IBlockState state = world.getBlockState(pos);
-		Block block = state.getBlock();
-
-		// only effective materials
-		if (!(toolClasses.contains(state.getBlock().getHarvestTool(state)) || canHarvestBlock(state, player.getHeldItemMainhand()))) {
-			return false;
-		}
-		if (!ForgeHooks.canHarvestBlock(block, player, world, pos)) {
-			return false;
-		}
-		// send the blockbreak event
-		int xpToDrop = 0;
-		if (playerMP != null) {
-			xpToDrop = ForgeHooks.onBlockBreakEvent(world, playerMP.interactionManager.getGameType(), playerMP, pos);
-			if (xpToDrop == -1) {
-				return false;
-			}
-		}
-		// Creative Mode
-		if (player.capabilities.isCreativeMode) {
-			if (!world.isRemote) {
-				if (block.removedByPlayer(state, world, pos, player, false)) {
-					block.onBlockDestroyedByPlayer(world, pos, state);
-				}
-				// always send block update to client
-				playerMP.connection.sendPacket(new SPacketBlockChange(world, pos));
-			} else {
-				if (block.removedByPlayer(state, world, pos, player, false)) {
-					block.onBlockDestroyedByPlayer(world, pos, state);
-				}
-				Minecraft.getMinecraft().getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, pos, Minecraft.getMinecraft().objectMouseOver.sideHit));
-			}
-		}
-		// Otherwise
-		if (!world.isRemote) {
-			if (block.removedByPlayer(state, world, pos, player, true)) {
-				block.onBlockDestroyedByPlayer(world, pos, state);
-				block.harvestBlock(world, player, pos, state, world.getTileEntity(pos), player.getHeldItemMainhand());
-				if (xpToDrop > 0) {
-					block.dropXpOnBlockBreak(world, pos, xpToDrop);
-				}
-			}
-			// always send block update to client
-			playerMP.connection.sendPacket(new SPacketBlockChange(world, pos));
-		} else {
-			if (block.removedByPlayer(state, world, pos, player, true)) {
-				block.onBlockDestroyedByPlayer(world, pos, state);
-			}
-			Minecraft.getMinecraft().getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, pos, Minecraft.getMinecraft().objectMouseOver.sideHit));
-		}
-		return true;
-	}
-
 	public int getBaseCapacity(int metadata) {
 
 		if (!typeMap.containsKey(metadata)) {
@@ -491,14 +287,6 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 		return typeMap.get(ItemHelper.getItemDamage(stack)).enchantability;
 	}
 
-	public int getMaxRadius(ItemStack stack) {
-
-		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
-			return 0;
-		}
-		return typeMap.get(ItemHelper.getItemDamage(stack)).maxRadius;
-	}
-
 	public int getHarvestLevel(ItemStack stack) {
 
 		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
@@ -512,7 +300,7 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
 			return 0;
 		}
-		if (getEnergyStored(stack) < ENERGY_PER_USE * 2) {
+		if (getEnergyStored(stack) < energyPerUse * 2) {
 			return 0;
 		}
 		return typeMap.get(ItemHelper.getItemDamage(stack)).attackDamage;
@@ -524,16 +312,6 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 			return 0;
 		}
 		return typeMap.get(ItemHelper.getItemDamage(stack)).efficiency;
-	}
-
-	public boolean isActive(ItemStack stack) {
-
-		return stack.getTagCompound() != null && stack.getTagCompound().hasKey("Active");
-	}
-
-	public void setActive(ItemStack stack, EntityLivingBase living) {
-
-		stack.getTagCompound().setLong("Active", living.world.getTotalWorldTime() + 20);
 	}
 
 	/* IModelRegister */
@@ -556,26 +334,17 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 	@Override
 	public int getNumModes(ItemStack stack) {
 
-		return getMaxRadius(stack) + 1;
+		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
+			return 0;
+		}
+		return typeMap.get(ItemHelper.getItemDamage(stack)).numModes;
 	}
 
 	@Override
 	public void onModeChange(EntityPlayer player, ItemStack stack) {
 
 		player.world.playSound(null, player.getPosition(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 0.6F, 1.0F - 0.1F * getMode(stack));
-
-		int radius = 1 + (getMode(stack) > 0 ? 2 : 0);
-		int depth = 1 + (getMode(stack) > 1 ? 2 : 0);
-
-		if (radius > 1) {
-			if (depth > 1) {
-				ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentString(StringHelper.localize("info.cofh.area") + ": " + radius + "x" + radius + "x" + depth));
-			} else {
-				ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentString(StringHelper.localize("info.cofh.area") + ": " + radius + "x" + radius));
-			}
-		} else {
-			ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentString(StringHelper.localize("info.cofh.noAOE")));
-		}
+		ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentTranslation("info.thermalinnovation.saw.c." + getMode(stack)));
 	}
 
 	/* IAOEBreakItem */
@@ -584,75 +353,26 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 
 		ArrayList<BlockPos> area = new ArrayList<>();
 		World world = player.getEntityWorld();
-		int radius = getMode(stack) > 0 ? 1 : 0;
-		int depth = getMode(stack) > 1 ? 2 : 0;
-		int depth_min = depth;
-		int depth_max = 0;
+		int mode = getMode(stack);
 
 		RayTraceResult traceResult = RayTracer.retrace(player, false);
 		if (traceResult == null || traceResult.sideHit == null || !canHarvestBlock(world.getBlockState(pos), stack)) {
 			return ImmutableList.copyOf(area);
 		}
-		BlockPos harvestPos;
-
-		int x = pos.getX();
-		int y = pos.getY();
-		int z = pos.getZ();
-
-		switch (traceResult.sideHit) {
-			case DOWN:
-				depth_min = 0;
-				depth_max = depth;
-			case UP:
-				for (int i = x - radius; i <= x + radius; i++) {
-					for (int j = y - depth_min; j <= y + depth_max; j++) {
-						for (int k = z - radius; k <= z + radius; k++) {
-							if (i == x && k == z) {
-								continue;
-							}
-							harvestPos = new BlockPos(i, j, k);
-							if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
-								area.add(harvestPos);
-							}
-						}
-					}
-				}
+		switch (mode) {
+			case SINGLE:
 				break;
-			case NORTH:
-				depth_min = 0;
-				depth_max = depth;
-			case SOUTH:
-				for (int i = x - radius; i <= x + radius; i++) {
-					for (int j = y - radius; j <= y + radius; j++) {
-						for (int k = z - depth_min; k <= z + depth_max; k++) {
-							if (i == x && j == y) {
-								continue;
-							}
-							harvestPos = new BlockPos(i, j, k);
-							if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
-								area.add(harvestPos);
-							}
-						}
-					}
-				}
+			case TUNNEL2:
+				getAOEBlocksTunnel2(stack, world, pos, traceResult, area);
 				break;
-			case WEST:
-				depth_min = 0;
-				depth_max = depth;
-			case EAST:
-				for (int i = x - depth_min; i <= x + depth_max; i++) {
-					for (int j = y - radius; j <= y + radius; j++) {
-						for (int k = z - radius; k <= z + radius; k++) {
-							if (j == y && k == z) {
-								continue;
-							}
-							harvestPos = new BlockPos(i, j, k);
-							if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
-								area.add(harvestPos);
-							}
-						}
-					}
-				}
+			case AREA3:
+				getAOEBlocksArea3(stack, world, pos, traceResult, area);
+				break;
+			case CUBE3:
+				getAOEBlocksCube3(stack, world, pos, traceResult, area);
+				break;
+			case AREA5:
+				getAOEBlocksArea5(stack, world, pos, traceResult, area);
 				break;
 		}
 		return ImmutableList.copyOf(area);
@@ -670,7 +390,7 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 		sawSignalum = addEntryItem(3, "standard3", EnumRarity.UNCOMMON);
 		sawResonant = addEntryItem(4, "standard4", EnumRarity.RARE);
 
-		sawCreative = addEntryItem(CREATIVE, "creative", HARVEST_LEVEL[4], EFFICIENCY[4], ATTACK_DAMAGE[4], ENCHANTABILITY[4], CAPACITY[4], 0, MAX_RADIUS[4], EnumRarity.EPIC);
+		sawCreative = addEntryItem(CREATIVE, "creative", HARVEST_LEVEL[4], EFFICIENCY[4], ATTACK_DAMAGE[4], ENCHANTABILITY[4], CAPACITY[4], 0, NUM_MODES[4], EnumRarity.EPIC);
 
 		ThermalInnovation.proxy.addIModelRegister(this);
 
@@ -684,7 +404,6 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 			return false;
 		}
 		// @formatter:off
-
 //		addShapedRecipe(sawBasic,
 //				" X ",
 //				"ICI",
@@ -695,9 +414,7 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 //				'X', "gearIron",
 //				'Y', ItemMaterial.powerCoilGold
 //		);
-
 		// @formatter:on
-
 		return true;
 	}
 
@@ -734,9 +451,9 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 
 		public final int capacity;
 		public final int recv;
-		public final int maxRadius;
+		public final int numModes;
 
-		TypeEntry(String name, int harvestLevel, float efficiency, float attackDamage, int enchantability, int capacity, int recv, int maxRadius) {
+		TypeEntry(String name, int harvestLevel, float efficiency, float attackDamage, int enchantability, int capacity, int recv, int numModes) {
 
 			this.name = name;
 			this.harvestLevel = harvestLevel;
@@ -745,43 +462,40 @@ public class ItemSaw extends ItemMultiRF implements IInitializer, IMultiModeItem
 			this.enchantability = enchantability;
 			this.capacity = capacity;
 			this.recv = recv;
-			this.maxRadius = maxRadius;
+			this.numModes = numModes;
 		}
 	}
 
-	private void addEntry(int metadata, String name, int harvestLevel, float efficiency, float attackDamage, int enchantability, int capacity, int xfer, int maxRadius) {
+	private void addEntry(int metadata, String name, int harvestLevel, float efficiency, float attackDamage, int enchantability, int capacity, int xfer, int numModes) {
 
-		typeMap.put(metadata, new TypeEntry(name, harvestLevel, efficiency, attackDamage, enchantability, capacity, xfer, maxRadius));
+		typeMap.put(metadata, new TypeEntry(name, harvestLevel, efficiency, attackDamage, enchantability, capacity, xfer, numModes));
 	}
 
 	private ItemStack addEntryItem(int metadata, String name, EnumRarity rarity) {
 
-		addEntry(metadata, name, HARVEST_LEVEL[metadata], EFFICIENCY[metadata], ATTACK_DAMAGE[metadata], ENCHANTABILITY[metadata], CAPACITY[metadata], XFER[metadata], MAX_RADIUS[metadata]);
+		addEntry(metadata, name, HARVEST_LEVEL[metadata], EFFICIENCY[metadata], ATTACK_DAMAGE[metadata], ENCHANTABILITY[metadata], CAPACITY[metadata], XFER[metadata], NUM_MODES[metadata]);
 		return addItem(metadata, name, rarity);
 	}
 
-	private ItemStack addEntryItem(int metadata, String name, int harvestLevel, float efficiency, float attackDamage, int enchantability, int capacity, int xfer, int maxRadius, EnumRarity rarity) {
+	private ItemStack addEntryItem(int metadata, String name, int harvestLevel, float efficiency, float attackDamage, int enchantability, int capacity, int xfer, int numModes, EnumRarity rarity) {
 
-		addEntry(metadata, name, harvestLevel, efficiency, attackDamage, enchantability, capacity, xfer, maxRadius);
+		addEntry(metadata, name, harvestLevel, efficiency, attackDamage, enchantability, capacity, xfer, numModes);
 		return addItem(metadata, name, rarity);
 	}
 
 	private static TIntObjectHashMap<TypeEntry> typeMap = new TIntObjectHashMap<>();
 
-	public static final int CAPACITY_BASE = 40000;
-	public static final int XFER_BASE = 1000;
-	public static final int ENERGY_PER_USE = 200;
-
 	public static final int[] HARVEST_LEVEL = { 2, 2, 3, 3, 4 };
-	public static final float[] EFFICIENCY = { 6.0F, 7.0F, 8.0F, 9.0F, 10.0F };
+	public static final float[] EFFICIENCY = { 6.0F, 7.5F, 9.0F, 10.5F, 12.0F };
 	public static final float[] ATTACK_DAMAGE = { 3.0F, 3.5F, 4.0F, 4.5F, 5.0F };
 	public static final int[] ENCHANTABILITY = { 10, 10, 15, 15, 20 };
 
 	public static final int[] CAPACITY = { 1, 3, 6, 10, 15 };
 	public static final int[] XFER = { 1, 4, 9, 16, 25 };
-	public static final int[] MAX_RADIUS = { 0, 1, 1, 2, 2 };
+	public static final int[] NUM_MODES = { 2, 3, 3, 5, 5 };
+	public static final float[] MODE_EFF = { 0, 2.0F, 4.0F, 8.0F, 8.0F };
 
-	public static boolean enable = false;
+	public static boolean enable = true;
 
 	/* REFERENCES */
 	public static ItemStack sawBasic;

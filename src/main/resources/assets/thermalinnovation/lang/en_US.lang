@@ -1,7 +1,12 @@
 #en_US
 
 info.thermalinnovation.drill.a.0=Mines blocks using Redstone Flux.
-info.thermalinnovation.drill.b.0=§ePress (%s) to adjust the area.§r
+info.thermalinnovation.drill.b.0=§ePress (%s) to adjust the drilling area.§r
+info.thermalinnovation.drill.c.0=Single Block
+info.thermalinnovation.drill.c.1=Tunnel: 1x2
+info.thermalinnovation.drill.c.2=Area: 3x3
+info.thermalinnovation.drill.c.3=Area: 3x3x3
+info.thermalinnovation.drill.c.4=Area: 5x5
 
 info.thermalinnovation.magnet.a.0=Attracts items to the wielder.
 info.thermalinnovation.magnet.a.1=Use to attract items at the target location.
@@ -13,6 +18,7 @@ info.thermalinnovation.magnet.c.1=Attraction Enabled
 
 info.thermalinnovation.injector.a.0=Stores and injects potions. Can infuse the wielder.
 info.thermalinnovation.injector.a.1=Use on an Entity to inject the contained potion.
+info.thermalinnovation.injector.a.2=Use while sneaking to inject yourself.
 info.thermalinnovation.injector.b.0=§bPress (%s) to enable auto-infuse.§r
 info.thermalinnovation.injector.b.1=§ePress (%s) to disable auto-infuse.§r
 info.thermalinnovation.injector.c.0=Auto-Infuse Disabled
@@ -20,7 +26,12 @@ info.thermalinnovation.injector.c.1=Auto-Infuse Enabled
 info.thermalinnovation.injector.d=Effects:
 
 info.thermalinnovation.saw.a.0=Cuts blocks using Redstone Flux.
-info.thermalinnovation.saw.b.0=§ePress (%s) to adjust the area.§r
+info.thermalinnovation.saw.b.0=§ePress (%s) to adjust the cutting area.§r
+info.thermalinnovation.saw.c.0=Single Block
+info.thermalinnovation.saw.c.1=Tunnel: 1x2
+info.thermalinnovation.saw.c.2=Area: 3x3
+info.thermalinnovation.saw.c.3=Area: 3x3x3
+info.thermalinnovation.saw.c.4=Area: 5x5
 
 item.thermalinnovation.drill.creative.name=Fluxbore (Creative)
 item.thermalinnovation.drill.standard0.name=Fluxbore (Basic)
