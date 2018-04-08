@@ -445,23 +445,23 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 
 	/* IBauble */
 	@Override
-	public BaubleType getBaubleType(ItemStack itemstack) {
+	public BaubleType getBaubleType(ItemStack stack) {
 
 		return BaubleType.TRINKET;
 	}
 
 	@Override
-	public void onWornTick(ItemStack itemstack, EntityLivingBase player) {
+	public void onWornTick(ItemStack stack, EntityLivingBase player) {
 
 		World world = player.world;
 
 		if (ServerHelper.isClientWorld(world) || world.getTotalWorldTime() % CoreProps.TIME_CONSTANT != 0) {
 			return;
 		}
-		if (CoreUtils.isFakePlayer(player) || getMode(itemstack) == 0) {
+		if (CoreUtils.isFakePlayer(player) || getMode(stack) == 0) {
 			return;
 		}
-		FluidStack fluid = getFluid(itemstack);
+		FluidStack fluid = getFluid(stack);
 		if (fluid != null && fluid.amount >= MB_PER_CYCLE) {
 			boolean used = false;
 			for (PotionEffect effect : PotionUtils.getEffectsFromTag(fluid.tag)) {
@@ -478,13 +478,13 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 				used = true;
 			}
 			if (used) {
-				drain(itemstack, MB_PER_CYCLE, true);
+				drain(stack, MB_PER_CYCLE, true);
 			}
 		}
 	}
 
 	@Override
-	public boolean willAutoSync(ItemStack itemstack, EntityLivingBase player) {
+	public boolean willAutoSync(ItemStack stack, EntityLivingBase player) {
 
 		return true;
 	}

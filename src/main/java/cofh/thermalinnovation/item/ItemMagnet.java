@@ -236,7 +236,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
 			return 0;
 		}
-		return typeMap.get(ItemHelper.getItemDamage(stack)).level + 6;
+		return typeMap.get(ItemHelper.getItemDamage(stack)).level + 4;
 	}
 
 	public static int getLevel(ItemStack stack) {
@@ -262,33 +262,33 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 
 	/* IBauble */
 	@Override
-	public BaubleType getBaubleType(ItemStack itemstack) {
+	public BaubleType getBaubleType(ItemStack stack) {
 
 		return BaubleType.TRINKET;
 	}
 
 	@Override
-	public void onWornTick(ItemStack itemstack, EntityLivingBase player) {
+	public void onWornTick(ItemStack stack, EntityLivingBase player) {
 
 		World world = player.world;
 
 		if (world.getTotalWorldTime() % CoreProps.TIME_CONSTANT_QUARTER != 0) {
 			return;
 		}
-		if (!(player instanceof EntityPlayer) || CoreUtils.isFakePlayer(player) || player.isSneaking() || getMode(itemstack) <= 0) {
+		if (!(player instanceof EntityPlayer) || CoreUtils.isFakePlayer(player) || player.isSneaking() || getMode(stack) <= 0) {
 			return;
 		}
 		EntityPlayer castPlayer = (EntityPlayer) player;
 
-		if (getEnergyStored(itemstack) < ENERGY_PER_ITEM && !castPlayer.capabilities.isCreativeMode) {
+		if (getEnergyStored(stack) < ENERGY_PER_ITEM && !castPlayer.capabilities.isCreativeMode) {
 			return;
 		}
-		int radius = getRadius(itemstack);
+		int radius = getRadius(stack);
 		int radSq = radius * radius;
 
 		AxisAlignedBB area = new AxisAlignedBB(player.getPosition().add(-radius, -radius, -radius), player.getPosition().add(1 + radius, 1 + radius, 1 + radius));
 		List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, area, EntitySelectors.IS_ALIVE);
-		ItemFilterWrapper wrapper = new ItemFilterWrapper(itemstack, getFilterSize(itemstack));
+		ItemFilterWrapper wrapper = new ItemFilterWrapper(stack, getFilterSize(stack));
 
 		if (ServerHelper.isClientWorld(world)) {
 			for (EntityItem item : items) {
@@ -314,13 +314,13 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 				}
 			}
 			if (!castPlayer.capabilities.isCreativeMode) {
-				extractEnergy(itemstack, ENERGY_PER_ITEM * itemCount, false);
+				extractEnergy(stack, ENERGY_PER_ITEM * itemCount, false);
 			}
 		}
 	}
 
 	@Override
-	public boolean willAutoSync(ItemStack itemstack, EntityLivingBase player) {
+	public boolean willAutoSync(ItemStack stack, EntityLivingBase player) {
 
 		return true;
 	}

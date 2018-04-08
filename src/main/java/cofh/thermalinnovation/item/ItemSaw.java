@@ -347,6 +347,13 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 		ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentTranslation("info.thermalinnovation.saw.c." + getMode(stack)));
 	}
 
+	/* IEnchantableItem */
+	@Override
+	public boolean canEnchant(ItemStack stack, Enchantment enchantment) {
+
+		return super.canEnchant(stack, enchantment) || enchantment == CoreEnchantments.insight || enchantment == CoreEnchantments.smelting || enchantment == CoreEnchantments.vorpal;
+	}
+
 	/* IAOEBreakItem */
 	@Override
 	public ImmutableList<BlockPos> getAOEBlocks(ItemStack stack, BlockPos pos, EntityPlayer player) {

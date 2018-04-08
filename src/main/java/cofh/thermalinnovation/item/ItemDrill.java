@@ -332,6 +332,13 @@ public class ItemDrill extends ItemToolMultiRF implements IInitializer, IAOEBrea
 		ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentTranslation("info.thermalinnovation.drill.c." + getMode(stack)));
 	}
 
+	/* IEnchantableItem */
+	@Override
+	public boolean canEnchant(ItemStack stack, Enchantment enchantment) {
+
+		return super.canEnchant(stack, enchantment) || enchantment == CoreEnchantments.insight || enchantment == CoreEnchantments.smelting;
+	}
+
 	/* IAOEBreakItem */
 	@Override
 	public ImmutableList<BlockPos> getAOEBlocks(ItemStack stack, BlockPos pos, EntityPlayer player) {
