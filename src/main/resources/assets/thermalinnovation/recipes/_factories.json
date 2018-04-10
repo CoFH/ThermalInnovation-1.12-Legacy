@@ -4,6 +4,7 @@
 	},
 	"recipes": {
 		"fluid_shapeless": "cofh.core.util.crafting.ShapelessFluidRecipeFactory",
+		"potion_fill_shapeless": "cofh.thermalfoundation.util.crafting.ShapelessPotionFillRecipeFactory",
 		"upgrade_shaped": "cofh.core.util.crafting.ShapedUpgradeRecipeFactory"
 	}
 }

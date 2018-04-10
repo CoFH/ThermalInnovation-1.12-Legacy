@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 
 import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
+import static cofh.thermalfoundation.util.TFCrafting.addPotionFillRecipe;
 
 @Optional.Interface (iface = "baubles.api.IBauble", modid = "baubles")
 public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeItem, IFluidContainerItem, IEnchantableItem, INBTCopyIngredient, IBauble {
@@ -139,6 +140,7 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 			boolean used = false;
 			for (PotionEffect effect : PotionUtils.getEffectsFromTag(fluid.tag)) {
 				PotionEffect active = living.getActivePotionMap().get(effect.getPotion());
+
 				if (active != null && active.getDuration() >= 40) {
 					continue;
 				}
@@ -532,6 +534,13 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 				'X', "ingotLead"
 		);
 		// @formatter:on
+
+		addPotionFillRecipe(injectorBasic, injectorBasic, "cofh:potion");
+		addPotionFillRecipe(injectorHardened, injectorHardened, "cofh:potion");
+		addPotionFillRecipe(injectorReinforced, injectorReinforced, "cofh:potion");
+		addPotionFillRecipe(injectorSignalum, injectorSignalum, "cofh:potion");
+		addPotionFillRecipe(injectorResonant, injectorResonant, "cofh:potion");
+		addPotionFillRecipe(injectorCreative, injectorCreative, "cofh:potion");
 		return true;
 	}
 

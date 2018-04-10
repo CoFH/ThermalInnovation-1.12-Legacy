@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
-public class ItemPump extends ItemMultiRF implements IInitializer, IMultiModeItem {
+public class ItemPump extends ItemToolMultiRF implements IInitializer, IMultiModeItem {
 
 	public ItemPump() {
 
@@ -44,6 +44,8 @@ public class ItemPump extends ItemMultiRF implements IInitializer, IMultiModeIte
 
 		setUnlocalizedName("pump");
 		setCreativeTab(ThermalInnovation.tabCommon);
+
+		energyPerUse = 100;
 	}
 
 	@Override
@@ -55,16 +57,10 @@ public class ItemPump extends ItemMultiRF implements IInitializer, IMultiModeIte
 		if (!StringHelper.isShiftKeyDown()) {
 			return;
 		}
-		int radius = getMode(stack) * 2 + 1;
-
 		tooltip.add(StringHelper.getInfoText("info.thermalinnovation.pump.a.0"));
+		tooltip.add(StringHelper.localize("info.thermalinnovation.pump.c." + getMode(stack)));
+		tooltip.add(StringHelper.localizeFormat("info.thermalinnovation.pump.b.0", StringHelper.getKeyName(KeyBindingItemMultiMode.INSTANCE.getKey())));
 
-		if (radius > 1) {
-			tooltip.add(StringHelper.localize("info.cofh.area") + ": " + radius + "x" + radius);
-		}
-		if (getNumModes(stack) > 1) {
-			tooltip.add(StringHelper.localizeFormat("info.thermalinnovation.pump.b.0", StringHelper.getKeyName(KeyBindingItemMultiMode.INSTANCE.getKey())));
-		}
 		if (ItemHelper.getItemDamage(stack) == CREATIVE) {
 			tooltip.add(StringHelper.localize("info.cofh.charge") + ": 1.21G RF");
 		} else {
@@ -128,34 +124,12 @@ public class ItemPump extends ItemMultiRF implements IInitializer, IMultiModeIte
 		return typeMap.get(ItemHelper.getItemDamage(stack)).recv;
 	}
 
-	protected int useEnergy(ItemStack stack, int count, boolean simulate) {
-
-		if (ItemHelper.getItemDamage(stack) == CREATIVE) {
-			return 0;
-		}
-		int unbreakingLevel = MathHelper.clamp(EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack), 0, 10);
-		if (MathHelper.RANDOM.nextInt(2 + unbreakingLevel) >= 2) {
-			return 0;
-		}
-		return extractEnergy(stack, count * ENERGY_PER_USE, simulate);
-	}
-
 	public int getBaseCapacity(int metadata) {
 
 		if (!typeMap.containsKey(metadata)) {
 			return 0;
 		}
 		return typeMap.get(metadata).capacity;
-	}
-
-	public boolean isActive(ItemStack stack) {
-
-		return stack.getTagCompound() != null && stack.getTagCompound().hasKey("Active");
-	}
-
-	public void setActive(ItemStack stack, EntityLivingBase living) {
-
-		stack.getTagCompound().setLong("Active", living.world.getTotalWorldTime() + 20);
 	}
 
 	/* IModelRegister */
