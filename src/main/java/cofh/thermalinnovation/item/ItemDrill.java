@@ -484,7 +484,7 @@ public class ItemDrill extends ItemToolMultiRF implements IInitializer, IAOEBrea
 
 	public static final int[] CAPACITY = { 1, 3, 6, 10, 15 };
 	public static final int[] XFER = { 1, 4, 9, 16, 25 };
-	public static final int[] NUM_MODES = { 2, 3, 3, 5, 5 };
+	public static final int[] NUM_MODES = { 2, 3, 3, 4, 5 };
 	public static final float[] MODE_EFF = { 0, 2.0F, 4.0F, 8.0F, 8.0F };
 
 	public static boolean enable = true;
