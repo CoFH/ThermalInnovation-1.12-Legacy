@@ -8,6 +8,7 @@ import cofh.core.util.core.IInitializer;
 import cofh.core.util.helpers.ChatHelper;
 import cofh.core.util.helpers.ItemHelper;
 import cofh.core.util.helpers.StringHelper;
+import cofh.thermalfoundation.init.TFProps;
 import cofh.thermalfoundation.item.ItemMaterial;
 import cofh.thermalinnovation.ThermalInnovation;
 import com.google.common.collect.HashMultimap;
@@ -60,7 +61,7 @@ public class ItemDrill extends ItemToolMultiRF implements IInitializer, IAOEBrea
 		super("thermalinnovation");
 
 		setUnlocalizedName("drill");
-		setCreativeTab(ThermalInnovation.tabCommon);
+		setCreativeTab(ThermalInnovation.tabTools);
 
 		toolClasses.add("pickaxe");
 		toolClasses.add("shovel");
@@ -111,10 +112,16 @@ public class ItemDrill extends ItemToolMultiRF implements IInitializer, IAOEBrea
 		if (isInCreativeTab(tab)) {
 			for (int metadata : itemList) {
 				if (metadata != CREATIVE) {
-					items.add(setDefaultTag(new ItemStack(this, 1, metadata), 0));
-					items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+					if (TFProps.showEmptyItems) {
+						items.add(setDefaultTag(new ItemStack(this, 1, metadata), 0));
+					}
+					if (TFProps.showFullItems) {
+						items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+					}
 				} else {
-					items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+					if (TFProps.showCreativeItems) {
+						items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+					}
 				}
 			}
 		}

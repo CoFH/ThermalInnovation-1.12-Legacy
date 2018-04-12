@@ -3,11 +3,26 @@
 	"defaults": {
 		"model": "builtin/generated",
 		"textures": {
-			"layer0": "thermalinnovation:items/magnet/magnet_0"
+			"layer0": "thermalinnovation:items/magnet/magnet_0",
+			"layer1": "thermalinnovation:items/magnet/magnet_empty"
 		},
-		"transform": "forge:default-item"
+		"transform": "forge:default-tool"
 	},
 	"variants": {
+		"state": {
+			"charged": {
+				"textures": {
+					"layer1": "thermalinnovation:items/magnet/magnet_charged"
+				}
+			},
+			"active": {
+				"textures": {
+					"layer1": "thermalinnovation:items/magnet/magnet_active"
+				}
+			},
+			"drained": {
+			}
+		},
 		"type": {
 			"standard0": {
 				"textures": {

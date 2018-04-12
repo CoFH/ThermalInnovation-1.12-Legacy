@@ -16,6 +16,7 @@ import cofh.core.util.core.IInitializer;
 import cofh.core.util.helpers.*;
 import cofh.thermalfoundation.fluid.FluidPotion;
 import cofh.thermalfoundation.init.TFFluids;
+import cofh.thermalfoundation.init.TFProps;
 import cofh.thermalinnovation.ThermalInnovation;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -62,7 +63,7 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 		super("thermalinnovation");
 
 		setUnlocalizedName("injector");
-		setCreativeTab(ThermalInnovation.tabCommon);
+		setCreativeTab(ThermalInnovation.tabTools);
 
 		setHasSubtypes(true);
 		setMaxStackSize(1);
@@ -120,7 +121,13 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 
 		if (isInCreativeTab(tab)) {
 			for (int metadata : itemList) {
-				items.add(new ItemStack(this, 1, metadata));
+				if (metadata != CREATIVE) {
+					items.add(new ItemStack(this, 1, metadata));
+				} else {
+					if (TFProps.showCreativeItems) {
+						items.add(new ItemStack(this, 1, metadata));
+					}
+				}
 			}
 		}
 	}
@@ -213,7 +220,7 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 	@Override
 	public boolean showDurabilityBar(ItemStack stack) {
 
-		return ItemHelper.getItemDamage(stack) != CREATIVE;
+		return ItemHelper.getItemDamage(stack) != CREATIVE && (stack.getTagCompound() == null || !stack.getTagCompound().getBoolean("CreativeTab"));
 	}
 
 	@Override

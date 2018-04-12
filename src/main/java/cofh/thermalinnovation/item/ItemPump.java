@@ -2,13 +2,12 @@ package cofh.thermalinnovation.item;
 
 import cofh.api.item.IMultiModeItem;
 import cofh.core.init.CoreEnchantments;
-import cofh.core.item.ItemMultiRF;
 import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.core.IInitializer;
 import cofh.core.util.helpers.ChatHelper;
 import cofh.core.util.helpers.ItemHelper;
-import cofh.core.util.helpers.MathHelper;
 import cofh.core.util.helpers.StringHelper;
+import cofh.thermalfoundation.init.TFProps;
 import cofh.thermalinnovation.ThermalInnovation;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -18,9 +17,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
@@ -43,7 +40,7 @@ public class ItemPump extends ItemToolMultiRF implements IInitializer, IMultiMod
 		super("thermalinnovation");
 
 		setUnlocalizedName("pump");
-		setCreativeTab(ThermalInnovation.tabCommon);
+		setCreativeTab(ThermalInnovation.tabTools);
 
 		energyPerUse = 100;
 	}
@@ -74,10 +71,16 @@ public class ItemPump extends ItemToolMultiRF implements IInitializer, IMultiMod
 		if (isInCreativeTab(tab)) {
 			for (int metadata : itemList) {
 				if (metadata != CREATIVE) {
-					items.add(setDefaultTag(new ItemStack(this, 1, metadata), 0));
-					items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+					if (TFProps.showEmptyItems) {
+						items.add(setDefaultTag(new ItemStack(this, 1, metadata), 0));
+					}
+					if (TFProps.showFullItems) {
+						items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+					}
 				} else {
-					items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+					if (TFProps.showCreativeItems) {
+						items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+					}
 				}
 			}
 		}

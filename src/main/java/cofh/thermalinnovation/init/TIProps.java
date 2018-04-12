@@ -1,6 +1,8 @@
 package cofh.thermalinnovation.init;
 
 import cofh.core.gui.CreativeTabCore;
+import cofh.thermalfoundation.ThermalFoundation;
+import cofh.thermalfoundation.init.TFProps;
 import cofh.thermalinnovation.ThermalInnovation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,24 +31,31 @@ public class TIProps {
 	private static void configClient() {
 
 		/* CREATIVE TABS */
-		ThermalInnovation.tabCommon = new CreativeTabCore("thermalinnovation") {
+		if (TFProps.useUnifiedTabs) {
+			ThermalInnovation.tabCommon = ThermalFoundation.tabCommon;
+			ThermalInnovation.tabItems = ThermalFoundation.tabItems;
+			ThermalInnovation.tabUtils = ThermalFoundation.tabUtils;
 
-			@Override
-			@SideOnly (Side.CLIENT)
-			public ItemStack getIconItemStack() {
+			TFProps.initToolTab();
+			ThermalInnovation.tabTools = ThermalFoundation.tabTools;
+		} else {
+			ThermalInnovation.tabCommon = new CreativeTabCore("thermalinnovation") {
 
-				ItemStack iconStack = new ItemStack(TIItems.itemDrill, 1, 1);
-				iconStack.setTagCompound(new NBTTagCompound());
-				iconStack.getTagCompound().setBoolean("CreativeTab", true);
+				@Override
+				@SideOnly (Side.CLIENT)
+				public ItemStack getTabIconItem() {
 
-				return iconStack;
-			}
+					ItemStack iconStack = new ItemStack(TIItems.itemDrill, 1, 1);
+					iconStack.setTagCompound(new NBTTagCompound());
+					iconStack.getTagCompound().setBoolean("CreativeTab", true);
 
-		};
+					return iconStack;
+				}
+			};
+			ThermalInnovation.tabItems = ThermalInnovation.tabCommon;
+			ThermalInnovation.tabUtils = ThermalInnovation.tabCommon;
+			ThermalInnovation.tabTools = ThermalInnovation.tabCommon;
+		}
 	}
-
-	/* INTERFACE */
-	public static boolean showArmorCharge = true;
-	public static boolean showToolCharge = true;
 
 }

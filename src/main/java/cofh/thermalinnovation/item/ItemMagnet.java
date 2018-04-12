@@ -12,10 +12,13 @@ import cofh.core.util.RayTracer;
 import cofh.core.util.core.IInitializer;
 import cofh.core.util.filter.ItemFilterWrapper;
 import cofh.core.util.helpers.*;
+import cofh.thermalfoundation.init.TFProps;
 import cofh.thermalfoundation.init.TFSounds;
 import cofh.thermalinnovation.ThermalInnovation;
 import cofh.thermalinnovation.gui.GuiHandler;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -31,10 +34,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 
 import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
 
@@ -46,7 +53,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 		super("thermalinnovation");
 
 		setUnlocalizedName("magnet");
-		setCreativeTab(ThermalInnovation.tabCommon);
+		setCreativeTab(ThermalInnovation.tabTools);
 
 		setHasSubtypes(true);
 		setMaxStackSize(1);
@@ -83,10 +90,16 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 		if (isInCreativeTab(tab)) {
 			for (int metadata : itemList) {
 				if (metadata != CREATIVE) {
-					items.add(EnergyHelper.setDefaultEnergyTag(new ItemStack(this, 1, metadata), 0));
-					items.add(EnergyHelper.setDefaultEnergyTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+					if (TFProps.showEmptyItems) {
+						items.add(EnergyHelper.setDefaultEnergyTag(new ItemStack(this, 1, metadata), 0));
+					}
+					if (TFProps.showFullItems) {
+						items.add(EnergyHelper.setDefaultEnergyTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+					}
 				} else {
-					items.add(EnergyHelper.setDefaultEnergyTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+					if (TFProps.showCreativeItems) {
+						items.add(EnergyHelper.setDefaultEnergyTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+					}
 				}
 			}
 		}
@@ -250,6 +263,22 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 	public static int getFilterSize(ItemStack stack) {
 
 		return CoreProps.FILTER_SIZE[getLevel(stack)];
+	}
+
+	/* IModelRegister */
+	@Override
+	@SideOnly (Side.CLIENT)
+	public void registerModels() {
+
+		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("state=%s,type=%s", this.getEnergyStored(stack) > 0 ? getMode(stack) == 1 ? "active" : "charged" : "drained", typeMap.get(ItemHelper.getItemDamage(stack)).name)));
+
+		String[] states = { "charged", "active", "drained" };
+
+		for (Map.Entry<Integer, ItemEntry> entry : itemMap.entrySet()) {
+			for (int i = 0; i < 3; i++) {
+				ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("state=%s,type=%s", states[i], entry.getValue().name)));
+			}
+		}
 	}
 
 	/* IMultiModeItem */

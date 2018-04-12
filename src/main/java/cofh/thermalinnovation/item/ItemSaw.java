@@ -7,6 +7,8 @@ import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.RayTracer;
 import cofh.core.util.core.IInitializer;
 import cofh.core.util.helpers.*;
+import cofh.thermalfoundation.init.TFProps;
+import cofh.thermalfoundation.item.ItemMaterial;
 import cofh.thermalinnovation.ThermalInnovation;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
@@ -52,6 +54,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
+
 public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiModeItem, IAOEBreakItem {
 
 	public ItemSaw() {
@@ -59,7 +63,7 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 		super("thermalinnovation");
 
 		setUnlocalizedName("saw");
-		setCreativeTab(ThermalInnovation.tabCommon);
+		setCreativeTab(ThermalInnovation.tabTools);
 
 		toolClasses.add("axe");
 		toolClasses.add("sword");
@@ -99,10 +103,16 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 		if (isInCreativeTab(tab)) {
 			for (int metadata : itemList) {
 				if (metadata != CREATIVE) {
-					items.add(setDefaultTag(new ItemStack(this, 1, metadata), 0));
-					items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+					if (TFProps.showEmptyItems) {
+						items.add(setDefaultTag(new ItemStack(this, 1, metadata), 0));
+					}
+					if (TFProps.showFullItems) {
+						items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+					}
 				} else {
-					items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+					if (TFProps.showCreativeItems) {
+						items.add(setDefaultTag(new ItemStack(this, 1, metadata), getBaseCapacity(metadata)));
+					}
 				}
 			}
 		}
@@ -411,16 +421,16 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 			return false;
 		}
 		// @formatter:off
-//		addShapedRecipe(sawBasic,
-//				" X ",
-//				"ICI",
-//				"RYR",
-//				'C', "blockCopper",
-//				'I', "gearLead",
-//				'R', "dustRedstone",
-//				'X', "gearIron",
-//				'Y', ItemMaterial.powerCoilGold
-//		);
+		addShapedRecipe(sawBasic,
+				" X ",
+				"ICI",
+				"RYR",
+				'C', "blockCopper",
+				'I', "gearLead",
+				'R', "dustRedstone",
+				'X', "gearIron",
+				'Y', ItemMaterial.powerCoilGold
+		);
 		// @formatter:on
 		return true;
 	}
@@ -499,7 +509,7 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 
 	public static final int[] CAPACITY = { 1, 3, 6, 10, 15 };
 	public static final int[] XFER = { 1, 4, 9, 16, 25 };
-	public static final int[] NUM_MODES = { 2, 3, 3, 5, 5 };
+	public static final int[] NUM_MODES = { 2, 3, 3, 4, 5 };
 	public static final float[] MODE_EFF = { 0, 2.0F, 4.0F, 8.0F, 8.0F };
 
 	public static boolean enable = true;
