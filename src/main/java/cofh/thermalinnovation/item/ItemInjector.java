@@ -532,11 +532,11 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 		}
 		// @formatter:off
 		addShapedRecipe(injectorBasic,
-				" I ",
-				"XBX",
 				"BRB",
+				"XBX",
+				" I ",
 				'B', Items.GLASS_BOTTLE,
-				'I', "ingotIron",
+				'I', "ingotSilver",
 				'R', "dustGlowstone",
 				'X', "ingotLead"
 		);

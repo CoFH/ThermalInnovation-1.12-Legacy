@@ -5,9 +5,9 @@
 		"data": 1
 	},
 	"pattern": [
-		"R R",
+		" R ",
 		"IXI",
-		" R "
+		"R R"
 	],
 	"key": {
 		"I": {

@@ -9,14 +9,19 @@ import gnu.trove.set.hash.TLinkedHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.CPacketPlayerDigging;
+import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -78,6 +83,55 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 	}
 
 	/* HELPERS */
+	protected boolean harvestBlock(World world, BlockPos pos, EntityPlayer player) {
+
+		if (world.isAirBlock(pos)) {
+			return false;
+		}
+		EntityPlayerMP playerMP = null;
+		if (player instanceof EntityPlayerMP) {
+			playerMP = (EntityPlayerMP) player;
+		}
+		IBlockState state = world.getBlockState(pos);
+		Block block = state.getBlock();
+
+		// only effective materials
+		if (!(toolClasses.contains(state.getBlock().getHarvestTool(state)) || canHarvestBlock(state, player.getHeldItemMainhand()))) {
+			return false;
+		}
+		if (!ForgeHooks.canHarvestBlock(block, player, world, pos)) {
+			return false;
+		}
+		// send the blockbreak event
+		int xpToDrop = 0;
+		if (playerMP != null) {
+			xpToDrop = ForgeHooks.onBlockBreakEvent(world, playerMP.interactionManager.getGameType(), playerMP, pos);
+			if (xpToDrop == -1) {
+				return false;
+			}
+		}
+		if (!world.isRemote) {
+			if (block.removedByPlayer(state, world, pos, player, !player.capabilities.isCreativeMode)) {
+				block.onBlockDestroyedByPlayer(world, pos, state);
+
+				if (!player.capabilities.isCreativeMode) {
+					block.harvestBlock(world, player, pos, state, world.getTileEntity(pos), player.getHeldItemMainhand());
+					if (xpToDrop > 0) {
+						block.dropXpOnBlockBreak(world, pos, xpToDrop);
+					}
+				}
+			}
+			// always send block update to client
+			playerMP.connection.sendPacket(new SPacketBlockChange(world, pos));
+		} else {
+			if (block.removedByPlayer(state, world, pos, player, !player.capabilities.isCreativeMode)) {
+				block.onBlockDestroyedByPlayer(world, pos, state);
+			}
+			Minecraft.getMinecraft().getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, pos, Minecraft.getMinecraft().objectMouseOver.sideHit));
+		}
+		return true;
+	}
+
 	protected int getHarvestLevel(ItemStack stack) {
 
 		return -1;

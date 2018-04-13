@@ -27,11 +27,15 @@ public class TIItems {
 
 		itemDrill = new ItemDrill();
 		itemSaw = new ItemSaw();
+		//		itemLaser = new ItemLaser();
+		//		itemPump = new ItemPump();
 		itemMagnet = new ItemMagnet();
 		itemInjector = new ItemInjector();
 
 		initList.add(itemDrill);
 		initList.add(itemSaw);
+		//		initList.add(itemLaser);
+		//		initList.add(itemPump);
 		initList.add(itemMagnet);
 		initList.add(itemInjector);
 
@@ -76,6 +80,8 @@ public class TIItems {
 	/* REFERENCES */
 	public static ItemDrill itemDrill;
 	public static ItemSaw itemSaw;
+	//	public static ItemLaser itemLaser;
+	//	public static ItemPump itemPump;
 	public static ItemMagnet itemMagnet;
 	public static ItemInjector itemInjector;
 

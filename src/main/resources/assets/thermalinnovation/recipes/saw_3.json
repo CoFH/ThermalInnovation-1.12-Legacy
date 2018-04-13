@@ -20,7 +20,7 @@
 		},
 		"R": {
 			"type": "forge:ore_dict",
-			"ore": "blockGlassHardened"
+			"ore": "dustAerotheum"
 		},
 		"X": {
 			"item": "thermalinnovation:saw",

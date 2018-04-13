@@ -29,7 +29,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -281,7 +280,7 @@ public class ItemDrill extends ItemToolMultiRF implements IInitializer, IAOEBrea
 
 	public int getHarvestLevel(ItemStack stack) {
 
-		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
+		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack)) || getEnergyStored(stack) <= energyPerUse) {
 			return -1;
 		}
 		return typeMap.get(ItemHelper.getItemDamage(stack)).harvestLevel;
@@ -406,12 +405,12 @@ public class ItemDrill extends ItemToolMultiRF implements IInitializer, IAOEBrea
 		addShapedRecipe(drillBasic,
 				" X ",
 				"ICI",
-				"RYR",
-				'C', Blocks.PISTON,
-				'I', "gearLead",
-				'R', "dustRedstone",
-				'X', "blockIron",
-				'Y', ItemMaterial.powerCoilGold
+				"YGY",
+				'C', ItemMaterial.partToolCasing,
+				'G', "gearLead",
+				'I', "ingotLead",
+				'X', ItemMaterial.partDrillHead,
+				'Y', "ingotTin"
 		);
 		// @formatter:on
 		return true;

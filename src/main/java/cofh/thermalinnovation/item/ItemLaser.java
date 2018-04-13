@@ -1,12 +1,13 @@
 package cofh.thermalinnovation.item;
 
-import cofh.api.item.IMultiModeItem;
 import cofh.core.init.CoreEnchantments;
 import cofh.core.item.IAOEBreakItem;
 import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.RayTracer;
 import cofh.core.util.core.IInitializer;
-import cofh.core.util.helpers.*;
+import cofh.core.util.helpers.ChatHelper;
+import cofh.core.util.helpers.ItemHelper;
+import cofh.core.util.helpers.StringHelper;
 import cofh.thermalfoundation.init.TFProps;
 import cofh.thermalfoundation.item.ItemMaterial;
 import cofh.thermalinnovation.ThermalInnovation;
@@ -14,7 +15,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -24,21 +24,14 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.EnumRarity;
-import net.minecraft.item.ItemAxe;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumHand;
+import net.minecraft.item.*;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -46,7 +39,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.IShearable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -57,32 +49,45 @@ import java.util.Map;
 
 import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
 
-public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiModeItem, IAOEBreakItem {
+public class ItemLaser extends ItemToolMultiRF implements IInitializer, IAOEBreakItem {
 
-	public ItemSaw() {
+	public ItemLaser() {
 
 		super("thermalinnovation");
 
-		setUnlocalizedName("saw");
+		setUnlocalizedName("laser");
 		setCreativeTab(ThermalInnovation.tabTools);
 
 		toolClasses.add("axe");
-		toolClasses.add("sword");
-		toolClasses.add("saw");
+		toolClasses.add("pickaxe");
+		toolClasses.add("shovel");
+		toolClasses.add("laser");
 
 		effectiveBlocks.addAll(ItemAxe.EFFECTIVE_ON);
+		effectiveBlocks.addAll(ItemPickaxe.EFFECTIVE_ON);
+		effectiveBlocks.addAll(ItemSpade.EFFECTIVE_ON);
 		effectiveBlocks.add(Blocks.WEB);
-		effectiveBlocks.add(Blocks.VINE);
-		effectiveBlocks.add(Blocks.LEAVES);
-		effectiveBlocks.add(Blocks.LEAVES2);
 
 		effectiveMaterials.add(Material.WOOD);
 		effectiveMaterials.add(Material.CACTUS);
 		effectiveMaterials.add(Material.GOURD);
-		effectiveMaterials.add(Material.LEAVES);
-		effectiveMaterials.add(Material.PLANTS);
-		effectiveMaterials.add(Material.VINE);
-		effectiveMaterials.add(Material.WEB);
+
+		effectiveMaterials.add(Material.IRON);
+		effectiveMaterials.add(Material.ANVIL);
+		effectiveMaterials.add(Material.ROCK);
+		effectiveMaterials.add(Material.ICE);
+		effectiveMaterials.add(Material.PACKED_ICE);
+		effectiveMaterials.add(Material.GLASS);
+		effectiveMaterials.add(Material.REDSTONE_LIGHT);
+
+		effectiveMaterials.add(Material.GROUND);
+		effectiveMaterials.add(Material.GRASS);
+		effectiveMaterials.add(Material.SAND);
+		effectiveMaterials.add(Material.SNOW);
+		effectiveMaterials.add(Material.CRAFTED_SNOW);
+		effectiveMaterials.add(Material.CLAY);
+
+		energyPerUse = 500;
 	}
 
 	@Override
@@ -94,9 +99,9 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 		if (!StringHelper.isShiftKeyDown()) {
 			return;
 		}
-		tooltip.add(StringHelper.getInfoText("info.thermalinnovation.saw.a.0"));
-		tooltip.add(StringHelper.localize("info.thermalinnovation.saw.c." + getMode(stack)));
-		tooltip.add(StringHelper.localizeFormat("info.thermalinnovation.saw.b.0", StringHelper.getKeyName(KeyBindingItemMultiMode.INSTANCE.getKey())));
+		tooltip.add(StringHelper.getInfoText("info.thermalinnovation.laser.a.0"));
+		tooltip.add(StringHelper.localize("info.thermalinnovation.laser.c." + getMode(stack)));
+		tooltip.add(StringHelper.localizeFormat("info.thermalinnovation.laser.b.0", StringHelper.getKeyName(KeyBindingItemMultiMode.INSTANCE.getKey())));
 
 		if (ItemHelper.getItemDamage(stack) == CREATIVE) {
 			tooltip.add(StringHelper.localize("info.cofh.charge") + ": 1.21G RF");
@@ -142,98 +147,13 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 	@Override
 	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
 
-		return enchantment.type.canEnchantItem(stack.getItem()) || enchantment.canApply(new ItemStack(Items.IRON_AXE));
-	}
-
-	@Override
-	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer player, EntityLivingBase entity, EnumHand hand) {
-
-		if (ServerHelper.isClientWorld(entity.world)) {
-			return false;
-		}
-		if (entity instanceof IShearable) {
-			IShearable target = (IShearable) entity;
-			BlockPos pos = new BlockPos(entity.posX, entity.posY, entity.posZ);
-			if (target.isShearable(stack, entity.world, pos)) {
-				List<ItemStack> drops = target.onSheared(stack, entity.world, pos, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack));
-				entity.attackEntityFrom(DamageSource.causePlayerDamage(player), 1.0F);
-
-				for (ItemStack drop : drops) {
-					EntityItem ent = entity.entityDropItem(drop, 1.0F);
-					ent.motionY += MathHelper.RANDOM.nextFloat() * 0.05F;
-					ent.motionX += (MathHelper.RANDOM.nextFloat() - MathHelper.RANDOM.nextFloat()) * 0.1F;
-					ent.motionZ += (MathHelper.RANDOM.nextFloat() - MathHelper.RANDOM.nextFloat()) * 0.1F;
-				}
-				if (!player.capabilities.isCreativeMode) {
-					useEnergy(stack, 1, false);
-				}
-			}
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, EntityPlayer player) {
-
-		World world = player.world;
-		IBlockState state = world.getBlockState(pos);
-
-		if (state.getBlockHardness(world, pos) == 0.0F) {
-			return false;
-		}
-		if (!canHarvestBlock(state, stack)) {
-			if (!player.capabilities.isCreativeMode) {
-				useEnergy(stack, 1, false);
-			}
-			return false;
-		}
-		world.playEvent(2001, pos, Block.getStateId(state));
-
-		float refStrength = state.getPlayerRelativeBlockHardness(player, world, pos);
-		if (refStrength != 0.0F) {
-			RayTraceResult traceResult = RayTracer.retrace(player, false);
-
-			if (traceResult == null || traceResult.sideHit == null) {
-				return false;
-			}
-			int count = 1;
-			int mode = getMode(stack);
-
-			switch (mode) {
-				case SINGLE:
-					break;
-				case TUNNEL2:
-					count += breakTunnel2(player, world, pos, traceResult, refStrength);
-					break;
-				case AREA3:
-					count += breakArea3(player, world, pos, traceResult, refStrength);
-					break;
-				case CUBE3:
-					count += breakCube3(player, world, pos, traceResult, refStrength);
-					break;
-				case AREA5:
-					count += breakArea5(player, world, pos, traceResult, refStrength);
-					break;
-			}
-			if (count > 0 && !player.capabilities.isCreativeMode) {
-				useEnergy(stack, count, false);
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
-
-		setActive(stack, entityLiving);
-		return true;
+		return enchantment.type.canEnchantItem(stack.getItem()) || enchantment.canApply(new ItemStack(Items.IRON_PICKAXE)) || enchantment.canApply(new ItemStack(Items.IRON_SHOVEL));
 	}
 
 	@Override
 	public boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack) {
 
-		return !oldStack.equals(newStack) && (getEnergyStored(oldStack) > 0 != getEnergyStored(newStack) > 0 || isActive(oldStack) != isActive(newStack));
+		return !oldStack.equals(newStack) && (getEnergyStored(oldStack) > 0 != getEnergyStored(newStack) > 0);
 	}
 
 	@Override
@@ -258,7 +178,7 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 
 		if (slot == EntityEquipmentSlot.MAINHAND) {
 			if (getEnergyStored(stack) >= energyPerUse) {
-				multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", -2.0F, 0));
+				multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", -2.2F, 0));
 				multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", getAttackDamage(stack), 0));
 			} else {
 				multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", -3.2F, 0));
@@ -363,14 +283,14 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 	public void onModeChange(EntityPlayer player, ItemStack stack) {
 
 		player.world.playSound(null, player.getPosition(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 0.6F, 1.0F - 0.1F * getMode(stack));
-		ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentTranslation("info.thermalinnovation.saw.c." + getMode(stack)));
+		ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentTranslation("info.thermalinnovation.laser.c." + getMode(stack)));
 	}
 
 	/* IEnchantableItem */
 	@Override
 	public boolean canEnchant(ItemStack stack, Enchantment enchantment) {
 
-		return super.canEnchant(stack, enchantment) || enchantment == CoreEnchantments.insight || enchantment == CoreEnchantments.smelting || enchantment == CoreEnchantments.vorpal;
+		return super.canEnchant(stack, enchantment) || enchantment == CoreEnchantments.insight || enchantment == CoreEnchantments.smelting;
 	}
 
 	/* IAOEBreakItem */
@@ -410,13 +330,13 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 
 		config();
 
-		sawBasic = addEntryItem(0, "standard0", EnumRarity.COMMON);
-		sawHardened = addEntryItem(1, "standard1", EnumRarity.COMMON);
-		sawReinforced = addEntryItem(2, "standard2", EnumRarity.UNCOMMON);
-		sawSignalum = addEntryItem(3, "standard3", EnumRarity.UNCOMMON);
-		sawResonant = addEntryItem(4, "standard4", EnumRarity.RARE);
+		laserBasic = addEntryItem(0, "standard0", EnumRarity.COMMON);
+		laserHardened = addEntryItem(1, "standard1", EnumRarity.COMMON);
+		laserReinforced = addEntryItem(2, "standard2", EnumRarity.UNCOMMON);
+		laserSignalum = addEntryItem(3, "standard3", EnumRarity.UNCOMMON);
+		laserResonant = addEntryItem(4, "standard4", EnumRarity.RARE);
 
-		sawCreative = addEntryItem(CREATIVE, "creative", HARVEST_LEVEL[4], EFFICIENCY[4], ATTACK_DAMAGE[4], ENCHANTABILITY[4], CAPACITY[4], 0, NUM_MODES[4], EnumRarity.EPIC);
+		laserCreative = addEntryItem(CREATIVE, "creative", HARVEST_LEVEL[4], EFFICIENCY[4], ATTACK_DAMAGE[4], ENCHANTABILITY[4], CAPACITY[4], 0, NUM_MODES[4], EnumRarity.EPIC);
 
 		ThermalInnovation.proxy.addIModelRegister(this);
 
@@ -430,14 +350,14 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 			return false;
 		}
 		// @formatter:off
-		addShapedRecipe(sawBasic,
+		addShapedRecipe(laserBasic,
 				" X ",
 				"ICI",
 				"YGY",
 				'C', ItemMaterial.partToolCasing,
 				'G', "gearLead",
 				'I', "ingotLead",
-				'X', ItemMaterial.partSawBlade,
+				'X', ItemMaterial.partDrillHead,
 				'Y', "ingotTin"
 		);
 		// @formatter:on
@@ -446,17 +366,17 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 
 	private static void config() {
 
-		String category = "Item.Saw";
+		String category = "Item.Laser";
 		String comment;
 
 		enable = ThermalInnovation.CONFIG.get(category, "Enable", true);
 
 		int capacity = CAPACITY_BASE;
-		comment = "Adjust this value to change the amount of Energy (in RF) stored by a Basic Fluxsaw. This base value will scale with item level.";
+		comment = "Adjust this value to change the amount of Energy (in RF) stored by a Basic Excavation Beam. This base value will scale with item level.";
 		capacity = ThermalInnovation.CONFIG.getConfiguration().getInt("BaseCapacity", category, capacity, capacity / 5, capacity * 5, comment);
 
 		int xfer = XFER_BASE;
-		comment = "Adjust this value to change the amount of Energy (in RF/t) that can be received by a Basic Fluxsaw. This base value will scale with item level.";
+		comment = "Adjust this value to change the amount of Energy (in RF/t) that can be received by a Basic Excavation Beam. This base value will scale with item level.";
 		xfer = ThermalInnovation.CONFIG.getConfiguration().getInt("BaseReceive", category, xfer, xfer / 10, xfer * 10, comment);
 
 		for (int i = 0; i < CAPACITY.length; i++) {
@@ -513,7 +433,7 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 
 	public static final int[] HARVEST_LEVEL = { 2, 2, 3, 3, 4 };
 	public static final float[] EFFICIENCY = { 6.0F, 7.5F, 9.0F, 10.5F, 12.0F };
-	public static final float[] ATTACK_DAMAGE = { 4.0F, 4.5F, 5.0F, 5.5F, 6.0F };
+	public static final float[] ATTACK_DAMAGE = { 3.0F, 3.5F, 4.0F, 4.5F, 5.0F };
 	public static final int[] ENCHANTABILITY = { 10, 10, 15, 15, 20 };
 
 	public static final int[] CAPACITY = { 1, 3, 6, 10, 15 };
@@ -524,12 +444,12 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 	public static boolean enable = true;
 
 	/* REFERENCES */
-	public static ItemStack sawBasic;
-	public static ItemStack sawHardened;
-	public static ItemStack sawReinforced;
-	public static ItemStack sawSignalum;
-	public static ItemStack sawResonant;
+	public static ItemStack laserBasic;
+	public static ItemStack laserHardened;
+	public static ItemStack laserReinforced;
+	public static ItemStack laserSignalum;
+	public static ItemStack laserResonant;
 
-	public static ItemStack sawCreative;
+	public static ItemStack laserCreative;
 
 }

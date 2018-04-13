@@ -381,9 +381,9 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 		}
 		// @formatter:off
 		addShapedRecipe(magnetBasic,
-				"R R",
 				"IRI",
 				"XIX",
+				" R ",
 				'I', "ingotIron",
 				'R', "dustRedstone",
 				'X', "ingotLead"
