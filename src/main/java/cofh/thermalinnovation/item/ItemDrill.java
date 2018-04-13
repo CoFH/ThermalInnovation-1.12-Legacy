@@ -425,11 +425,11 @@ public class ItemDrill extends ItemToolMultiRF implements IInitializer, IAOEBrea
 
 		int capacity = CAPACITY_BASE;
 		comment = "Adjust this value to change the amount of Energy (in RF) stored by a Basic Fluxbore. This base value will scale with item level.";
-		capacity = ThermalInnovation.CONFIG.getConfiguration().getInt("BaseCapacity", category, capacity, capacity / 5, capacity * 5, comment);
+		capacity = ThermalInnovation.CONFIG.getConfiguration().getInt("BaseCapacity", category, capacity, CAPACITY_MIN, CAPACITY_MAX, comment);
 
 		int xfer = XFER_BASE;
 		comment = "Adjust this value to change the amount of Energy (in RF/t) that can be received by a Basic Fluxbore. This base value will scale with item level.";
-		xfer = ThermalInnovation.CONFIG.getConfiguration().getInt("BaseReceive", category, xfer, xfer / 10, xfer * 10, comment);
+		xfer = ThermalInnovation.CONFIG.getConfiguration().getInt("BaseReceive", category, xfer, XFER_MIN, XFER_MAX, comment);
 
 		for (int i = 0; i < CAPACITY.length; i++) {
 			CAPACITY[i] *= capacity;
