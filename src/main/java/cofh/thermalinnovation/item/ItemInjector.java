@@ -62,6 +62,7 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 
 		super("thermalinnovation");
 
+		register("injector");
 		setUnlocalizedName("injector");
 		setCreativeTab(ThermalInnovation.tabTools);
 

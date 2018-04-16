@@ -55,6 +55,7 @@ public class ItemLaser extends ItemToolMultiRF implements IInitializer, IAOEBrea
 
 		super("thermalinnovation");
 
+		register("laser");
 		setUnlocalizedName("laser");
 		setCreativeTab(ThermalInnovation.tabTools);
 

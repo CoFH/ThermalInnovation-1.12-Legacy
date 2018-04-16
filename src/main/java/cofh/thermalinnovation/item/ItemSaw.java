@@ -63,6 +63,7 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 
 		super("thermalinnovation");
 
+		register("saw");
 		setUnlocalizedName("saw");
 		setCreativeTab(ThermalInnovation.tabTools);
 

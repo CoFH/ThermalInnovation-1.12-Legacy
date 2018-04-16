@@ -39,6 +39,7 @@ public class ItemPump extends ItemToolMultiRF implements IInitializer, IMultiMod
 
 		super("thermalinnovation");
 
+		register("pump");
 		setUnlocalizedName("pump");
 		setCreativeTab(ThermalInnovation.tabTools);
 

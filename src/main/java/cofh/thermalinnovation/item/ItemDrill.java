@@ -59,6 +59,7 @@ public class ItemDrill extends ItemToolMultiRF implements IInitializer, IAOEBrea
 
 		super("thermalinnovation");
 
+		register("drill");
 		setUnlocalizedName("drill");
 		setCreativeTab(ThermalInnovation.tabTools);
 
