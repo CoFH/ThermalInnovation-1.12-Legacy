@@ -15,7 +15,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -192,8 +191,13 @@ public class ItemSaw extends ItemMultiRFTool implements IInitializer, IMultiMode
 			}
 			return false;
 		}
-		world.playEvent(2001, pos, Block.getStateId(state));
-
+		// world.playEvent(2001, pos, Block.getStateId(state));
+		if (player.isSneaking()) {
+			if (!player.capabilities.isCreativeMode) {
+				useEnergy(stack, 1, false);
+			}
+			return false;
+		}
 		float refStrength = state.getPlayerRelativeBlockHardness(player, world, pos);
 		if (refStrength != 0.0F) {
 			RayTraceResult traceResult = RayTracer.retrace(player, false);
@@ -386,7 +390,7 @@ public class ItemSaw extends ItemMultiRFTool implements IInitializer, IMultiMode
 		int mode = getMode(stack);
 
 		RayTraceResult traceResult = RayTracer.retrace(player, false);
-		if (traceResult == null || traceResult.sideHit == null || !canHarvestBlock(world.getBlockState(pos), stack)) {
+		if (traceResult == null || traceResult.sideHit == null || !canHarvestBlock(world.getBlockState(pos), stack) || player.isSneaking()) {
 			return ImmutableList.copyOf(area);
 		}
 		switch (mode) {

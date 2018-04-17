@@ -304,7 +304,7 @@ public class ItemLaser extends ItemMultiRFTool implements IInitializer, IAOEBrea
 		int mode = getMode(stack);
 
 		RayTraceResult traceResult = RayTracer.retrace(player, false);
-		if (traceResult == null || traceResult.sideHit == null || !canHarvestBlock(world.getBlockState(pos), stack)) {
+		if (traceResult == null || traceResult.sideHit == null || !canHarvestBlock(world.getBlockState(pos), stack) || player.isSneaking()) {
 			return ImmutableList.copyOf(area);
 		}
 		switch (mode) {

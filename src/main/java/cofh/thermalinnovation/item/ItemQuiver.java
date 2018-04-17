@@ -21,6 +21,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
@@ -205,6 +206,46 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 			stack.getTagCompound().setInteger(ARROWS, stored);
 		}
 		return toRemove;
+	}
+
+	public static ItemStack findArrows(EntityPlayer player) {
+
+		ItemStack offHand = player.getHeldItemOffhand();
+		ItemStack mainHand = player.getHeldItemMainhand();
+
+		if (isArrow(offHand)) {
+			return offHand;
+		} else if (isArrow(mainHand)) {
+			return mainHand;
+		}
+		for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
+			ItemStack stack = player.inventory.getStackInSlot(i);
+
+			if (isArrow(stack)) {
+				return stack;
+			}
+		}
+		return ItemStack.EMPTY;
+	}
+
+	public static boolean isArrow(ItemStack stack) {
+
+		return stack.getItem().equals(Items.ARROW);
+	}
+
+	public static boolean addToPlayerInventory(EntityPlayer player, ItemStack stack) {
+
+		if (stack.isEmpty() || player == null) {
+			return false;
+		}
+		InventoryPlayer inv = player.inventory;
+		for (int i = 0; i < inv.mainInventory.size(); i++) {
+			if (inv.mainInventory.get(i).isEmpty()) {
+				inv.mainInventory.set(i, stack.copy());
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
