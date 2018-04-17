@@ -54,7 +54,7 @@ import java.util.Map;
 
 import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
 
-public class ItemDrill extends ItemToolMultiRF implements IInitializer, IAOEBreakItem {
+public class ItemDrill extends ItemMultiRFTool implements IInitializer, IAOEBreakItem {
 
 	public ItemDrill() {
 

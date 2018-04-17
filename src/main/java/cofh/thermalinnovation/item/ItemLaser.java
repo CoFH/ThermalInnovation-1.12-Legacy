@@ -50,7 +50,7 @@ import java.util.Map;
 
 import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
 
-public class ItemLaser extends ItemToolMultiRF implements IInitializer, IAOEBreakItem {
+public class ItemLaser extends ItemMultiRFTool implements IInitializer, IAOEBreakItem {
 
 	public ItemLaser() {
 

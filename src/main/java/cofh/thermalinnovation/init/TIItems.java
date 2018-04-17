@@ -1,5 +1,6 @@
 package cofh.thermalinnovation.init;
 
+import cofh.core.init.CoreProps;
 import cofh.core.util.core.IInitializer;
 import cofh.thermalfoundation.init.TFProps;
 import cofh.thermalinnovation.item.*;
@@ -44,22 +45,27 @@ public class TIItems {
 		for (int i = 0; i < 5; i++) {
 			ItemStack iconStack = new ItemStack(itemDrill, 1, i);
 			iconStack.setTagCompound(new NBTTagCompound());
-			iconStack.getTagCompound().setBoolean("CreativeTab", true);
+			iconStack.getTagCompound().setBoolean(CoreProps.CREATIVE_TAB, true);
 			TFProps.toolList.add(iconStack.copy());
 
 			iconStack = new ItemStack(itemSaw, 1, i);
 			iconStack.setTagCompound(new NBTTagCompound());
-			iconStack.getTagCompound().setBoolean("CreativeTab", true);
+			iconStack.getTagCompound().setBoolean(CoreProps.CREATIVE_TAB, true);
 			TFProps.toolList.add(iconStack.copy());
 
 			iconStack = new ItemStack(itemMagnet, 1, i);
 			iconStack.setTagCompound(new NBTTagCompound());
-			iconStack.getTagCompound().setBoolean("CreativeTab", true);
+			iconStack.getTagCompound().setBoolean(CoreProps.CREATIVE_TAB, true);
 			TFProps.toolList.add(iconStack.copy());
 
 			iconStack = new ItemStack(itemInjector, 1, i);
 			iconStack.setTagCompound(new NBTTagCompound());
-			iconStack.getTagCompound().setBoolean("CreativeTab", true);
+			iconStack.getTagCompound().setBoolean(CoreProps.CREATIVE_TAB, true);
+			TFProps.toolList.add(iconStack.copy());
+
+			iconStack = new ItemStack(itemQuiver, 1, i);
+			iconStack.setTagCompound(new NBTTagCompound());
+			iconStack.getTagCompound().setBoolean(CoreProps.CREATIVE_TAB, true);
 			TFProps.toolList.add(iconStack.copy());
 		}
 		MinecraftForge.EVENT_BUS.register(INSTANCE);

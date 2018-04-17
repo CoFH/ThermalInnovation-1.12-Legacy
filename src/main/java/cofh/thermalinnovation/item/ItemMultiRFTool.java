@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Set;
 
-public abstract class ItemToolMultiRF extends ItemMultiRF {
+public abstract class ItemMultiRFTool extends ItemMultiRF {
 
 	protected final TLinkedHashSet<String> toolClasses = new TLinkedHashSet<>();
 	protected final Set<String> immutableClasses = java.util.Collections.unmodifiableSet(toolClasses);
@@ -37,7 +37,7 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 
 	protected int energyPerUse = 200;
 
-	public ItemToolMultiRF(String modName) {
+	public ItemMultiRFTool(String modName) {
 
 		super(modName);
 

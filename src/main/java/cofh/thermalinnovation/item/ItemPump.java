@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
-public class ItemPump extends ItemToolMultiRF implements IInitializer, IMultiModeItem {
+public class ItemPump extends ItemMultiRFTool implements IInitializer, IMultiModeItem {
 
 	public ItemPump() {
 

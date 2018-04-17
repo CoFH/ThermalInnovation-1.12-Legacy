@@ -1,6 +1,7 @@
 package cofh.thermalinnovation.init;
 
 import cofh.core.gui.CreativeTabCore;
+import cofh.core.init.CoreProps;
 import cofh.thermalfoundation.ThermalFoundation;
 import cofh.thermalfoundation.init.TFProps;
 import cofh.thermalinnovation.ThermalInnovation;
@@ -47,7 +48,7 @@ public class TIProps {
 
 					ItemStack iconStack = new ItemStack(TIItems.itemDrill, 1, 1);
 					iconStack.setTagCompound(new NBTTagCompound());
-					iconStack.getTagCompound().setBoolean("CreativeTab", true);
+					iconStack.getTagCompound().setBoolean(CoreProps.CREATIVE_TAB, true);
 
 					return iconStack;
 				}
