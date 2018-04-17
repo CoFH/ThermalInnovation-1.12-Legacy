@@ -78,7 +78,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 		tooltip.add(StringHelper.localizeFormat("info.thermalinnovation.magnet.b." + getMode(stack), StringHelper.getKeyName(KeyBindingItemMultiMode.INSTANCE.getKey())));
 		tooltip.add(StringHelper.ORANGE + StringHelper.localize("info.cofh.radius") + ": " + radius + StringHelper.END);
 
-		if (ItemHelper.getItemDamage(stack) == CREATIVE) {
+		if (isCreative(stack)) {
 			tooltip.add(StringHelper.localize("info.cofh.charge") + ": 1.21G RF");
 		} else {
 			tooltip.add(StringHelper.localize("info.cofh.charge") + ": " + StringHelper.getScaledNumber(getEnergyStored(stack)) + " / " + StringHelper.getScaledNumber(getMaxEnergyStored(stack)) + " RF");

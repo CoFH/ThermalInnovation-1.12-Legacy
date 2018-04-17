@@ -2,20 +2,12 @@ package cofh.thermalinnovation.item;
 
 import baubles.api.BaubleType;
 import baubles.api.IBauble;
-import cofh.api.fluid.IFluidContainerItem;
-import cofh.api.item.IMultiModeItem;
-import cofh.api.item.INBTCopyIngredient;
 import cofh.core.init.CoreEnchantments;
 import cofh.core.init.CoreProps;
-import cofh.core.item.IEnchantableItem;
-import cofh.core.item.ItemMulti;
 import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.CoreUtils;
-import cofh.core.util.capabilities.FluidContainerItemWrapper;
 import cofh.core.util.core.IInitializer;
 import cofh.core.util.helpers.*;
-import cofh.thermalfoundation.fluid.FluidPotion;
-import cofh.thermalfoundation.init.TFFluids;
 import cofh.thermalfoundation.init.TFProps;
 import cofh.thermalinnovation.ThermalInnovation;
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -23,7 +15,6 @@ import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -32,17 +23,12 @@ import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.*;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
@@ -56,7 +42,7 @@ import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
 import static cofh.thermalfoundation.util.TFCrafting.addPotionFillRecipe;
 
 @Optional.Interface (iface = "baubles.api.IBauble", modid = "baubles")
-public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeItem, IFluidContainerItem, IEnchantableItem, INBTCopyIngredient, IBauble {
+public class ItemInjector extends ItemMultiPotion implements IInitializer, IBauble {
 
 	public ItemInjector() {
 
@@ -65,10 +51,6 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 		register("injector");
 		setUnlocalizedName("injector");
 		setCreativeTab(ThermalInnovation.tabTools);
-
-		setHasSubtypes(true);
-		setMaxStackSize(1);
-		setNoRepair();
 	}
 
 	@Override
@@ -98,7 +80,7 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 			}
 			tooltip.add(StringHelper.localize("info.cofh.fluid") + ": " + color + fluid.getFluid().getLocalizedName(fluid) + StringHelper.LIGHT_GRAY);
 
-			if (ItemHelper.getItemDamage(stack) == CREATIVE) {
+			if (isCreative(stack)) {
 				tooltip.add(StringHelper.localize("info.cofh.infiniteSource"));
 			} else {
 				tooltip.add(StringHelper.localize("info.cofh.level") + ": " + StringHelper.formatNumber(fluid.amount) + " / " + StringHelper.formatNumber(getCapacity(stack)) + " mB");
@@ -109,7 +91,7 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 		} else {
 			tooltip.add(StringHelper.localize("info.cofh.fluid") + ": " + StringHelper.localize("info.cofh.empty"));
 
-			if (ItemHelper.getItemDamage(stack) == CREATIVE) {
+			if (isCreative(stack)) {
 				tooltip.add(StringHelper.localize("info.cofh.infiniteSource"));
 			} else {
 				tooltip.add(StringHelper.localize("info.cofh.level") + ": 0 / " + StringHelper.formatNumber(getCapacity(stack)) + " mB");
@@ -189,42 +171,6 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 	}
 
 	@Override
-	public boolean isFull3D() {
-
-		return true;
-	}
-
-	@Override
-	public boolean isEnchantable(ItemStack stack) {
-
-		return ItemHelper.getItemDamage(stack) != CREATIVE;
-	}
-
-	@Override
-	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-
-		return super.shouldCauseReequipAnimation(oldStack, newStack, slotChanged) && (slotChanged || !ItemHelper.areItemStacksEqualIgnoreTags(oldStack, newStack, "Fluid"));
-	}
-
-	@Override
-	public int getRGBDurabilityForDisplay(ItemStack stack) {
-
-		return colorMultiplier(stack, 1);
-	}
-
-	@Override
-	public double getDurabilityForDisplay(ItemStack stack) {
-
-		return 1.0D - (getFluidAmount(stack) / (double) getCapacity(stack));
-	}
-
-	@Override
-	public boolean showDurabilityBar(ItemStack stack) {
-
-		return ItemHelper.getItemDamage(stack) != CREATIVE && (stack.getTagCompound() == null || !stack.getTagCompound().getBoolean("CreativeTab"));
-	}
-
-	@Override
 	public int getItemEnchantability(ItemStack stack) {
 
 		return 10;
@@ -257,38 +203,15 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 	}
 
 	/* HELPERS */
-	public int getFluidAmount(ItemStack stack) {
+	protected int getMaxFluidAmount(ItemStack stack) {
 
-		FluidStack fluid = getFluid(stack);
-		return fluid == null ? 0 : fluid.amount;
-	}
-
-	public int getScaledFluidStored(ItemStack stack, int scale) {
-
-		return MathHelper.round((long) getFluidAmount(stack) * scale / getCapacity(stack));
-	}
-
-	@SideOnly (Side.CLIENT)
-	private static void addPotionTooltip(NBTTagCompound potionTag, List<String> lores) {
-
-		List<PotionEffect> list = PotionUtils.getEffectsFromTag(potionTag);
-		if (list.isEmpty()) {
-			String s = StringHelper.localize("effect.none").trim();
-			lores.add(TextFormatting.GRAY + s);
-		} else {
-			for (PotionEffect potioneffect : list) {
-				String s1 = StringHelper.localize(potioneffect.getEffectName()).trim();
-				Potion potion = potioneffect.getPotion();
-				if (potioneffect.getAmplifier() > 0) {
-					s1 = s1 + " " + StringHelper.localize("potion.potency." + potioneffect.getAmplifier()).trim();
-				}
-				if (potion.isBadEffect()) {
-					lores.add(TextFormatting.RED + s1);
-				} else {
-					lores.add(TextFormatting.BLUE + s1);
-				}
-			}
+		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
+			return 0;
 		}
+		int capacity = typeMap.get(ItemHelper.getItemDamage(stack)).capacity;
+		int enchant = EnchantmentHelper.getEnchantmentLevel(CoreEnchantments.holding, stack);
+
+		return capacity + capacity * enchant / 2;
 	}
 
 	/* IModelRegister */
@@ -316,141 +239,6 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 			player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 0.2F, 0.6F);
 		}
 		ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentTranslation("info.thermalinnovation.injector.c." + mode));
-	}
-
-	/* IItemColor */
-	public int colorMultiplier(ItemStack stack, int tintIndex) {
-
-		FluidStack fluid = getFluid(stack);
-		if (fluid != null && tintIndex == 1) {
-			return FluidPotion.getPotionColor(fluid);
-		}
-		return 0xFFFFFF;
-	}
-
-	/* IFluidContainerItem */
-	@Override
-	public FluidStack getFluid(ItemStack container) {
-
-		if (container.getTagCompound() == null) {
-			container.setTagCompound(new NBTTagCompound());
-		}
-		if (!container.getTagCompound().hasKey("Fluid")) {
-			return null;
-		}
-		return FluidStack.loadFluidStackFromNBT(container.getTagCompound().getCompoundTag("Fluid"));
-	}
-
-	@Override
-	public int getCapacity(ItemStack stack) {
-
-		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
-			return 0;
-		}
-		int capacity = typeMap.get(ItemHelper.getItemDamage(stack)).capacity;
-		int enchant = EnchantmentHelper.getEnchantmentLevel(CoreEnchantments.holding, stack);
-
-		return capacity + capacity * enchant / 2;
-	}
-
-	@Override
-	public int fill(ItemStack container, FluidStack resource, boolean doFill) {
-
-		if (container.getTagCompound() == null) {
-			container.setTagCompound(new NBTTagCompound());
-		}
-		if (resource == null || resource.getFluid() != TFFluids.fluidPotion) {
-			return 0;
-		}
-		int capacity = getCapacity(container);
-
-		if (ItemHelper.getItemDamage(container) == CREATIVE) {
-			if (doFill) {
-				NBTTagCompound fluidTag = resource.writeToNBT(new NBTTagCompound());
-				fluidTag.setInteger("Amount", capacity - Fluid.BUCKET_VOLUME);
-				container.getTagCompound().setTag("Fluid", fluidTag);
-			}
-			return resource.amount;
-		}
-		if (!doFill) {
-			if (!container.getTagCompound().hasKey("Fluid")) {
-				return Math.min(capacity, resource.amount);
-			}
-			FluidStack stack = FluidStack.loadFluidStackFromNBT(container.getTagCompound().getCompoundTag("Fluid"));
-
-			if (stack == null) {
-				return Math.min(capacity, resource.amount);
-			}
-			if (!stack.isFluidEqual(resource)) {
-				return 0;
-			}
-			return Math.min(capacity - stack.amount, resource.amount);
-		}
-		if (!container.getTagCompound().hasKey("Fluid")) {
-			NBTTagCompound fluidTag = resource.writeToNBT(new NBTTagCompound());
-
-			if (capacity < resource.amount) {
-				fluidTag.setInteger("Amount", capacity);
-				container.getTagCompound().setTag("Fluid", fluidTag);
-				return capacity;
-			}
-			fluidTag.setInteger("Amount", resource.amount);
-			container.getTagCompound().setTag("Fluid", fluidTag);
-			return resource.amount;
-		}
-		NBTTagCompound fluidTag = container.getTagCompound().getCompoundTag("Fluid");
-		FluidStack stack = FluidStack.loadFluidStackFromNBT(fluidTag);
-
-		if (!stack.isFluidEqual(resource)) {
-			return 0;
-		}
-		int filled = capacity - stack.amount;
-
-		if (resource.amount < filled) {
-			stack.amount += resource.amount;
-			filled = resource.amount;
-		} else {
-			stack.amount = capacity;
-		}
-		container.getTagCompound().setTag("Fluid", stack.writeToNBT(fluidTag));
-		return filled;
-	}
-
-	@Override
-	public FluidStack drain(ItemStack container, int maxDrain, boolean doDrain) {
-
-		if (container.getTagCompound() == null) {
-			container.setTagCompound(new NBTTagCompound());
-		}
-		if (!container.getTagCompound().hasKey("Fluid") || maxDrain == 0) {
-			return null;
-		}
-		FluidStack stack = FluidStack.loadFluidStackFromNBT(container.getTagCompound().getCompoundTag("Fluid"));
-
-		if (stack == null) {
-			return null;
-		}
-		boolean creative = ItemHelper.getItemDamage(container) == CREATIVE;
-		int drained = creative ? maxDrain : Math.min(stack.amount, maxDrain);
-
-		if (doDrain && !creative) {
-			if (maxDrain >= stack.amount) {
-				container.getTagCompound().removeTag("Fluid");
-				return stack;
-			}
-			NBTTagCompound fluidTag = container.getTagCompound().getCompoundTag("Fluid");
-			fluidTag.setInteger("Amount", fluidTag.getInteger("Amount") - drained);
-			container.getTagCompound().setTag("Fluid", fluidTag);
-		}
-		stack.amount = drained;
-		return stack;
-	}
-
-	/* IEnchantableItem */
-	@Override
-	public boolean canEnchant(ItemStack stack, Enchantment enchantment) {
-
-		return enchantment == CoreEnchantments.holding;
 	}
 
 	/* IBauble */
@@ -497,13 +285,6 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 	public boolean willAutoSync(ItemStack stack, EntityLivingBase player) {
 
 		return true;
-	}
-
-	/* CAPABILITIES */
-	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
-
-		return new FluidContainerItemWrapper(stack, this);
 	}
 
 	/* IInitializer */
@@ -558,7 +339,7 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 		String comment;
 
 		int capacity = CAPACITY_BASE;
-		comment = "Adjust this value to change the amount of Fluid (in mb) stored by a Basic Hypoinfuser. This base value will scale with item level.";
+		comment = "Adjust this value to change the amount of Fluid (in mB) stored by a Basic Hypoinfuser. This base value will scale with item level.";
 		capacity = ThermalInnovation.CONFIG.getConfiguration().getInt("BaseCapacity", category, capacity, capacity / 5, capacity * 5, comment);
 
 		for (int i = 0; i < CAPACITY.length; i++) {
@@ -595,7 +376,6 @@ public class ItemInjector extends ItemMulti implements IInitializer, IMultiModeI
 	public static final int CAPACITY_BASE = 2000;
 	public static final int MB_PER_CYCLE = 50;
 	public static final int MB_PER_USE = 250;
-	public static final int CREATIVE = 32000;
 
 	public static final int[] CAPACITY = { 1, 3, 6, 10, 15 };
 

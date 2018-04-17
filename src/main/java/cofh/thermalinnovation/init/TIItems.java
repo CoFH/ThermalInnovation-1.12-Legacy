@@ -2,10 +2,7 @@ package cofh.thermalinnovation.init;
 
 import cofh.core.util.core.IInitializer;
 import cofh.thermalfoundation.init.TFProps;
-import cofh.thermalinnovation.item.ItemDrill;
-import cofh.thermalinnovation.item.ItemInjector;
-import cofh.thermalinnovation.item.ItemMagnet;
-import cofh.thermalinnovation.item.ItemSaw;
+import cofh.thermalinnovation.item.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,6 +28,7 @@ public class TIItems {
 		//		itemPump = new ItemPump();
 		itemMagnet = new ItemMagnet();
 		itemInjector = new ItemInjector();
+		itemQuiver = new ItemQuiver();
 
 		initList.add(itemDrill);
 		initList.add(itemSaw);
@@ -38,6 +36,7 @@ public class TIItems {
 		//		initList.add(itemPump);
 		initList.add(itemMagnet);
 		initList.add(itemInjector);
+		initList.add(itemQuiver);
 
 		for (IInitializer init : initList) {
 			init.initialize();
@@ -84,5 +83,6 @@ public class TIItems {
 	//	public static ItemPump itemPump;
 	public static ItemMagnet itemMagnet;
 	public static ItemInjector itemInjector;
+	public static ItemQuiver itemQuiver;
 
 }

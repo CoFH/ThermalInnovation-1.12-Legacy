@@ -2,6 +2,7 @@ package cofh.thermalinnovation.item;
 
 import cofh.api.item.IMultiModeItem;
 import cofh.core.init.CoreEnchantments;
+import cofh.core.init.CoreProps;
 import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.core.IInitializer;
 import cofh.core.util.helpers.ChatHelper;
@@ -59,7 +60,7 @@ public class ItemPump extends ItemToolMultiRF implements IInitializer, IMultiMod
 		tooltip.add(StringHelper.localize("info.thermalinnovation.pump.c." + getMode(stack)));
 		tooltip.add(StringHelper.localizeFormat("info.thermalinnovation.pump.b.0", StringHelper.getKeyName(KeyBindingItemMultiMode.INSTANCE.getKey())));
 
-		if (ItemHelper.getItemDamage(stack) == CREATIVE) {
+		if (isCreative(stack)) {
 			tooltip.add(StringHelper.localize("info.cofh.charge") + ": 1.21G RF");
 		} else {
 			tooltip.add(StringHelper.localize("info.cofh.charge") + ": " + StringHelper.getScaledNumber(getEnergyStored(stack)) + " / " + StringHelper.getScaledNumber(getMaxEnergyStored(stack)) + " RF");
@@ -93,10 +94,10 @@ public class ItemPump extends ItemToolMultiRF implements IInitializer, IMultiMod
 		if (!isActive(stack)) {
 			return;
 		}
-		long activeTime = stack.getTagCompound().getLong("Active");
+		long activeTime = stack.getTagCompound().getLong(CoreProps.ACTIVE);
 
 		if (entity.world.getTotalWorldTime() > activeTime) {
-			stack.getTagCompound().removeTag("Active");
+			stack.getTagCompound().removeTag(CoreProps.ACTIVE);
 		}
 	}
 

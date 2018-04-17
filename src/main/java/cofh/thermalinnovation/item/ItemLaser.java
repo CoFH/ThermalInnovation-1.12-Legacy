@@ -1,6 +1,7 @@
 package cofh.thermalinnovation.item;
 
 import cofh.core.init.CoreEnchantments;
+import cofh.core.init.CoreProps;
 import cofh.core.item.IAOEBreakItem;
 import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.RayTracer;
@@ -104,7 +105,7 @@ public class ItemLaser extends ItemToolMultiRF implements IInitializer, IAOEBrea
 		tooltip.add(StringHelper.localize("info.thermalinnovation.laser.c." + getMode(stack)));
 		tooltip.add(StringHelper.localizeFormat("info.thermalinnovation.laser.b.0", StringHelper.getKeyName(KeyBindingItemMultiMode.INSTANCE.getKey())));
 
-		if (ItemHelper.getItemDamage(stack) == CREATIVE) {
+		if (isCreative(stack)) {
 			tooltip.add(StringHelper.localize("info.cofh.charge") + ": 1.21G RF");
 		} else {
 			tooltip.add(StringHelper.localize("info.cofh.charge") + ": " + StringHelper.getScaledNumber(getEnergyStored(stack)) + " / " + StringHelper.getScaledNumber(getMaxEnergyStored(stack)) + " RF");
@@ -138,10 +139,10 @@ public class ItemLaser extends ItemToolMultiRF implements IInitializer, IAOEBrea
 		if (!isActive(stack)) {
 			return;
 		}
-		long activeTime = stack.getTagCompound().getLong("Active");
+		long activeTime = stack.getTagCompound().getLong(CoreProps.ACTIVE);
 
 		if (entity.world.getTotalWorldTime() > activeTime) {
-			stack.getTagCompound().removeTag("Active");
+			stack.getTagCompound().removeTag(CoreProps.ACTIVE);
 		}
 	}
 
@@ -309,8 +310,8 @@ public class ItemLaser extends ItemToolMultiRF implements IInitializer, IAOEBrea
 		switch (mode) {
 			case SINGLE:
 				break;
-			case TUNNEL2:
-				getAOEBlocksTunnel2(stack, world, pos, traceResult, area);
+			case TUNNEL:
+				getAOEBlocksTunnel3(stack, world, player, pos, traceResult, area);
 				break;
 			case AREA3:
 				getAOEBlocksArea3(stack, world, pos, traceResult, area);

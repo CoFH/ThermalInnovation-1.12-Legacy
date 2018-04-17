@@ -2,6 +2,7 @@ package cofh.thermalinnovation.item;
 
 import cofh.api.item.IMultiModeItem;
 import cofh.core.init.CoreEnchantments;
+import cofh.core.init.CoreProps;
 import cofh.core.item.IAOEBreakItem;
 import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.RayTracer;
@@ -99,7 +100,7 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 		tooltip.add(StringHelper.localize("info.thermalinnovation.saw.c." + getMode(stack)));
 		tooltip.add(StringHelper.localizeFormat("info.thermalinnovation.saw.b.0", StringHelper.getKeyName(KeyBindingItemMultiMode.INSTANCE.getKey())));
 
-		if (ItemHelper.getItemDamage(stack) == CREATIVE) {
+		if (isCreative(stack)) {
 			tooltip.add(StringHelper.localize("info.cofh.charge") + ": 1.21G RF");
 		} else {
 			tooltip.add(StringHelper.localize("info.cofh.charge") + ": " + StringHelper.getScaledNumber(getEnergyStored(stack)) + " / " + StringHelper.getScaledNumber(getMaxEnergyStored(stack)) + " RF");
@@ -133,10 +134,10 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 		if (!isActive(stack)) {
 			return;
 		}
-		long activeTime = stack.getTagCompound().getLong("Active");
+		long activeTime = stack.getTagCompound().getLong(CoreProps.ACTIVE);
 
 		if (entity.world.getTotalWorldTime() > activeTime) {
-			stack.getTagCompound().removeTag("Active");
+			stack.getTagCompound().removeTag(CoreProps.ACTIVE);
 		}
 	}
 
@@ -165,6 +166,8 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 					ent.motionX += (MathHelper.RANDOM.nextFloat() - MathHelper.RANDOM.nextFloat()) * 0.1F;
 					ent.motionZ += (MathHelper.RANDOM.nextFloat() - MathHelper.RANDOM.nextFloat()) * 0.1F;
 				}
+				setActive(stack, player);
+
 				if (!player.capabilities.isCreativeMode) {
 					useEnergy(stack, 1, false);
 				}
@@ -204,8 +207,8 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 			switch (mode) {
 				case SINGLE:
 					break;
-				case TUNNEL2:
-					count += breakTunnel2(player, world, pos, traceResult, refStrength);
+				case TUNNEL:
+					count += breakTunnel3(player, world, pos, traceResult, refStrength);
 					break;
 				case AREA3:
 					count += breakArea3(player, world, pos, traceResult, refStrength);
@@ -389,8 +392,8 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 		switch (mode) {
 			case SINGLE:
 				break;
-			case TUNNEL2:
-				getAOEBlocksTunnel2(stack, world, pos, traceResult, area);
+			case TUNNEL:
+				getAOEBlocksTunnel3(stack, world, player, pos, traceResult, area);
 				break;
 			case AREA3:
 				getAOEBlocksArea3(stack, world, pos, traceResult, area);
@@ -520,7 +523,7 @@ public class ItemSaw extends ItemToolMultiRF implements IInitializer, IMultiMode
 	public static final int[] CAPACITY = { 1, 3, 6, 10, 15 };
 	public static final int[] XFER = { 1, 4, 9, 16, 25 };
 	public static final int[] NUM_MODES = { 2, 3, 3, 4, 5 };
-	public static final float[] MODE_EFF = { 0, 2.0F, 4.0F, 8.0F, 8.0F };
+	public static final float[] MODE_EFF = { 0, 1.0F, 2.0F, 4.0F, 4.0F };
 
 	public static boolean enable = true;
 

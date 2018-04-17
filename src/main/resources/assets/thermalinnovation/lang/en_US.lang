@@ -25,10 +25,19 @@ info.thermalinnovation.injector.c.0=Auto-Infuse Disabled
 info.thermalinnovation.injector.c.1=Auto-Infuse Enabled
 info.thermalinnovation.injector.d=Effects:
 
+info.thermalinnovation.quiver.a.0=Imbues arrows with potions.
+info.thermalinnovation.quiver.a.1=Use to add arrows from your inventory to the quiver.
+info.thermalinnovation.quiver.a.2=Use while sneaking to remove arrows from the quiver.
+info.thermalinnovation.quiver.b.0=§bPress (%s) to enable arrow imbuing.§r
+info.thermalinnovation.quiver.b.1=§ePress (%s) to disable arrow imbuing.§r
+info.thermalinnovation.quiver.c.0=Imbuing Disabled
+info.thermalinnovation.quiver.c.1=Imbuing Enabled
+info.thermalinnovation.quiver.d=Effects:
+
 info.thermalinnovation.saw.a.0=Cuts blocks using Redstone Flux.
 info.thermalinnovation.saw.b.0=§ePress (%s) to adjust the cutting area.§r
 info.thermalinnovation.saw.c.0=Single Block
-info.thermalinnovation.saw.c.1=Tunnel: 1x2
+info.thermalinnovation.saw.c.1=Tunnel: 1x3
 info.thermalinnovation.saw.c.2=Area: 3x3
 info.thermalinnovation.saw.c.3=Area: 3x3x3
 info.thermalinnovation.saw.c.4=Area: 5x5
@@ -54,6 +63,13 @@ item.thermalinnovation.injector.standard1.name=Hypoinfuser (Hardened)
 item.thermalinnovation.injector.standard2.name=Hypoinfuser (Reinforced)
 item.thermalinnovation.injector.standard3.name=Hypoinfuser (Signalum)
 item.thermalinnovation.injector.standard4.name=Hypoinfuser (Resonant)
+
+item.thermalinnovation.quiver.creative.name=Decoctive Quiver (Creative)
+item.thermalinnovation.quiver.standard0.name=Decoctive Quiver (Basic)
+item.thermalinnovation.quiver.standard1.name=Decoctive Quiver (Hardened)
+item.thermalinnovation.quiver.standard2.name=Decoctive Quiver (Reinforced)
+item.thermalinnovation.quiver.standard3.name=Decoctive Quiver (Signalum)
+item.thermalinnovation.quiver.standard4.name=Decoctive Quiver (Resonant)
 
 item.thermalinnovation.saw.creative.name=Fluxsaw (Creative)
 item.thermalinnovation.saw.standard0.name=Fluxsaw (Basic)

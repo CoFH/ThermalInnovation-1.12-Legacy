@@ -1,8 +1,8 @@
 package cofh.thermalinnovation.item;
 
+import cofh.core.init.CoreProps;
 import cofh.core.item.ItemMultiRF;
 import cofh.core.util.helpers.EnergyHelper;
-import cofh.core.util.helpers.ItemHelper;
 import cofh.core.util.helpers.MathHelper;
 import gnu.trove.set.hash.THashSet;
 import gnu.trove.set.hash.TLinkedHashSet;
@@ -50,7 +50,7 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 	public ItemStack setDefaultTag(ItemStack stack, int energy) {
 
 		EnergyHelper.setDefaultEnergyTag(stack, energy);
-		stack.getTagCompound().setInteger("Mode", getNumModes(stack) - 1);
+		stack.getTagCompound().setInteger(CoreProps.MODE, getNumModes(stack) - 1);
 		return stack;
 	}
 
@@ -139,7 +139,7 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 
 	protected int useEnergy(ItemStack stack, int count, boolean simulate) {
 
-		if (ItemHelper.getItemDamage(stack) == CREATIVE) {
+		if (isCreative(stack)) {
 			return 0;
 		}
 		int unbreakingLevel = MathHelper.clamp(EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack), 0, 10);
@@ -151,12 +151,12 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 
 	protected boolean isActive(ItemStack stack) {
 
-		return stack.getTagCompound() != null && stack.getTagCompound().hasKey("Active");
+		return stack.getTagCompound() != null && stack.getTagCompound().hasKey(CoreProps.ACTIVE);
 	}
 
 	protected void setActive(ItemStack stack, EntityLivingBase living) {
 
-		stack.getTagCompound().setLong("Active", living.world.getTotalWorldTime() + 20);
+		stack.getTagCompound().setLong(CoreProps.ACTIVE, living.world.getTotalWorldTime() + 20);
 	}
 
 	protected int breakTunnel2(EntityPlayer player, World world, BlockPos pos, RayTraceResult traceResult, float refStrength) {
@@ -173,13 +173,85 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 				adjPos = new BlockPos(pos.down());
 				adjState = world.getBlockState(adjPos);
 				strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-				if (strength > 0F && refStrength / strength <= 10F) {
+				if (strength > 0F && refStrength / strength <= 4F) {
 					if (harvestBlock(world, adjPos, player)) {
 						return 1;
 					}
 				}
 		}
 		return 0;
+	}
+
+	protected int breakTunnel3(EntityPlayer player, World world, BlockPos pos, RayTraceResult traceResult, float refStrength) {
+
+		BlockPos adjPos;
+		IBlockState adjState;
+		float strength;
+		int count = 0;
+
+		int x = pos.getX();
+		int y = pos.getY();
+		int z = pos.getZ();
+
+		switch (traceResult.sideHit) {
+			case DOWN:
+			case UP:
+				int facing = MathHelper.floor(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
+				if (facing % 2 == 0) {
+					adjPos = new BlockPos(x, y, z - 1);
+					adjState = world.getBlockState(adjPos);
+					strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
+					if (strength > 0F && refStrength / strength <= 4F) {
+						if (harvestBlock(world, adjPos, player)) {
+							count++;
+						}
+					}
+					adjPos = new BlockPos(x, y, z + 1);
+					adjState = world.getBlockState(adjPos);
+					strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
+					if (strength > 0F && refStrength / strength <= 4F) {
+						if (harvestBlock(world, adjPos, player)) {
+							count++;
+						}
+					}
+				} else {
+					adjPos = new BlockPos(x - 1, y, z);
+					adjState = world.getBlockState(adjPos);
+					strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
+					if (strength > 0F && refStrength / strength <= 4F) {
+						if (harvestBlock(world, adjPos, player)) {
+							count++;
+						}
+					}
+					adjPos = new BlockPos(x + 1, y, z);
+					adjState = world.getBlockState(adjPos);
+					strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
+					if (strength > 0F && refStrength / strength <= 4F) {
+						if (harvestBlock(world, adjPos, player)) {
+							count++;
+						}
+					}
+				}
+				break;
+			default:
+				adjPos = new BlockPos(x, y - 1, z);
+				adjState = world.getBlockState(adjPos);
+				strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
+				if (strength > 0F && refStrength / strength <= 4F) {
+					if (harvestBlock(world, adjPos, player)) {
+						count++;
+					}
+				}
+				adjPos = new BlockPos(x, y + 1, z);
+				adjState = world.getBlockState(adjPos);
+				strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
+				if (strength > 0F && refStrength / strength <= 4F) {
+					if (harvestBlock(world, adjPos, player)) {
+						count++;
+					}
+				}
+		}
+		return count;
 	}
 
 	protected int breakArea3(EntityPlayer player, World world, BlockPos pos, RayTraceResult traceResult, float refStrength) {
@@ -205,7 +277,7 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 						adjPos = new BlockPos(i, y, k);
 						adjState = world.getBlockState(adjPos);
 						strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-						if (strength > 0F && refStrength / strength <= 10F) {
+						if (strength > 0F && refStrength / strength <= 4F) {
 							if (harvestBlock(world, adjPos, player)) {
 								count++;
 							}
@@ -223,7 +295,7 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 						adjPos = new BlockPos(i, j, z);
 						adjState = world.getBlockState(adjPos);
 						strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-						if (strength > 0F && refStrength / strength <= 10F) {
+						if (strength > 0F && refStrength / strength <= 4F) {
 							if (harvestBlock(world, adjPos, player)) {
 								count++;
 							}
@@ -231,8 +303,7 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 					}
 				}
 				break;
-			case WEST:
-			case EAST:
+			default:
 				for (int j = y - radius; j <= y + radius; j++) {
 					for (int k = z - radius; k <= z + radius; k++) {
 						if (j == y && k == z) {
@@ -241,7 +312,7 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 						adjPos = new BlockPos(x, j, k);
 						adjState = world.getBlockState(adjPos);
 						strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-						if (strength > 0F && refStrength / strength <= 10F) {
+						if (strength > 0F && refStrength / strength <= 4F) {
 							if (harvestBlock(world, adjPos, player)) {
 								count++;
 							}
@@ -282,7 +353,7 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 							adjPos = new BlockPos(i, j, k);
 							adjState = world.getBlockState(adjPos);
 							strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-							if (strength > 0F && refStrength / strength <= 10F) {
+							if (strength > 0F && refStrength / strength <= 4F) {
 								if (harvestBlock(world, adjPos, player)) {
 									count++;
 								}
@@ -304,7 +375,7 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 							adjPos = new BlockPos(i, j, k);
 							adjState = world.getBlockState(adjPos);
 							strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-							if (strength > 0F && refStrength / strength <= 10F) {
+							if (strength > 0F && refStrength / strength <= 4F) {
 								if (harvestBlock(world, adjPos, player)) {
 									count++;
 								}
@@ -326,7 +397,7 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 							adjPos = new BlockPos(i, j, k);
 							adjState = world.getBlockState(adjPos);
 							strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-							if (strength > 0F && refStrength / strength <= 10F) {
+							if (strength > 0F && refStrength / strength <= 4F) {
 								if (harvestBlock(world, adjPos, player)) {
 									count++;
 								}
@@ -359,7 +430,7 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 						adjPos = new BlockPos(i, y, k);
 						adjState = world.getBlockState(adjPos);
 						strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-						if (strength > 0F && refStrength / strength <= 10F) {
+						if (strength > 0F && refStrength / strength <= 4F) {
 							if (harvestBlock(world, adjPos, player)) {
 								count++;
 							}
@@ -379,7 +450,7 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 						adjPos = new BlockPos(i, j, z);
 						adjState = world.getBlockState(adjPos);
 						strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-						if (strength > 0F && refStrength / strength <= 10F) {
+						if (strength > 0F && refStrength / strength <= 4F) {
 							if (harvestBlock(world, adjPos, player)) {
 								count++;
 							}
@@ -387,8 +458,7 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 					}
 				}
 				break;
-			case WEST:
-			case EAST:
+			default:
 				posY = y;
 				y += 1;     // Offset for 5x5
 				for (int j = y - radius; j <= y + radius; j++) {
@@ -399,14 +469,13 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 						adjPos = new BlockPos(x, j, k);
 						adjState = world.getBlockState(adjPos);
 						strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-						if (strength > 0F && refStrength / strength <= 10F) {
+						if (strength > 0F && refStrength / strength <= 4F) {
 							if (harvestBlock(world, adjPos, player)) {
 								count++;
 							}
 						}
 					}
 				}
-				break;
 		}
 		return count;
 	}
@@ -425,6 +494,49 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 					area.add(harvestPos);
 				}
 				break;
+		}
+	}
+
+	protected void getAOEBlocksTunnel3(ItemStack stack, World world, EntityPlayer player, BlockPos pos, RayTraceResult traceResult, ArrayList<BlockPos> area) {
+
+		BlockPos harvestPos;
+
+		int x = pos.getX();
+		int y = pos.getY();
+		int z = pos.getZ();
+
+		switch (traceResult.sideHit) {
+			case DOWN:
+			case UP:
+				int facing = MathHelper.floor(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
+				if (facing % 2 == 0) {
+					harvestPos = new BlockPos(x, y, z - 1);
+					if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
+						area.add(harvestPos);
+					}
+					harvestPos = new BlockPos(x, y, z + 1);
+					if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
+						area.add(harvestPos);
+					}
+				} else {
+					harvestPos = new BlockPos(x - 1, y, z);
+					if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
+						area.add(harvestPos);
+					}
+					harvestPos = new BlockPos(x + 1, y, z);
+					if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
+						area.add(harvestPos);
+					}
+				}
+			default:
+				harvestPos = new BlockPos(x, y - 1, z);
+				if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
+					area.add(harvestPos);
+				}
+				harvestPos = new BlockPos(x, y + 1, z);
+				if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
+					area.add(harvestPos);
+				}
 		}
 	}
 
@@ -466,8 +578,7 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 					}
 				}
 				break;
-			case WEST:
-			case EAST:
+			default:
 				for (int j = y - radius; j <= y + radius; j++) {
 					for (int k = z - radius; k <= z + radius; k++) {
 						if (j == y && k == z) {
@@ -479,7 +590,6 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 						}
 					}
 				}
-				break;
 		}
 	}
 
@@ -593,8 +703,7 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 					}
 				}
 				break;
-			case WEST:
-			case EAST:
+			default:
 				posY = y;
 				y += 1;     // Offset for 5x5
 				for (int j = y - radius; j <= y + radius; j++) {
@@ -608,7 +717,6 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 						}
 					}
 				}
-				break;
 		}
 	}
 
@@ -616,7 +724,7 @@ public abstract class ItemToolMultiRF extends ItemMultiRF {
 	public static final int XFER_BASE = 1000;
 
 	public static final int SINGLE = 0;
-	public static final int TUNNEL2 = 1;
+	public static final int TUNNEL = 1;
 	public static final int AREA3 = 2;
 	public static final int CUBE3 = 3;
 	public static final int AREA5 = 4;

@@ -3,7 +3,7 @@
 	"defaults": {
 		"model": "builtin/generated",
 		"textures": {
-			"layer0": "thermalinnovation:items/injector/injector_0"
+			"layer0": "thermalinnovation:items/quiver/quiver_0"
 		},
 		"transform": {
 			"thirdperson_righthand": {
@@ -46,69 +46,69 @@
 			},
 			"1": {
 				"textures": {
-					"layer1": "thermalinnovation:items/injector/injector_overlay_1"
+					"layer1": "thermalinnovation:items/quiver/quiver_overlay_1"
 				}
 			},
 			"2": {
 				"textures": {
-					"layer1": "thermalinnovation:items/injector/injector_overlay_2"
+					"layer1": "thermalinnovation:items/quiver/quiver_overlay_2"
 				}
 			},
 			"3": {
 				"textures": {
-					"layer1": "thermalinnovation:items/injector/injector_overlay_3"
+					"layer1": "thermalinnovation:items/quiver/quiver_overlay_3"
 				}
 			},
 			"4": {
 				"textures": {
-					"layer1": "thermalinnovation:items/injector/injector_overlay_4"
+					"layer1": "thermalinnovation:items/quiver/quiver_overlay_4"
 				}
 			},
 			"5": {
 				"textures": {
-					"layer1": "thermalinnovation:items/injector/injector_overlay_5"
+					"layer1": "thermalinnovation:items/quiver/quiver_overlay_5"
 				}
 			},
 			"6": {
 				"textures": {
-					"layer1": "thermalinnovation:items/injector/injector_overlay_6"
+					"layer1": "thermalinnovation:items/quiver/quiver_overlay_6"
 				}
 			},
 			"7": {
 				"textures": {
-					"layer1": "thermalinnovation:items/injector/injector_overlay_7"
+					"layer1": "thermalinnovation:items/quiver/quiver_overlay_7"
 				}
 			}
 		},
 		"type": {
 			"standard0": {
 				"textures": {
-					"layer0": "thermalinnovation:items/injector/injector_0"
+					"layer0": "thermalinnovation:items/quiver/quiver_0"
 				}
 			},
 			"standard1": {
 				"textures": {
-					"layer0": "thermalinnovation:items/injector/injector_1"
+					"layer0": "thermalinnovation:items/quiver/quiver_1"
 				}
 			},
 			"standard2": {
 				"textures": {
-					"layer0": "thermalinnovation:items/injector/injector_2"
+					"layer0": "thermalinnovation:items/quiver/quiver_2"
 				}
 			},
 			"standard3": {
 				"textures": {
-					"layer0": "thermalinnovation:items/injector/injector_3"
+					"layer0": "thermalinnovation:items/quiver/quiver_3"
 				}
 			},
 			"standard4": {
 				"textures": {
-					"layer0": "thermalinnovation:items/injector/injector_4"
+					"layer0": "thermalinnovation:items/quiver/quiver_4"
 				}
 			},
 			"creative": {
 				"textures": {
-					"layer0": "thermalinnovation:items/injector/injector_c"
+					"layer0": "thermalinnovation:items/quiver/quiver_c"
 				}
 			}
 		}
