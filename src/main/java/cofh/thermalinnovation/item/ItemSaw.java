@@ -143,7 +143,7 @@ public class ItemSaw extends ItemMultiRFTool implements IInitializer, IMultiMode
 	@Override
 	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
 
-		return enchantment.type.canEnchantItem(stack.getItem()) || enchantment.canApply(new ItemStack(Items.IRON_AXE));
+		return enchantment.type.canEnchantItem(stack.getItem()) || enchantment != Enchantments.MENDING && enchantment.canApply(new ItemStack(Items.IRON_AXE));
 	}
 
 	@Override
