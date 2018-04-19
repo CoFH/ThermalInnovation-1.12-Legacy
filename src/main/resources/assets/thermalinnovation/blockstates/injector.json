@@ -46,37 +46,37 @@
 			},
 			"1": {
 				"textures": {
-					"layer1": "thermalinnovation:items/injector/injector_overlay_1"
+					"layer1": "thermalinnovation:items/injector/injector_gauge_1"
 				}
 			},
 			"2": {
 				"textures": {
-					"layer1": "thermalinnovation:items/injector/injector_overlay_2"
+					"layer1": "thermalinnovation:items/injector/injector_gauge_2"
 				}
 			},
 			"3": {
 				"textures": {
-					"layer1": "thermalinnovation:items/injector/injector_overlay_3"
+					"layer1": "thermalinnovation:items/injector/injector_gauge_3"
 				}
 			},
 			"4": {
 				"textures": {
-					"layer1": "thermalinnovation:items/injector/injector_overlay_4"
+					"layer1": "thermalinnovation:items/injector/injector_gauge_4"
 				}
 			},
 			"5": {
 				"textures": {
-					"layer1": "thermalinnovation:items/injector/injector_overlay_5"
+					"layer1": "thermalinnovation:items/injector/injector_gauge_5"
 				}
 			},
 			"6": {
 				"textures": {
-					"layer1": "thermalinnovation:items/injector/injector_overlay_6"
+					"layer1": "thermalinnovation:items/injector/injector_gauge_6"
 				}
 			},
 			"7": {
 				"textures": {
-					"layer1": "thermalinnovation:items/injector/injector_overlay_7"
+					"layer1": "thermalinnovation:items/injector/injector_gauge_7"
 				}
 			}
 		},

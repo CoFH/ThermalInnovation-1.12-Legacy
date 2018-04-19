@@ -133,7 +133,7 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 	@Override
 	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
 
-		return super.shouldCauseReequipAnimation(oldStack, newStack, slotChanged) && (slotChanged || !ItemHelper.areItemStacksEqualIgnoreTags(oldStack, newStack, ARROWS, CoreProps.FLUID));
+		return super.shouldCauseReequipAnimation(oldStack, newStack, slotChanged) && (slotChanged || !ItemHelper.areItemStacksEqualIgnoreTags(oldStack, newStack, CoreProps.ARROWS, CoreProps.FLUID));
 	}
 
 	@Override
@@ -148,9 +148,18 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 		ItemStack stack = player.getHeldItem(hand);
 
 		if (player.isSneaking()) {
-			addArrows(stack, 1, false);
+			ItemStack arrows = findArrows(player);
+			if (!arrows.isEmpty() && arrows.getCount() < arrows.getMaxStackSize()) {
+				arrows.grow(removeArrows(stack, arrows.getMaxStackSize() - arrows.getCount(), player.capabilities.isCreativeMode));
+			} else {
+				arrows = new ItemStack(Items.ARROW, Math.min(getNumArrows(stack), 64));
+				if (addToPlayerInventory(player, arrows)) {
+					removeArrows(stack, arrows.getCount(), player.capabilities.isCreativeMode);
+				}
+			}
 		} else {
-			addArrows(stack, 64, false);
+			ItemStack arrows = findArrows(player);
+			arrows.shrink(addArrows(stack, arrows.getCount(), false));
 		}
 		return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 	}
@@ -161,7 +170,7 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 		if (stack.getTagCompound() == null) {
 			stack.setTagCompound(new NBTTagCompound());
 		}
-		return stack.getTagCompound().getInteger(ARROWS);
+		return isCreative(stack) ? getMaxArrowCount(stack) : stack.getTagCompound().getInteger(CoreProps.ARROWS);
 	}
 
 	public int getMaxArrowCount(ItemStack stack) {
@@ -175,6 +184,11 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 		return arrows + arrows * enchant / 2;
 	}
 
+	public int getScaledArrowsStored(ItemStack stack, int scale) {
+
+		return MathHelper.round((long) getNumArrows(stack) * scale / getMaxArrowCount(stack));
+	}
+
 	public int addArrows(ItemStack stack, int maxArrows, boolean simulate) {
 
 		if (stack.getTagCompound() == null) {
@@ -185,7 +199,7 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 
 		if (!simulate && !isCreative(stack)) {
 			stored += toAdd;
-			stack.getTagCompound().setInteger(ARROWS, stored);
+			stack.getTagCompound().setInteger(CoreProps.ARROWS, stored);
 		}
 		return toAdd;
 	}
@@ -198,12 +212,12 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 		if (isCreative(stack)) {
 			return maxArrows;
 		}
-		int stored = Math.min(stack.getTagCompound().getInteger(ARROWS), getMaxArrowCount(stack));
+		int stored = Math.min(stack.getTagCompound().getInteger(CoreProps.ARROWS), getMaxArrowCount(stack));
 		int toRemove = Math.min(maxArrows, stored);
 
 		if (!simulate) {
 			stored -= toRemove;
-			stack.getTagCompound().setInteger(ARROWS, stored);
+			stack.getTagCompound().setInteger(CoreProps.ARROWS, stored);
 		}
 		return toRemove;
 	}
@@ -303,11 +317,13 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 	@SideOnly (Side.CLIENT)
 	public void registerModels() {
 
-		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("fill=%s,type=%s", MathHelper.clamp(getFluidAmount(stack) > 0 ? 1 + getScaledFluidStored(stack, 7) : 0, 0, 7), typeMap.get(ItemHelper.getItemDamage(stack)).name)));
+		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("arrows=%s,fill=%s,type=%s", MathHelper.clamp(getNumArrows(stack) > 0 ? 1 + getScaledArrowsStored(stack, 4) : 0, 0, 4), MathHelper.clamp(getFluidAmount(stack) > 0 ? 1 + getScaledFluidStored(stack, 12) : 0, 0, 12), typeMap.get(ItemHelper.getItemDamage(stack)).name)));
 
 		for (Map.Entry<Integer, ItemEntry> entry : itemMap.entrySet()) {
-			for (int fill = 0; fill < 8; fill++) {
-				ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("fill=%s,type=%s", fill, entry.getValue().name)));
+			for (int arrows = 0; arrows < 5; arrows++) {
+				for (int fill = 0; fill < 13; fill++) {
+					ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("arrows=%s,fill=%s,type=%s", arrows, fill, entry.getValue().name)));
+				}
 			}
 		}
 	}
@@ -411,7 +427,7 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 		String comment;
 
 		int capacity = CAPACITY_ARROW_BASE;
-		comment = "Adjust this value to change the quantity of arrows stored by a Basic Decoctive Quiver. This base value will scale with item level.";
+		comment = "Adjust this value to change the quantity of arrows stored by a Basic Alchemical Quiver. This base value will scale with item level.";
 		capacity = ThermalInnovation.CONFIG.getConfiguration().getInt("BaseArrowCapacity", category, capacity, capacity / 5, capacity * 5, comment);
 
 		for (int i = 0; i < CAPACITY_FLUID.length; i++) {
@@ -419,7 +435,7 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 		}
 
 		capacity = CAPACITY_FLUID_BASE;
-		comment = "Adjust this value to change the amount of Fluid (in mB) stored by a Basic Decoctive Quiver. This base value will scale with item level.";
+		comment = "Adjust this value to change the amount of Fluid (in mB) stored by a Basic Alchemical Quiver. This base value will scale with item level.";
 		capacity = ThermalInnovation.CONFIG.getConfiguration().getInt("BaseFluidCapacity", category, capacity, capacity / 5, capacity * 5, comment);
 
 		for (int i = 0; i < CAPACITY_FLUID.length; i++) {
@@ -455,7 +471,6 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 
 	private static TIntObjectHashMap<TypeEntry> typeMap = new TIntObjectHashMap<>();
 
-	public static final String ARROWS = "Arrows";
 	public static final int CAPACITY_ARROW_BASE = 40;
 	public static final int CAPACITY_FLUID_BASE = 2000;
 	public static final int MB_PER_ARROW = 50;

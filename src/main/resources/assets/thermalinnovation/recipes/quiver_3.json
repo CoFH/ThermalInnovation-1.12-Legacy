@@ -1,0 +1,26 @@
+{
+	"type": "thermalinnovation:upgrade_shaped",
+	"result": {
+		"item": "thermalinnovation:quiver",
+		"data": 3
+	},
+	"pattern": [
+		" R ",
+		"IXI",
+		"R R"
+	],
+	"key": {
+		"I": {
+			"type": "forge:ore_dict",
+			"ore": "ingotSignalum"
+		},
+		"R": {
+			"type": "forge:ore_dict",
+			"ore": "nuggetElectrum"
+		},
+		"X": {
+			"item": "thermalinnovation:quiver",
+			"data": 2
+		}
+	}
+}

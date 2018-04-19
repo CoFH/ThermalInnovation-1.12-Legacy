@@ -41,42 +41,94 @@
 		}
 	},
 	"variants": {
-		"fill": {
+		"arrows": {
 			"0": {
 			},
 			"1": {
 				"textures": {
-					"layer1": "thermalinnovation:items/quiver/quiver_overlay_1"
+					"layer2": "thermalinnovation:items/quiver/quiver_arrows_1"
 				}
 			},
 			"2": {
 				"textures": {
-					"layer1": "thermalinnovation:items/quiver/quiver_overlay_2"
+					"layer2": "thermalinnovation:items/quiver/quiver_arrows_2"
 				}
 			},
 			"3": {
 				"textures": {
-					"layer1": "thermalinnovation:items/quiver/quiver_overlay_3"
+					"layer2": "thermalinnovation:items/quiver/quiver_arrows_3"
 				}
 			},
 			"4": {
 				"textures": {
-					"layer1": "thermalinnovation:items/quiver/quiver_overlay_4"
+					"layer2": "thermalinnovation:items/quiver/quiver_arrows_4"
+				}
+			}
+		},
+		"fill": {
+			"0": {
+				"textures": {
+					"layer1": "thermalinnovation:items/quiver/quiver_gauge_1"
+				}
+			},
+			"1": {
+				"textures": {
+					"layer1": "thermalinnovation:items/quiver/quiver_gauge_0"
+				}
+			},
+			"2": {
+				"textures": {
+					"layer1": "thermalinnovation:items/quiver/quiver_gauge_2"
+				}
+			},
+			"3": {
+				"textures": {
+					"layer1": "thermalinnovation:items/quiver/quiver_gauge_3"
+				}
+			},
+			"4": {
+				"textures": {
+					"layer1": "thermalinnovation:items/quiver/quiver_gauge_4"
 				}
 			},
 			"5": {
 				"textures": {
-					"layer1": "thermalinnovation:items/quiver/quiver_overlay_5"
+					"layer1": "thermalinnovation:items/quiver/quiver_gauge_5"
 				}
 			},
 			"6": {
 				"textures": {
-					"layer1": "thermalinnovation:items/quiver/quiver_overlay_6"
+					"layer1": "thermalinnovation:items/quiver/quiver_gauge_6"
 				}
 			},
 			"7": {
 				"textures": {
-					"layer1": "thermalinnovation:items/quiver/quiver_overlay_7"
+					"layer1": "thermalinnovation:items/quiver/quiver_gauge_7"
+				}
+			},
+			"8": {
+				"textures": {
+					"layer1": "thermalinnovation:items/quiver/quiver_gauge_8"
+				}
+			},
+			"9": {
+				"textures": {
+					"layer1": "thermalinnovation:items/quiver/quiver_gauge_9"
+				}
+			},
+			"10": {
+				"textures": {
+					"layer1": "thermalinnovation:items/quiver/quiver_gauge_10"
+				}
+			},
+			"11": {
+				"textures": {
+					"layer1": "thermalinnovation:items/quiver/quiver_gauge_11"
+				}
+			},
+			"12": {
+				"textures": {
+					"layer1": "thermalinnovation:items/quiver/quiver_gauge_12"
 				}
 			}
 		},

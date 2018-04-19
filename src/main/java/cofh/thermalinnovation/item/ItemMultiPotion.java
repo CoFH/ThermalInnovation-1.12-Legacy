@@ -72,7 +72,7 @@ public abstract class ItemMultiPotion extends ItemMulti implements IMultiModeIte
 	@Override
 	public boolean showDurabilityBar(ItemStack stack) {
 
-		return !isCreative(stack) && (stack.getTagCompound() == null || !stack.getTagCompound().getBoolean(CoreProps.CREATIVE_TAB));
+		return !isCreative(stack) && getFluidAmount(stack) > 0;
 	}
 
 	/* HELPERS */

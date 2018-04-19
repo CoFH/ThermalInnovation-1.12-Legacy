@@ -320,7 +320,7 @@ public class ItemInjector extends ItemMultiPotion implements IInitializer, IBaub
 				'B', Items.GLASS_BOTTLE,
 				'I', "ingotSilver",
 				'R', "dustGlowstone",
-				'X', "ingotLead"
+				'X', "ingotCopper"
 		);
 		// @formatter:on
 

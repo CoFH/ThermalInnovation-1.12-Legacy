@@ -1,12 +1,10 @@
 package cofh.thermalinnovation.init;
 
 import cofh.core.gui.CreativeTabCore;
-import cofh.core.init.CoreProps;
 import cofh.thermalfoundation.ThermalFoundation;
 import cofh.thermalfoundation.init.TFProps;
 import cofh.thermalinnovation.ThermalInnovation;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -46,11 +44,7 @@ public class TIProps {
 				@SideOnly (Side.CLIENT)
 				public ItemStack getTabIconItem() {
 
-					ItemStack iconStack = new ItemStack(TIItems.itemDrill, 1, 1);
-					iconStack.setTagCompound(new NBTTagCompound());
-					iconStack.getTagCompound().setBoolean(CoreProps.CREATIVE_TAB, true);
-
-					return iconStack;
+					return new ItemStack(TIItems.itemDrill, 1, 1);
 				}
 			};
 			ThermalInnovation.tabItems = ThermalInnovation.tabCommon;
