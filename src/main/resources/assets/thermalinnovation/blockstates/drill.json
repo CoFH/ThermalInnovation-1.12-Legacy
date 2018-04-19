@@ -52,7 +52,8 @@
 			},
 			"active": {
 				"textures": {
-					"layer1": "thermalinnovation:items/drill/drill_active"
+					"layer1": "thermalinnovation:items/drill/drill_active",
+					"layer2": "thermalinnovation:items/drill/drill_active_2"
 				},
 				"transform": {
 					"thirdperson_righthand": {
