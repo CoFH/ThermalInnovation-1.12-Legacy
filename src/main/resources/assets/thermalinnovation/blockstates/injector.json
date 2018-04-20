@@ -3,7 +3,8 @@
 	"defaults": {
 		"model": "builtin/generated",
 		"textures": {
-			"layer0": "thermalinnovation:items/injector/injector_0"
+			"layer0": "thermalinnovation:items/injector/injector_0",
+			"layer1": "thermalinnovation:items/blank"
 		},
 		"transform": {
 			"thirdperson_righthand": {

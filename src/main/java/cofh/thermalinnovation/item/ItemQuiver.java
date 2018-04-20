@@ -150,11 +150,11 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 		if (player.isSneaking()) {
 			ItemStack arrows = findArrows(player);
 			if (!arrows.isEmpty() && arrows.getCount() < arrows.getMaxStackSize()) {
-				arrows.grow(removeArrows(stack, arrows.getMaxStackSize() - arrows.getCount(), player.capabilities.isCreativeMode));
+				arrows.grow(removeArrows(stack, arrows.getMaxStackSize() - arrows.getCount(), false));
 			} else {
 				arrows = new ItemStack(Items.ARROW, Math.min(getNumArrows(stack), 64));
 				if (addToPlayerInventory(player, arrows)) {
-					removeArrows(stack, arrows.getCount(), player.capabilities.isCreativeMode);
+					removeArrows(stack, arrows.getCount(), false);
 				}
 			}
 		} else {
