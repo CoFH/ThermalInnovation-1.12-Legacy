@@ -116,7 +116,7 @@ public abstract class ItemMultiPotion extends ItemMulti implements IMultiModeIte
 	public int colorMultiplier(ItemStack stack, int tintIndex) {
 
 		FluidStack fluid = getFluid(stack);
-		if (fluid != null && tintIndex == 1) {
+		if (fluid != null && tintIndex == TINT_INDEX_FLUID) {
 			return FluidPotion.getPotionColor(fluid);
 		}
 		return 0xFFFFFF;
@@ -247,5 +247,7 @@ public abstract class ItemMultiPotion extends ItemMulti implements IMultiModeIte
 
 		return new FluidContainerItemWrapper(stack, this);
 	}
+
+	public static final int TINT_INDEX_FLUID = 1;
 
 }

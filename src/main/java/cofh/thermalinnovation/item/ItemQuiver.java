@@ -1,16 +1,13 @@
 package cofh.thermalinnovation.item;
 
-import cofh.api.item.IInventoryContainerItem;
+import cofh.api.item.IColorableItem;
 import cofh.api.item.IToolQuiver;
-import cofh.core.gui.container.InventoryContainerItemWrapper;
 import cofh.core.init.CoreEnchantments;
 import cofh.core.init.CoreProps;
 import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.core.IInitializer;
-import cofh.core.util.helpers.ChatHelper;
-import cofh.core.util.helpers.ItemHelper;
-import cofh.core.util.helpers.MathHelper;
-import cofh.core.util.helpers.StringHelper;
+import cofh.core.util.crafting.FluidIngredientFactory.FluidIngredient;
+import cofh.core.util.helpers.*;
 import cofh.thermalfoundation.init.TFProps;
 import cofh.thermalinnovation.ThermalInnovation;
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -35,20 +32,18 @@ import net.minecraft.util.*;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
-import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
+import static cofh.core.util.helpers.RecipeHelper.*;
 import static cofh.thermalfoundation.util.TFCrafting.addPotionFillRecipe;
 
-public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQuiver {
+public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQuiver, IColorableItem {
 
 	public ItemQuiver() {
 
@@ -274,58 +269,39 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 		return capacity + capacity * enchant / 2;
 	}
 
-	public static boolean onItemPickup(EntityItemPickupEvent event, ItemStack stack) {
+	/* IItemColor */
+	public int colorMultiplier(ItemStack stack, int tintIndex) {
 
-		if (!canPlayerAccess(stack, event.getEntityPlayer()) || ((ItemQuiver) stack.getItem()).getMode(stack) <= 0 || isCreative(stack)) {
-			return false;
+		if (tintIndex == TINT_INDEX_1 && ColorHelper.hasColor1(stack)) {
+			return ColorHelper.getColor1(stack);
+		} else if (tintIndex == TINT_INDEX_2 && ColorHelper.hasColor2(stack)) {
+			return ColorHelper.getColor2(stack);
 		}
-		ItemStack eventItem = event.getItem().getItem();
-
-		if (!(eventItem.getItem() instanceof IInventoryContainerItem) || ((IInventoryContainerItem) eventItem.getItem()).getSizeInventory(stack) <= 0) {
-			int count = eventItem.getCount();
-			InventoryContainerItemWrapper inv = new InventoryContainerItemWrapper(stack);
-			for (int i = 0; i < inv.getSizeInventory(); i++) {
-				ItemStack slot = inv.getStackInSlot(i);
-				if (ItemHandlerHelper.canItemStacksStackRelaxed(eventItem, slot)) {
-					int fill = slot.getMaxStackSize() - slot.getCount();
-					if (fill > eventItem.getCount()) {
-						slot.setCount(slot.getCount() + eventItem.getCount());
-					} else {
-						slot.setCount(slot.getMaxStackSize());
-					}
-					eventItem.splitStack(fill);
-				} else if (slot.isEmpty()) {
-					inv.setInventorySlotContents(i, eventItem.copy());
-					eventItem.setCount(0);
-				}
-				if (eventItem.isEmpty()) {
-					break;
-				}
-			}
-			if (eventItem.getCount() != count) {
-				stack.setAnimationsToGo(5);
-				EntityPlayer player = event.getEntityPlayer();
-				player.world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((MathHelper.RANDOM.nextFloat() - MathHelper.RANDOM.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-				inv.markDirty();
-			}
-		}
-		return eventItem.isEmpty();
+		return super.colorMultiplier(stack, tintIndex);
 	}
 
-	/* IModelRegister */
+	/* IColorableItem */
 	@Override
-	@SideOnly (Side.CLIENT)
-	public void registerModels() {
+	public void applyColor(ItemStack stack, int color, int colorIndex) {
 
-		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("arrows=%s,fill=%s,type=%s", MathHelper.clamp(getNumArrows(stack) > 0 ? 1 + getScaledArrowsStored(stack, 4) : 0, 0, 4), MathHelper.clamp(getFluidAmount(stack) > 0 ? 1 + getScaledFluidStored(stack, 12) : 0, 0, 12), typeMap.get(ItemHelper.getItemDamage(stack)).name)));
-
-		for (Map.Entry<Integer, ItemEntry> entry : itemMap.entrySet()) {
-			for (int arrows = 0; arrows < 5; arrows++) {
-				for (int fill = 0; fill < 13; fill++) {
-					ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("arrows=%s,fill=%s,type=%s", arrows, fill, entry.getValue().name)));
-				}
-			}
+		if (stack.getTagCompound() == null) {
+			stack.setTagCompound(new NBTTagCompound());
 		}
+		if (colorIndex == 0) {
+			stack.getTagCompound().setInteger(CoreProps.COLOR_1, color);
+		} else {
+			stack.getTagCompound().setInteger(CoreProps.COLOR_2, color);
+		}
+	}
+
+	@Override
+	public void removeColor(ItemStack stack) {
+
+		if (stack.getTagCompound() == null) {
+			stack.setTagCompound(new NBTTagCompound());
+		}
+		stack.getTagCompound().removeTag(CoreProps.COLOR_1);
+		stack.getTagCompound().removeTag(CoreProps.COLOR_2);
 	}
 
 	/* IMultiModeItem */
@@ -375,6 +351,26 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 		}
 	}
 
+	/* IModelRegister */
+	@Override
+	@SideOnly (Side.CLIENT)
+	public void registerModels() {
+
+		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("arrows=%s,color1=%s,color2=%s,fill=%s,type=%s", MathHelper.clamp(getNumArrows(stack) > 0 ? 1 + getScaledArrowsStored(stack, 4) : 0, 0, 4), ColorHelper.hasColor1(stack) ? 1 : 0, ColorHelper.hasColor2(stack) ? 1 : 0, MathHelper.clamp(getFluidAmount(stack) > 0 ? 1 + getScaledFluidStored(stack, 12) : 0, 0, 12), typeMap.get(ItemHelper.getItemDamage(stack)).name)));
+
+		for (Map.Entry<Integer, ItemEntry> entry : itemMap.entrySet()) {
+			for (int arrows = 0; arrows < 5; arrows++) {
+				for (int color1 = 0; color1 < 2; color1++) {
+					for (int color2 = 0; color2 < 2; color2++) {
+						for (int fill = 0; fill < 13; fill++) {
+							ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("arrows=%s,color1=%s,color2=%s,fill=%s,type=%s", arrows, color1, color2, fill, entry.getValue().name)));
+						}
+					}
+				}
+			}
+		}
+	}
+
 	/* IInitializer */
 	@Override
 	public boolean initialize() {
@@ -418,6 +414,24 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 		addPotionFillRecipe(quiverSignalum, quiverSignalum, "cofh:potion");
 		addPotionFillRecipe(quiverResonant, quiverResonant, "cofh:potion");
 		addPotionFillRecipe(quiverCreative, quiverCreative, "cofh:potion");
+
+		addShapedColorRecipe(quiverBasic, "Y", "X", 'X', quiverBasic, 'Y', "dye");
+		addShapedColorRecipe(quiverHardened, "Y", "X", 'X', quiverHardened, 'Y', "dye");
+		addShapedColorRecipe(quiverReinforced, "Y", "X", 'X', quiverReinforced, 'Y', "dye");
+		addShapedColorRecipe(quiverSignalum, "Y", "X", 'X', quiverSignalum, 'Y', "dye");
+		addShapedColorRecipe(quiverResonant, "Y", "X", 'X', quiverResonant, 'Y', "dye");
+
+		addShapedColorRecipe(quiverBasic, "Y", "X", 'Y', quiverBasic, 'X', "dye");
+		addShapedColorRecipe(quiverHardened, "Y", "X", 'Y', quiverHardened, 'X', "dye");
+		addShapedColorRecipe(quiverReinforced, "Y", "X", 'Y', quiverReinforced, 'X', "dye");
+		addShapedColorRecipe(quiverSignalum, "Y", "X", 'Y', quiverSignalum, 'X', "dye");
+		addShapedColorRecipe(quiverResonant, "Y", "X", 'Y', quiverResonant, 'X', "dye");
+
+		addShapelessColorRemoveRecipe(quiverBasic, quiverBasic, new FluidIngredient("water"));
+		addShapelessColorRemoveRecipe(quiverHardened, quiverHardened, new FluidIngredient("water"));
+		addShapelessColorRemoveRecipe(quiverReinforced, quiverReinforced, new FluidIngredient("water"));
+		addShapelessColorRemoveRecipe(quiverSignalum, quiverSignalum, new FluidIngredient("water"));
+		addShapelessColorRemoveRecipe(quiverResonant, quiverResonant, new FluidIngredient("water"));
 		return true;
 	}
 
@@ -477,6 +491,9 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 
 	public static final int[] CAPACITY_ARROW = { 1, 3, 6, 10, 15 };
 	public static final int[] CAPACITY_FLUID = { 1, 3, 6, 10, 15 };
+
+	public static final int TINT_INDEX_1 = 2;
+	public static final int TINT_INDEX_2 = 3;
 
 	public static boolean enable = true;
 

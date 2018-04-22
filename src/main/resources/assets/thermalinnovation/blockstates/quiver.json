@@ -5,7 +5,9 @@
 		"textures": {
 			"layer0": "thermalinnovation:items/quiver/quiver_0",
 			"layer1": "thermalinnovation:items/blank",
-			"layer2": "thermalinnovation:items/blank"
+			"layer2": "thermalinnovation:items/blank",
+			"layer3": "thermalinnovation:items/blank",
+			"layer4": "thermalinnovation:items/blank"
 		},
 		"transform": {
 			"thirdperson_righthand": {
@@ -48,22 +50,42 @@
 			},
 			"1": {
 				"textures": {
-					"layer2": "thermalinnovation:items/quiver/quiver_arrows_1"
+					"layer4": "thermalinnovation:items/quiver/quiver_arrows_1"
 				}
 			},
 			"2": {
 				"textures": {
-					"layer2": "thermalinnovation:items/quiver/quiver_arrows_2"
+					"layer4": "thermalinnovation:items/quiver/quiver_arrows_2"
 				}
 			},
 			"3": {
 				"textures": {
-					"layer2": "thermalinnovation:items/quiver/quiver_arrows_3"
+					"layer4": "thermalinnovation:items/quiver/quiver_arrows_3"
 				}
 			},
 			"4": {
 				"textures": {
-					"layer2": "thermalinnovation:items/quiver/quiver_arrows_4"
+					"layer4": "thermalinnovation:items/quiver/quiver_arrows_4"
+				}
+			}
+		},
+		"color1": {
+			"0": {
+
+			},
+			"1": {
+				"textures": {
+					"layer2": "thermalinnovation:items/quiver/quiver_color_1"
+				}
+			}
+		},
+		"color2": {
+			"0": {
+
+			},
+			"1": {
+				"textures": {
+					"layer3": "thermalinnovation:items/quiver/quiver_color_2"
 				}
 			}
 		},

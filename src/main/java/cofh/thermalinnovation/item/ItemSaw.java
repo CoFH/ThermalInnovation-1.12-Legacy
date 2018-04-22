@@ -443,8 +443,8 @@ public class ItemSaw extends ItemMultiRFTool implements IInitializer, IMultiMode
 				"ICI",
 				"YGY",
 				'C', ItemMaterial.partToolCasing,
-				'G', "gearLead",
-				'I', "ingotLead",
+				'G', "gearIron",
+				'I', "ingotSilver",
 				'X', ItemMaterial.partSawBlade,
 				'Y', "ingotTin"
 		);

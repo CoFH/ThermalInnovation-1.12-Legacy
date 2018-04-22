@@ -414,8 +414,8 @@ public class ItemDrill extends ItemMultiRFTool implements IInitializer, IAOEBrea
 				"ICI",
 				"YGY",
 				'C', ItemMaterial.partToolCasing,
-				'G', "gearLead",
-				'I', "ingotLead",
+				'G', "gearIron",
+				'I', "ingotSilver",
 				'X', ItemMaterial.partDrillHead,
 				'Y', "ingotTin"
 		);
