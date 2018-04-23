@@ -149,6 +149,12 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 		return extractEnergy(stack, count * energyPerUse, simulate);
 	}
 
+	@Override
+	protected int getTintIndex(ItemStack stack) {
+
+		return 3;
+	}
+
 	protected boolean isActive(ItemStack stack) {
 
 		return stack.getTagCompound() != null && stack.getTagCompound().hasKey(CoreProps.ACTIVE);

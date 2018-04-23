@@ -1,8 +1,8 @@
 package cofh.thermalinnovation.item;
 
 import cofh.api.fluid.IFluidContainerItem;
+import cofh.api.item.IColorableItem;
 import cofh.api.item.IMultiModeItem;
-import cofh.api.item.INBTCopyIngredient;
 import cofh.core.init.CoreEnchantments;
 import cofh.core.init.CoreProps;
 import cofh.core.item.IEnchantableItem;
@@ -28,7 +28,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public abstract class ItemMultiPotion extends ItemMulti implements IMultiModeItem, IFluidContainerItem, IEnchantableItem, INBTCopyIngredient {
+public abstract class ItemMultiPotion extends ItemMulti implements IColorableItem, IEnchantableItem, IFluidContainerItem, IMultiModeItem {
 
 	public ItemMultiPotion(String modName) {
 
@@ -120,6 +120,13 @@ public abstract class ItemMultiPotion extends ItemMulti implements IMultiModeIte
 			return FluidPotion.getPotionColor(fluid);
 		}
 		return 0xFFFFFF;
+	}
+
+	/* IEnchantableItem */
+	@Override
+	public boolean canEnchant(ItemStack stack, Enchantment enchantment) {
+
+		return !isCreative(stack) && enchantment == CoreEnchantments.holding;
 	}
 
 	/* IFluidContainerItem */
@@ -232,13 +239,6 @@ public abstract class ItemMultiPotion extends ItemMulti implements IMultiModeIte
 		}
 		stack.amount = drained;
 		return stack;
-	}
-
-	/* IEnchantableItem */
-	@Override
-	public boolean canEnchant(ItemStack stack, Enchantment enchantment) {
-
-		return !isCreative(stack) && enchantment == CoreEnchantments.holding;
 	}
 
 	/* CAPABILITIES */

@@ -214,33 +214,6 @@ public class ItemInjector extends ItemMultiPotion implements IInitializer, IBaub
 		return capacity + capacity * enchant / 2;
 	}
 
-	/* IModelRegister */
-	@Override
-	@SideOnly (Side.CLIENT)
-	public void registerModels() {
-
-		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("fill=%s,type=%s", MathHelper.clamp(getFluidAmount(stack) > 0 ? 1 + getScaledFluidStored(stack, 7) : 0, 0, 7), typeMap.get(ItemHelper.getItemDamage(stack)).name)));
-
-		for (Map.Entry<Integer, ItemEntry> entry : itemMap.entrySet()) {
-			for (int fill = 0; fill < 8; fill++) {
-				ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("fill=%s,type=%s", fill, entry.getValue().name)));
-			}
-		}
-	}
-
-	/* IMultiModeItem */
-	@Override
-	public void onModeChange(EntityPlayer player, ItemStack stack) {
-
-		int mode = getMode(stack);
-		if (mode == 1) {
-			player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_PLAYER_SPLASH, SoundCategory.PLAYERS, 0.4F, 1.0F);
-		} else {
-			player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 0.2F, 0.6F);
-		}
-		ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentTranslation("info.thermalinnovation.injector.c." + mode));
-	}
-
 	/* IBauble */
 	@Override
 	public BaubleType getBaubleType(ItemStack stack) {
@@ -252,7 +225,6 @@ public class ItemInjector extends ItemMultiPotion implements IInitializer, IBaub
 	public void onWornTick(ItemStack stack, EntityLivingBase player) {
 
 		World world = player.world;
-
 		if (ServerHelper.isClientWorld(world) || world.getTotalWorldTime() % CoreProps.TIME_CONSTANT != 0) {
 			return;
 		}
@@ -285,6 +257,33 @@ public class ItemInjector extends ItemMultiPotion implements IInitializer, IBaub
 	public boolean willAutoSync(ItemStack stack, EntityLivingBase player) {
 
 		return true;
+	}
+
+	/* IMultiModeItem */
+	@Override
+	public void onModeChange(EntityPlayer player, ItemStack stack) {
+
+		int mode = getMode(stack);
+		if (mode == 1) {
+			player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_PLAYER_SPLASH, SoundCategory.PLAYERS, 0.4F, 1.0F);
+		} else {
+			player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 0.2F, 0.6F);
+		}
+		ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentTranslation("info.thermalinnovation.injector.c." + mode));
+	}
+
+	/* IModelRegister */
+	@Override
+	@SideOnly (Side.CLIENT)
+	public void registerModels() {
+
+		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("fill=%s,type=%s", MathHelper.clamp(getFluidAmount(stack) > 0 ? 1 + getScaledFluidStored(stack, 7) : 0, 0, 7), typeMap.get(ItemHelper.getItemDamage(stack)).name)));
+
+		for (Map.Entry<Integer, ItemEntry> entry : itemMap.entrySet()) {
+			for (int fill = 0; fill < 8; fill++) {
+				ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("fill=%s,type=%s", fill, entry.getValue().name)));
+			}
+		}
 	}
 
 	/* IInitializer */

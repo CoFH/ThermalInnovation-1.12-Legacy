@@ -2,7 +2,6 @@ package cofh.thermalinnovation.item;
 
 import baubles.api.BaubleType;
 import baubles.api.IBauble;
-import cofh.api.item.IMultiModeItem;
 import cofh.core.init.CoreEnchantments;
 import cofh.core.init.CoreProps;
 import cofh.core.item.ItemMultiRF;
@@ -46,7 +45,7 @@ import java.util.Map;
 import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
 
 @Optional.Interface (iface = "baubles.api.IBauble", modid = "baubles")
-public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeItem, IBauble {
+public class ItemMagnet extends ItemMultiRF implements IInitializer, IBauble {
 
 	public ItemMagnet() {
 
@@ -266,30 +265,6 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 		return CoreProps.FILTER_SIZE[getLevel(stack)];
 	}
 
-	/* IModelRegister */
-	@Override
-	@SideOnly (Side.CLIENT)
-	public void registerModels() {
-
-		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("state=%s,type=%s", this.getEnergyStored(stack) > 0 ? getMode(stack) == 1 ? "active" : "charged" : "drained", typeMap.get(ItemHelper.getItemDamage(stack)).name)));
-
-		String[] states = { "charged", "active", "drained" };
-
-		for (Map.Entry<Integer, ItemEntry> entry : itemMap.entrySet()) {
-			for (int i = 0; i < 3; i++) {
-				ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("state=%s,type=%s", states[i], entry.getValue().name)));
-			}
-		}
-	}
-
-	/* IMultiModeItem */
-	@Override
-	public void onModeChange(EntityPlayer player, ItemStack stack) {
-
-		player.world.playSound(null, player.getPosition(), TFSounds.magnetUse, SoundCategory.PLAYERS, 0.4F, 0.8F + 0.4F * getMode(stack));
-		ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentTranslation("info.thermalinnovation.magnet.c." + getMode(stack)));
-	}
-
 	/* IBauble */
 	@Override
 	public BaubleType getBaubleType(ItemStack stack) {
@@ -301,7 +276,6 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 	public void onWornTick(ItemStack stack, EntityLivingBase player) {
 
 		World world = player.world;
-
 		if (world.getTotalWorldTime() % CoreProps.TIME_CONSTANT_QUARTER != 0) {
 			return;
 		}
@@ -309,7 +283,6 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 			return;
 		}
 		EntityPlayer castPlayer = (EntityPlayer) player;
-
 		if (getEnergyStored(stack) < ENERGY_PER_ITEM && !castPlayer.capabilities.isCreativeMode) {
 			return;
 		}
@@ -353,6 +326,30 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IMultiModeI
 	public boolean willAutoSync(ItemStack stack, EntityLivingBase player) {
 
 		return true;
+	}
+
+	/* IMultiModeItem */
+	@Override
+	public void onModeChange(EntityPlayer player, ItemStack stack) {
+
+		player.world.playSound(null, player.getPosition(), TFSounds.magnetUse, SoundCategory.PLAYERS, 0.4F, 0.8F + 0.4F * getMode(stack));
+		ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentTranslation("info.thermalinnovation.magnet.c." + getMode(stack)));
+	}
+
+	/* IModelRegister */
+	@Override
+	@SideOnly (Side.CLIENT)
+	public void registerModels() {
+
+		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("state=%s,type=%s", this.getEnergyStored(stack) > 0 ? getMode(stack) == 1 ? "active" : "charged" : "drained", typeMap.get(ItemHelper.getItemDamage(stack)).name)));
+
+		String[] states = { "charged", "active", "drained" };
+
+		for (Map.Entry<Integer, ItemEntry> entry : itemMap.entrySet()) {
+			for (int i = 0; i < 3; i++) {
+				ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("state=%s,type=%s", states[i], entry.getValue().name)));
+			}
+		}
 	}
 
 	/* IInitializer */

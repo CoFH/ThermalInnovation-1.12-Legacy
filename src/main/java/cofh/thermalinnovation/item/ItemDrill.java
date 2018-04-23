@@ -6,7 +6,9 @@ import cofh.core.item.IAOEBreakItem;
 import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.RayTracer;
 import cofh.core.util.core.IInitializer;
+import cofh.core.util.crafting.FluidIngredientFactory.FluidIngredient;
 import cofh.core.util.helpers.ChatHelper;
+import cofh.core.util.helpers.ColorHelper;
 import cofh.core.util.helpers.ItemHelper;
 import cofh.core.util.helpers.StringHelper;
 import cofh.thermalfoundation.init.TFProps;
@@ -52,7 +54,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
+import static cofh.core.util.helpers.RecipeHelper.*;
 
 public class ItemDrill extends ItemMultiRFTool implements IInitializer, IAOEBreakItem {
 
@@ -312,46 +314,6 @@ public class ItemDrill extends ItemMultiRFTool implements IInitializer, IAOEBrea
 		return typeMap.get(ItemHelper.getItemDamage(stack)).efficiency;
 	}
 
-	/* IModelRegister */
-	@Override
-	@SideOnly (Side.CLIENT)
-	public void registerModels() {
-
-		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("state=%s,type=%s", this.getEnergyStored(stack) > 0 ? isActive(stack) ? "active" : "charged" : "drained", typeMap.get(ItemHelper.getItemDamage(stack)).name)));
-
-		String[] states = { "charged", "active", "drained" };
-
-		for (Map.Entry<Integer, ItemEntry> entry : itemMap.entrySet()) {
-			for (int i = 0; i < 3; i++) {
-				ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("state=%s,type=%s", states[i], entry.getValue().name)));
-			}
-		}
-	}
-
-	/* IMultiModeItem */
-	@Override
-	public int getNumModes(ItemStack stack) {
-
-		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
-			return 0;
-		}
-		return typeMap.get(ItemHelper.getItemDamage(stack)).numModes;
-	}
-
-	@Override
-	public void onModeChange(EntityPlayer player, ItemStack stack) {
-
-		player.world.playSound(null, player.getPosition(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 0.6F, 1.0F - 0.1F * getMode(stack));
-		ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentTranslation("info.thermalinnovation.drill.c." + getMode(stack)));
-	}
-
-	/* IEnchantableItem */
-	@Override
-	public boolean canEnchant(ItemStack stack, Enchantment enchantment) {
-
-		return super.canEnchant(stack, enchantment) || enchantment == CoreEnchantments.insight || enchantment == CoreEnchantments.smelting;
-	}
-
 	/* IAOEBreakItem */
 	@Override
 	public ImmutableList<BlockPos> getAOEBlocks(ItemStack stack, BlockPos pos, EntityPlayer player) {
@@ -381,6 +343,48 @@ public class ItemDrill extends ItemMultiRFTool implements IInitializer, IAOEBrea
 				break;
 		}
 		return ImmutableList.copyOf(area);
+	}
+
+	/* IEnchantableItem */
+	@Override
+	public boolean canEnchant(ItemStack stack, Enchantment enchantment) {
+
+		return super.canEnchant(stack, enchantment) || enchantment == CoreEnchantments.insight || enchantment == CoreEnchantments.smelting;
+	}
+
+	/* IMultiModeItem */
+	@Override
+	public int getNumModes(ItemStack stack) {
+
+		if (!typeMap.containsKey(ItemHelper.getItemDamage(stack))) {
+			return 0;
+		}
+		return typeMap.get(ItemHelper.getItemDamage(stack)).numModes;
+	}
+
+	@Override
+	public void onModeChange(EntityPlayer player, ItemStack stack) {
+
+		player.world.playSound(null, player.getPosition(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 0.6F, 1.0F - 0.1F * getMode(stack));
+		ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentTranslation("info.thermalinnovation.drill.c." + getMode(stack)));
+	}
+
+	/* IModelRegister */
+	@Override
+	@SideOnly (Side.CLIENT)
+	public void registerModels() {
+
+		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("color0=%s,state=%s,type=%s", ColorHelper.hasColor0(stack) ? 1 : 0, this.getEnergyStored(stack) > 0 ? isActive(stack) ? "active" : "charged" : "drained", typeMap.get(ItemHelper.getItemDamage(stack)).name)));
+
+		String[] states = { "charged", "active", "drained" };
+
+		for (Map.Entry<Integer, ItemEntry> entry : itemMap.entrySet()) {
+			for (int color0 = 0; color0 < 2; color0++) {
+				for (int state = 0; state < 3; state++) {
+					ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("color0=%s,state=%s,type=%s", color0, states[state], entry.getValue().name)));
+				}
+			}
+		}
 	}
 
 	/* IInitializer */
@@ -420,6 +424,18 @@ public class ItemDrill extends ItemMultiRFTool implements IInitializer, IAOEBrea
 				'Y', "ingotTin"
 		);
 		// @formatter:on
+
+		addColorRecipe(drillBasic, drillBasic, "dye");
+		addColorRecipe(drillHardened, drillHardened, "dye");
+		addColorRecipe(drillReinforced, drillReinforced, "dye");
+		addColorRecipe(drillSignalum, drillSignalum, "dye");
+		addColorRecipe(drillResonant, drillResonant, "dye");
+
+		addColorRemoveRecipe(drillBasic, drillBasic, new FluidIngredient("water"));
+		addColorRemoveRecipe(drillHardened, drillHardened, new FluidIngredient("water"));
+		addColorRemoveRecipe(drillReinforced, drillReinforced, new FluidIngredient("water"));
+		addColorRemoveRecipe(drillSignalum, drillSignalum, new FluidIngredient("water"));
+		addColorRemoveRecipe(drillResonant, drillResonant, new FluidIngredient("water"));
 		return true;
 	}
 

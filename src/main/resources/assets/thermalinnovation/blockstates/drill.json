@@ -4,7 +4,9 @@
 		"model": "builtin/generated",
 		"textures": {
 			"layer0": "thermalinnovation:items/drill/drill_0",
-			"layer1": "thermalinnovation:items/drill/drill_empty"
+			"layer1": "thermalinnovation:items/drill/drill_empty",
+			"layer2": "thermalinnovation:items/blank",
+			"layer3": "thermalinnovation:items/blank"
 		},
 		"transform": {
 			"thirdperson_righthand": {
@@ -44,6 +46,16 @@
 		}
 	},
 	"variants": {
+		"color0": {
+			"0": {
+
+			},
+			"1": {
+				"textures": {
+					"layer3": "thermalinnovation:items/drill/drill_color_0"
+				}
+			}
+		},
 		"state": {
 			"charged": {
 				"textures": {
