@@ -329,7 +329,7 @@ public class ItemLaser extends ItemMultiRFTool implements IInitializer, IAOEBrea
 
 	/* IInitializer */
 	@Override
-	public boolean initialize() {
+	public boolean preInit() {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("laser"));
 		ThermalInnovation.proxy.addIModelRegister(this);
@@ -348,7 +348,7 @@ public class ItemLaser extends ItemMultiRFTool implements IInitializer, IAOEBrea
 	}
 
 	@Override
-	public boolean register() {
+	public boolean initialize() {
 
 		if (!enable) {
 			return false;

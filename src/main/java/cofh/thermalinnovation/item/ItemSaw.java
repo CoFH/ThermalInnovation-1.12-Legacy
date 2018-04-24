@@ -416,7 +416,7 @@ public class ItemSaw extends ItemMultiRFTool implements IInitializer, IAOEBreakI
 
 	/* IInitializer */
 	@Override
-	public boolean initialize() {
+	public boolean preInit() {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("saw"));
 		ThermalInnovation.proxy.addIModelRegister(this);
@@ -435,7 +435,7 @@ public class ItemSaw extends ItemMultiRFTool implements IInitializer, IAOEBreakI
 	}
 
 	@Override
-	public boolean register() {
+	public boolean initialize() {
 
 		if (!enable) {
 			return false;

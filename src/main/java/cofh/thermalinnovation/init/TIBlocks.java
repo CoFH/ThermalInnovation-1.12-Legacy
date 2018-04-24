@@ -19,7 +19,7 @@ public class TIBlocks {
 	public static void preInit() {
 
 		for (IInitializer init : initList) {
-			init.initialize();
+			init.preInit();
 		}
 		MinecraftForge.EVENT_BUS.register(INSTANCE);
 	}
@@ -29,7 +29,7 @@ public class TIBlocks {
 	public void registerRecipes(RegistryEvent.Register<IRecipe> event) {
 
 		for (IInitializer init : initList) {
-			init.register();
+			init.initialize();
 		}
 	}
 

@@ -170,7 +170,7 @@ public class ItemPump extends ItemMultiRFTool implements IInitializer, IMultiMod
 
 	/* IInitializer */
 	@Override
-	public boolean initialize() {
+	public boolean preInit() {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("pump"));
 		ThermalInnovation.proxy.addIModelRegister(this);
@@ -189,7 +189,7 @@ public class ItemPump extends ItemMultiRFTool implements IInitializer, IMultiMod
 	}
 
 	@Override
-	public boolean register() {
+	public boolean initialize() {
 
 		if (!enable) {
 			return false;

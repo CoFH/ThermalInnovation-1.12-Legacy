@@ -357,7 +357,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IBauble {
 
 	/* IInitializer */
 	@Override
-	public boolean initialize() {
+	public boolean preInit() {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("magnet"));
 		ThermalInnovation.proxy.addIModelRegister(this);
@@ -376,7 +376,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IBauble {
 	}
 
 	@Override
-	public boolean register() {
+	public boolean initialize() {
 
 		if (!enable) {
 			return false;

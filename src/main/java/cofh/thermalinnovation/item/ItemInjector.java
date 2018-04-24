@@ -306,7 +306,7 @@ public class ItemInjector extends ItemMultiPotion implements IInitializer, IBaub
 
 	/* IInitializer */
 	@Override
-	public boolean initialize() {
+	public boolean preInit() {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("injector"));
 		ThermalInnovation.proxy.addIModelRegister(this);
@@ -325,7 +325,7 @@ public class ItemInjector extends ItemMultiPotion implements IInitializer, IBaub
 	}
 
 	@Override
-	public boolean register() {
+	public boolean initialize() {
 
 		if (!enable) {
 			return false;

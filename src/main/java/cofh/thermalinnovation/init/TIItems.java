@@ -38,7 +38,7 @@ public class TIItems {
 		initList.add(itemQuiver);
 
 		for (IInitializer init : initList) {
-			init.initialize();
+			init.preInit();
 		}
 		for (int i = 0; i < 5; i++) {
 			ItemStack iconStack = new ItemStack(itemDrill, 1, i);
@@ -64,7 +64,7 @@ public class TIItems {
 	public void registerRecipes(RegistryEvent.Register<IRecipe> event) {
 
 		for (IInitializer init : initList) {
-			init.register();
+			init.initialize();
 		}
 	}
 

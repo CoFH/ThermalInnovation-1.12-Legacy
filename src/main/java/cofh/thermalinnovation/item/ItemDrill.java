@@ -389,7 +389,7 @@ public class ItemDrill extends ItemMultiRFTool implements IInitializer, IAOEBrea
 
 	/* IInitializer */
 	@Override
-	public boolean initialize() {
+	public boolean preInit() {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("drill"));
 		ThermalInnovation.proxy.addIModelRegister(this);
@@ -408,7 +408,7 @@ public class ItemDrill extends ItemMultiRFTool implements IInitializer, IAOEBrea
 	}
 
 	@Override
-	public boolean register() {
+	public boolean initialize() {
 
 		if (!enable) {
 			return false;

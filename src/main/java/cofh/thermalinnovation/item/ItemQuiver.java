@@ -354,7 +354,7 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 
 	/* IInitializer */
 	@Override
-	public boolean initialize() {
+	public boolean preInit() {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("quiver"));
 		ThermalInnovation.proxy.addIModelRegister(this);
@@ -373,7 +373,7 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 	}
 
 	@Override
-	public boolean register() {
+	public boolean initialize() {
 
 		if (!enable) {
 			return false;
