@@ -25,7 +25,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
-@Mod (modid = ThermalInnovation.MOD_ID, name = ThermalInnovation.MOD_NAME, version = ThermalInnovation.VERSION, dependencies = ThermalInnovation.DEPENDENCIES, updateJSON = ThermalInnovation.UPDATE_URL)
+@Mod (modid = ThermalInnovation.MOD_ID, name = ThermalInnovation.MOD_NAME, version = ThermalInnovation.VERSION, dependencies = ThermalInnovation.DEPENDENCIES, updateJSON = ThermalInnovation.UPDATE_URL, certificateFingerprint = "8a6abf2cb9e141b866580d369ba6548732eff25f")
 public class ThermalInnovation {
 
 	public static final String MOD_ID = "thermalinnovation";
