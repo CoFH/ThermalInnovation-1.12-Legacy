@@ -249,5 +249,7 @@ public abstract class ItemMultiPotion extends ItemMulti implements IColorableIte
 	}
 
 	public static final int TINT_INDEX_FLUID = 1;
+	public static final int TINT_INDEX_0 = 2;
+	public static final int TINT_INDEX_1 = 3;
 
 }

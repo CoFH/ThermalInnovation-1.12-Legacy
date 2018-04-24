@@ -155,11 +155,6 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 		return 3;
 	}
 
-	protected boolean isActive(ItemStack stack) {
-
-		return stack.getTagCompound() != null && stack.getTagCompound().hasKey(CoreProps.ACTIVE);
-	}
-
 	protected void setActive(ItemStack stack, EntityLivingBase living) {
 
 		stack.getTagCompound().setLong(CoreProps.ACTIVE, living.world.getTotalWorldTime() + 20);

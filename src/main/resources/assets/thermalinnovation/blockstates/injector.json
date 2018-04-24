@@ -4,7 +4,8 @@
 		"model": "builtin/generated",
 		"textures": {
 			"layer0": "thermalinnovation:items/injector/injector_0",
-			"layer1": "thermalinnovation:items/blank"
+			"layer1": "thermalinnovation:items/blank",
+			"layer2": "thermalinnovation:items/blank"
 		},
 		"transform": {
 			"thirdperson_righthand": {
@@ -42,6 +43,16 @@
 		}
 	},
 	"variants": {
+		"color0": {
+			"0": {
+
+			},
+			"1": {
+				"textures": {
+					"layer2": "thermalinnovation:items/injector/injector_color_0"
+				}
+			}
+		},
 		"fill": {
 			"0": {
 			},

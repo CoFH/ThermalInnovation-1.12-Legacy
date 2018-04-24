@@ -29,6 +29,7 @@ public class ProxyClient extends Proxy {
 
 		Minecraft.getMinecraft().getItemColors().registerItemColorHandler(TIItems.itemDrill::colorMultiplier, TIItems.itemDrill);
 		Minecraft.getMinecraft().getItemColors().registerItemColorHandler(TIItems.itemSaw::colorMultiplier, TIItems.itemSaw);
+		Minecraft.getMinecraft().getItemColors().registerItemColorHandler(TIItems.itemMagnet::colorMultiplier, TIItems.itemMagnet);
 		Minecraft.getMinecraft().getItemColors().registerItemColorHandler(TIItems.itemInjector::colorMultiplier, TIItems.itemInjector);
 		Minecraft.getMinecraft().getItemColors().registerItemColorHandler(TIItems.itemQuiver::colorMultiplier, TIItems.itemQuiver);
 	}

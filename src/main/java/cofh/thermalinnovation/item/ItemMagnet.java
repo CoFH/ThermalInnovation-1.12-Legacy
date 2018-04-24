@@ -9,6 +9,7 @@ import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.CoreUtils;
 import cofh.core.util.RayTracer;
 import cofh.core.util.core.IInitializer;
+import cofh.core.util.crafting.FluidIngredientFactory.FluidIngredient;
 import cofh.core.util.filter.ItemFilterWrapper;
 import cofh.core.util.helpers.*;
 import cofh.thermalfoundation.init.TFProps;
@@ -42,7 +43,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
-import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
+import static cofh.core.util.helpers.RecipeHelper.*;
 
 @Optional.Interface (iface = "baubles.api.IBauble", modid = "baubles")
 public class ItemMagnet extends ItemMultiRF implements IInitializer, IBauble {
@@ -341,13 +342,15 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IBauble {
 	@SideOnly (Side.CLIENT)
 	public void registerModels() {
 
-		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("state=%s,type=%s", this.getEnergyStored(stack) > 0 ? getMode(stack) == 1 ? "active" : "charged" : "drained", typeMap.get(ItemHelper.getItemDamage(stack)).name)));
+		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("color0=%s,state=%s,type=%s", ColorHelper.hasColor0(stack) ? 1 : 0, this.getEnergyStored(stack) > 0 ? getMode(stack) == 1 ? "active" : "charged" : "drained", typeMap.get(ItemHelper.getItemDamage(stack)).name)));
 
 		String[] states = { "charged", "active", "drained" };
 
 		for (Map.Entry<Integer, ItemEntry> entry : itemMap.entrySet()) {
-			for (int i = 0; i < 3; i++) {
-				ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("state=%s,type=%s", states[i], entry.getValue().name)));
+			for (int color0 = 0; color0 < 2; color0++) {
+				for (int state = 0; state < 3; state++) {
+					ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("color0=%s,state=%s,type=%s", color0, states[state], entry.getValue().name)));
+				}
 			}
 		}
 	}
@@ -387,6 +390,18 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IBauble {
 				'X', "ingotLead"
 		);
 		// @formatter:on
+
+		addColorRecipe(magnetBasic, magnetBasic, "dye");
+		addColorRecipe(magnetHardened, magnetHardened, "dye");
+		addColorRecipe(magnetReinforced, magnetReinforced, "dye");
+		addColorRecipe(magnetSignalum, magnetSignalum, "dye");
+		addColorRecipe(magnetResonant, magnetResonant, "dye");
+
+		addColorRemoveRecipe(magnetBasic, magnetBasic, new FluidIngredient("water"));
+		addColorRemoveRecipe(magnetHardened, magnetHardened, new FluidIngredient("water"));
+		addColorRemoveRecipe(magnetReinforced, magnetReinforced, new FluidIngredient("water"));
+		addColorRemoveRecipe(magnetSignalum, magnetSignalum, new FluidIngredient("water"));
+		addColorRemoveRecipe(magnetResonant, magnetResonant, new FluidIngredient("water"));
 		return true;
 	}
 

@@ -473,9 +473,6 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 	public static final int[] CAPACITY_ARROW = { 1, 3, 6, 10, 15 };
 	public static final int[] CAPACITY_FLUID = { 1, 3, 6, 10, 15 };
 
-	public static final int TINT_INDEX_0 = 2;
-	public static final int TINT_INDEX_1 = 3;
-
 	public static boolean enable = true;
 
 	/* REFERENCES */

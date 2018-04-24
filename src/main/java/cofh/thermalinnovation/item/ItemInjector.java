@@ -7,6 +7,7 @@ import cofh.core.init.CoreProps;
 import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.CoreUtils;
 import cofh.core.util.core.IInitializer;
+import cofh.core.util.crafting.FluidIngredientFactory.FluidIngredient;
 import cofh.core.util.helpers.*;
 import cofh.thermalfoundation.init.TFProps;
 import cofh.thermalinnovation.ThermalInnovation;
@@ -38,7 +39,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
-import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
+import static cofh.core.util.helpers.RecipeHelper.*;
 import static cofh.thermalfoundation.util.TFCrafting.addPotionFillRecipe;
 
 @Optional.Interface (iface = "baubles.api.IBauble", modid = "baubles")
@@ -214,6 +215,21 @@ public class ItemInjector extends ItemMultiPotion implements IInitializer, IBaub
 		return capacity + capacity * enchant / 2;
 	}
 
+	/* IItemColor */
+	public int colorMultiplier(ItemStack stack, int tintIndex) {
+
+		if (tintIndex == TINT_INDEX_0 && ColorHelper.hasColor0(stack)) {
+			return ColorHelper.getColor0(stack);
+		}
+		return super.colorMultiplier(stack, tintIndex);
+	}
+
+	@Override
+	public int getMaxColorIndex(ItemStack stack) {
+
+		return 1;
+	}
+
 	/* IBauble */
 	@Override
 	public BaubleType getBaubleType(ItemStack stack) {
@@ -277,11 +293,13 @@ public class ItemInjector extends ItemMultiPotion implements IInitializer, IBaub
 	@SideOnly (Side.CLIENT)
 	public void registerModels() {
 
-		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("fill=%s,type=%s", MathHelper.clamp(getFluidAmount(stack) > 0 ? 1 + getScaledFluidStored(stack, 7) : 0, 0, 7), typeMap.get(ItemHelper.getItemDamage(stack)).name)));
+		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("color0=%s,fill=%s,type=%s", ColorHelper.hasColor0(stack) ? 1 : 0, MathHelper.clamp(getFluidAmount(stack) > 0 ? 1 + getScaledFluidStored(stack, 7) : 0, 0, 7), typeMap.get(ItemHelper.getItemDamage(stack)).name)));
 
 		for (Map.Entry<Integer, ItemEntry> entry : itemMap.entrySet()) {
-			for (int fill = 0; fill < 8; fill++) {
-				ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("fill=%s,type=%s", fill, entry.getValue().name)));
+			for (int color0 = 0; color0 < 2; color0++) {
+				for (int fill = 0; fill < 8; fill++) {
+					ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("color0=%s,fill=%s,type=%s", color0, fill, entry.getValue().name)));
+				}
 			}
 		}
 	}
@@ -329,6 +347,18 @@ public class ItemInjector extends ItemMultiPotion implements IInitializer, IBaub
 		addPotionFillRecipe(injectorSignalum, injectorSignalum, "cofh:potion");
 		addPotionFillRecipe(injectorResonant, injectorResonant, "cofh:potion");
 		addPotionFillRecipe(injectorCreative, injectorCreative, "cofh:potion");
+
+		addColorRecipe(injectorBasic, injectorBasic, "dye");
+		addColorRecipe(injectorHardened, injectorHardened, "dye");
+		addColorRecipe(injectorReinforced, injectorReinforced, "dye");
+		addColorRecipe(injectorSignalum, injectorSignalum, "dye");
+		addColorRecipe(injectorResonant, injectorResonant, "dye");
+
+		addColorRemoveRecipe(injectorBasic, injectorBasic, new FluidIngredient("water"));
+		addColorRemoveRecipe(injectorHardened, injectorHardened, new FluidIngredient("water"));
+		addColorRemoveRecipe(injectorReinforced, injectorReinforced, new FluidIngredient("water"));
+		addColorRemoveRecipe(injectorSignalum, injectorSignalum, new FluidIngredient("water"));
+		addColorRemoveRecipe(injectorResonant, injectorResonant, new FluidIngredient("water"));
 		return true;
 	}
 
