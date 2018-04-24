@@ -47,6 +47,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.IShearable;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -63,7 +64,6 @@ public class ItemSaw extends ItemMultiRFTool implements IInitializer, IAOEBreakI
 
 		super("thermalinnovation");
 
-		register("saw");
 		setUnlocalizedName("saw");
 		setCreativeTab(ThermalInnovation.tabTools);
 
@@ -418,6 +418,9 @@ public class ItemSaw extends ItemMultiRFTool implements IInitializer, IAOEBreakI
 	@Override
 	public boolean initialize() {
 
+		ForgeRegistries.ITEMS.register(setRegistryName("saw"));
+		ThermalInnovation.proxy.addIModelRegister(this);
+
 		config();
 
 		sawBasic = addEntryItem(0, "standard0", EnumRarity.COMMON);
@@ -427,8 +430,6 @@ public class ItemSaw extends ItemMultiRFTool implements IInitializer, IAOEBreakI
 		sawResonant = addEntryItem(4, "standard4", EnumRarity.RARE);
 
 		sawCreative = addEntryItem(CREATIVE, "creative", HARVEST_LEVEL[4], EFFICIENCY[4], ATTACK_DAMAGE[4], ENCHANTABILITY[4], CAPACITY[4], 0, NUM_MODES[4], EnumRarity.EPIC);
-
-		ThermalInnovation.proxy.addIModelRegister(this);
 
 		return true;
 	}

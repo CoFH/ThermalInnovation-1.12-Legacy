@@ -27,6 +27,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -40,7 +41,6 @@ public class ItemPump extends ItemMultiRFTool implements IInitializer, IMultiMod
 
 		super("thermalinnovation");
 
-		register("pump");
 		setUnlocalizedName("pump");
 		setCreativeTab(ThermalInnovation.tabTools);
 
@@ -172,6 +172,9 @@ public class ItemPump extends ItemMultiRFTool implements IInitializer, IMultiMod
 	@Override
 	public boolean initialize() {
 
+		ForgeRegistries.ITEMS.register(setRegistryName("pump"));
+		ThermalInnovation.proxy.addIModelRegister(this);
+
 		config();
 
 		pumpBasic = addEntryItem(0, "standard0", 0, EnumRarity.COMMON);
@@ -181,8 +184,6 @@ public class ItemPump extends ItemMultiRFTool implements IInitializer, IMultiMod
 		pumpResonant = addEntryItem(4, "standard4", 4, EnumRarity.RARE);
 
 		pumpCreative = addEntryItem(CREATIVE, "creative", CAPACITY[4], 0, 4, EnumRarity.EPIC);
-
-		ThermalInnovation.proxy.addIModelRegister(this);
 
 		return true;
 	}

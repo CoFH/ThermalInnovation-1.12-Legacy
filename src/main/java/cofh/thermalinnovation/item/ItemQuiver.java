@@ -32,6 +32,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -48,7 +49,6 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 
 		super("thermalinnovation");
 
-		register("quiver");
 		setUnlocalizedName("quiver");
 		setCreativeTab(ThermalInnovation.tabTools);
 
@@ -356,6 +356,9 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 	@Override
 	public boolean initialize() {
 
+		ForgeRegistries.ITEMS.register(setRegistryName("quiver"));
+		ThermalInnovation.proxy.addIModelRegister(this);
+
 		config();
 
 		quiverBasic = addEntryItem(0, "standard0", CAPACITY_ARROW[0], CAPACITY_FLUID[0], EnumRarity.COMMON);
@@ -365,8 +368,6 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 		quiverResonant = addEntryItem(4, "standard4", CAPACITY_ARROW[4], CAPACITY_FLUID[4], EnumRarity.RARE);
 
 		quiverCreative = addEntryItem(CREATIVE, "creative", CAPACITY_ARROW[4], CAPACITY_FLUID[4], EnumRarity.EPIC);
-
-		ThermalInnovation.proxy.addIModelRegister(this);
 
 		return true;
 	}

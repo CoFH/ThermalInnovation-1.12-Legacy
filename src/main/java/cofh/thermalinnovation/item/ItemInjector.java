@@ -32,6 +32,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -49,7 +50,6 @@ public class ItemInjector extends ItemMultiPotion implements IInitializer, IBaub
 
 		super("thermalinnovation");
 
-		register("injector");
 		setUnlocalizedName("injector");
 		setCreativeTab(ThermalInnovation.tabTools);
 	}
@@ -308,6 +308,9 @@ public class ItemInjector extends ItemMultiPotion implements IInitializer, IBaub
 	@Override
 	public boolean initialize() {
 
+		ForgeRegistries.ITEMS.register(setRegistryName("injector"));
+		ThermalInnovation.proxy.addIModelRegister(this);
+
 		config();
 
 		injectorBasic = addEntryItem(0, "standard0", CAPACITY[0], EnumRarity.COMMON);
@@ -317,8 +320,6 @@ public class ItemInjector extends ItemMultiPotion implements IInitializer, IBaub
 		injectorResonant = addEntryItem(4, "standard4", CAPACITY[4], EnumRarity.RARE);
 
 		injectorCreative = addEntryItem(CREATIVE, "creative", CAPACITY[4], EnumRarity.EPIC);
-
-		ThermalInnovation.proxy.addIModelRegister(this);
 
 		return true;
 	}

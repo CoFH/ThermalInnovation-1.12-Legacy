@@ -46,6 +46,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -62,7 +63,6 @@ public class ItemDrill extends ItemMultiRFTool implements IInitializer, IAOEBrea
 
 		super("thermalinnovation");
 
-		register("drill");
 		setUnlocalizedName("drill");
 		setCreativeTab(ThermalInnovation.tabTools);
 
@@ -391,6 +391,9 @@ public class ItemDrill extends ItemMultiRFTool implements IInitializer, IAOEBrea
 	@Override
 	public boolean initialize() {
 
+		ForgeRegistries.ITEMS.register(setRegistryName("drill"));
+		ThermalInnovation.proxy.addIModelRegister(this);
+
 		config();
 
 		drillBasic = addEntryItem(0, "standard0", EnumRarity.COMMON);
@@ -400,8 +403,6 @@ public class ItemDrill extends ItemMultiRFTool implements IInitializer, IAOEBrea
 		drillResonant = addEntryItem(4, "standard4", EnumRarity.RARE);
 
 		drillCreative = addEntryItem(CREATIVE, "creative", HARVEST_LEVEL[4], EFFICIENCY[4], ATTACK_DAMAGE[4], ENCHANTABILITY[4], CAPACITY[4], 0, NUM_MODES[4], EnumRarity.EPIC);
-
-		ThermalInnovation.proxy.addIModelRegister(this);
 
 		return true;
 	}

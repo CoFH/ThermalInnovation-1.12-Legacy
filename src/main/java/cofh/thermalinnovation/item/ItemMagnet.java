@@ -36,6 +36,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -52,7 +53,6 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IBauble {
 
 		super("thermalinnovation");
 
-		register("magnet");
 		setUnlocalizedName("magnet");
 		setCreativeTab(ThermalInnovation.tabTools);
 
@@ -359,6 +359,9 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IBauble {
 	@Override
 	public boolean initialize() {
 
+		ForgeRegistries.ITEMS.register(setRegistryName("magnet"));
+		ThermalInnovation.proxy.addIModelRegister(this);
+
 		config();
 
 		magnetBasic = addEntryItem(0, "standard0", 0, EnumRarity.COMMON);
@@ -368,8 +371,6 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IBauble {
 		magnetResonant = addEntryItem(4, "standard4", 4, EnumRarity.RARE);
 
 		magnetCreative = addEntryItem(CREATIVE, "creative", CAPACITY[4], 0, 4, EnumRarity.EPIC);
-
-		ThermalInnovation.proxy.addIModelRegister(this);
 
 		return true;
 	}
