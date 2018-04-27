@@ -3,12 +3,11 @@ package cofh.thermalinnovation.item;
 import cofh.core.init.CoreEnchantments;
 import cofh.core.init.CoreProps;
 import cofh.core.item.IAOEBreakItem;
+import cofh.core.item.IFOVUpdateItem;
 import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.RayTracer;
 import cofh.core.util.core.IInitializer;
-import cofh.core.util.helpers.ChatHelper;
-import cofh.core.util.helpers.ItemHelper;
-import cofh.core.util.helpers.StringHelper;
+import cofh.core.util.helpers.*;
 import cofh.thermalfoundation.init.TFProps;
 import cofh.thermalfoundation.item.ItemMaterial;
 import cofh.thermalinnovation.ThermalInnovation;
@@ -24,7 +23,9 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,8 +35,7 @@ import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.*;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -52,7 +52,7 @@ import java.util.Map;
 
 import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
 
-public class ItemLaser extends ItemMultiRFTool implements IInitializer, IAOEBreakItem {
+public class ItemLaser extends ItemMultiRFTool implements IInitializer, IAOEBreakItem, IFOVUpdateItem {
 
 	public ItemLaser() {
 
@@ -148,9 +148,18 @@ public class ItemLaser extends ItemMultiRFTool implements IInitializer, IAOEBrea
 	}
 
 	@Override
+	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
+
+		System.out.println("using!!!");
+	}
+
+	@Override
 	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
 
-		return enchantment.type.canEnchantItem(stack.getItem()) || enchantment != Enchantments.MENDING && (enchantment.canApply(new ItemStack(Items.IRON_PICKAXE)) || enchantment.canApply(new ItemStack(Items.IRON_SHOVEL)));
+		if (EnumEnchantmentType.BREAKABLE.equals(enchantment.type)) {
+			return enchantment.equals(Enchantments.UNBREAKING);
+		}
+		return enchantment.type.canEnchantItem(this) || enchantment.canApply(new ItemStack(Items.IRON_PICKAXE)) || enchantment.canApply(new ItemStack(Items.IRON_SHOVEL));
 	}
 
 	@Override
@@ -166,12 +175,29 @@ public class ItemLaser extends ItemMultiRFTool implements IInitializer, IAOEBrea
 	}
 
 	@Override
+	public int getMaxItemUseDuration(ItemStack stack) {
+
+		return 72000;
+	}
+
+	@Override
 	public float getDestroySpeed(ItemStack stack, IBlockState state) {
 
 		if (getEnergyStored(stack) < energyPerUse) {
 			return 1.0F;
 		}
 		return (effectiveMaterials.contains(state.getMaterial()) || effectiveBlocks.contains(state)) ? getEfficiency(stack) - MODE_EFF[getMode(stack)] : 1.0F;
+	}
+
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+
+		ItemStack stack = player.getHeldItem(hand);
+		if (!player.capabilities.isCreativeMode && getEnergyStored(stack) < energyPerUse) {
+			return new ActionResult<>(EnumActionResult.FAIL, stack);
+		}
+		player.setActiveHand(hand);
+		return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 	}
 
 	@Override
@@ -256,20 +282,47 @@ public class ItemLaser extends ItemMultiRFTool implements IInitializer, IAOEBrea
 		return typeMap.get(ItemHelper.getItemDamage(stack)).efficiency;
 	}
 
-	/* IModelRegister */
+	/* IAOEBreakItem */
 	@Override
-	@SideOnly (Side.CLIENT)
-	public void registerModels() {
+	public ImmutableList<BlockPos> getAOEBlocks(ItemStack stack, BlockPos pos, EntityPlayer player) {
 
-		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("state=%s,type=%s", this.getEnergyStored(stack) > 0 ? isActive(stack) ? "active" : "charged" : "drained", typeMap.get(ItemHelper.getItemDamage(stack)).name)));
+		ArrayList<BlockPos> area = new ArrayList<>();
+		World world = player.getEntityWorld();
+		int mode = getMode(stack);
 
-		String[] states = { "charged", "active", "drained" };
-
-		for (Map.Entry<Integer, ItemEntry> entry : itemMap.entrySet()) {
-			for (int i = 0; i < 3; i++) {
-				ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("state=%s,type=%s", states[i], entry.getValue().name)));
-			}
+		RayTraceResult traceResult = RayTracer.retrace(player, false);
+		if (traceResult == null || traceResult.sideHit == null || player.isSneaking()) {
+			return ImmutableList.copyOf(area);
 		}
+		switch (mode) {
+			case SINGLE:
+				break;
+			default:
+				getAOEBlocksCross1(stack, world, pos, traceResult, area);
+				break;
+		}
+		return ImmutableList.copyOf(area);
+	}
+
+	@Override
+	public float getReachDistance(ItemStack stack) {
+
+		return 16F;
+	}
+
+	/* IEnchantableItem */
+	@Override
+	public boolean canEnchant(ItemStack stack, Enchantment enchantment) {
+
+		return super.canEnchant(stack, enchantment) || enchantment == CoreEnchantments.insight || enchantment == CoreEnchantments.smelting;
+	}
+
+	/* IFOVUpdateItem */
+	@Override
+	public float getFOVMod(ItemStack stack, EntityPlayer player) {
+
+		float progress = MathHelper.clamp((stack.getMaxItemUseDuration() - player.getItemInUseCount()) / 20.0F, 0, 1.0F);
+		return progress * progress * 0.1F;
 	}
 
 	/* IMultiModeItem */
@@ -289,42 +342,22 @@ public class ItemLaser extends ItemMultiRFTool implements IInitializer, IAOEBrea
 		ChatHelper.sendIndexedChatMessageToPlayer(player, new TextComponentTranslation("info.thermalinnovation.laser.c." + getMode(stack)));
 	}
 
-	/* IEnchantableItem */
+	/* IModelRegister */
 	@Override
-	public boolean canEnchant(ItemStack stack, Enchantment enchantment) {
+	@SideOnly (Side.CLIENT)
+	public void registerModels() {
 
-		return super.canEnchant(stack, enchantment) || enchantment == CoreEnchantments.insight || enchantment == CoreEnchantments.smelting;
-	}
+		ModelLoader.setCustomMeshDefinition(this, stack -> new ModelResourceLocation(getRegistryName(), String.format("color0=%s,state=%s,type=%s", ColorHelper.hasColor0(stack) ? 1 : 0, this.getEnergyStored(stack) > 0 ? isActive(stack) ? "active" : "charged" : "drained", typeMap.get(ItemHelper.getItemDamage(stack)).name)));
 
-	/* IAOEBreakItem */
-	@Override
-	public ImmutableList<BlockPos> getAOEBlocks(ItemStack stack, BlockPos pos, EntityPlayer player) {
+		String[] states = { "charged", "active", "drained" };
 
-		ArrayList<BlockPos> area = new ArrayList<>();
-		World world = player.getEntityWorld();
-		int mode = getMode(stack);
-
-		RayTraceResult traceResult = RayTracer.retrace(player, false);
-		if (traceResult == null || traceResult.sideHit == null || !canHarvestBlock(world.getBlockState(pos), stack) || player.isSneaking()) {
-			return ImmutableList.copyOf(area);
+		for (Map.Entry<Integer, ItemEntry> entry : itemMap.entrySet()) {
+			for (int color0 = 0; color0 < 2; color0++) {
+				for (int state = 0; state < 3; state++) {
+					ModelBakery.registerItemVariants(this, new ModelResourceLocation(getRegistryName(), String.format("color0=%s,state=%s,type=%s", color0, states[state], entry.getValue().name)));
+				}
+			}
 		}
-		switch (mode) {
-			case SINGLE:
-				break;
-			case TUNNEL:
-				getAOEBlocksTunnel3(stack, world, player, pos, traceResult, area);
-				break;
-			case AREA3:
-				getAOEBlocksArea3(stack, world, pos, traceResult, area);
-				break;
-			case CUBE3:
-				getAOEBlocksCube3(stack, world, pos, traceResult, area);
-				break;
-			case AREA5:
-				getAOEBlocksArea5(stack, world, pos, traceResult, area);
-				break;
-		}
-		return ImmutableList.copyOf(area);
 	}
 
 	/* IInitializer */
@@ -434,6 +467,9 @@ public class ItemLaser extends ItemMultiRFTool implements IInitializer, IAOEBrea
 	}
 
 	private static TIntObjectHashMap<TypeEntry> typeMap = new TIntObjectHashMap<>();
+
+	public static final int SINGLE = 0;
+	public static final int CROSS_1 = 2;
 
 	public static final int[] HARVEST_LEVEL = { 2, 2, 3, 3, 4 };
 	public static final float[] EFFICIENCY = { 6.0F, 7.5F, 9.0F, 10.5F, 12.0F };

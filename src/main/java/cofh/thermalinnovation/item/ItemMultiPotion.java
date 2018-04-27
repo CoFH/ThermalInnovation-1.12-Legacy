@@ -14,6 +14,7 @@ import cofh.core.util.helpers.StringHelper;
 import cofh.thermalfoundation.fluid.FluidPotion;
 import cofh.thermalfoundation.init.TFFluids;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
@@ -40,13 +41,25 @@ public abstract class ItemMultiPotion extends ItemMulti implements IColorableIte
 	}
 
 	@Override
-	public boolean isFull3D() {
+	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+
+		return !EnumEnchantmentType.BREAKABLE.equals(enchantment.type) && super.canApplyAtEnchantingTable(stack, enchantment);
+	}
+
+	@Override
+	public boolean isDamageable() {
 
 		return true;
 	}
 
 	@Override
 	public boolean isEnchantable(ItemStack stack) {
+
+		return true;
+	}
+
+	@Override
+	public boolean isFull3D() {
 
 		return true;
 	}

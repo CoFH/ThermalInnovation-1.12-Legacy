@@ -721,13 +721,74 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 		}
 	}
 
+	protected void getAOEBlocksCross1(ItemStack stack, World world, BlockPos pos, RayTraceResult traceResult, ArrayList<BlockPos> area) {
+
+		BlockPos harvestPos;
+
+		int x = pos.getX();
+		int y = pos.getY();
+		int z = pos.getZ();
+
+		switch (traceResult.sideHit) {
+			case DOWN:
+			case UP:
+				harvestPos = new BlockPos(x - 1, y, z);
+				if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
+					area.add(harvestPos);
+				}
+				harvestPos = new BlockPos(x + 1, y, z);
+				if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
+					area.add(harvestPos);
+				}
+				harvestPos = new BlockPos(x, y, z - 1);
+				if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
+					area.add(harvestPos);
+				}
+				harvestPos = new BlockPos(x, y, z + 1);
+				if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
+					area.add(harvestPos);
+				}
+				break;
+			case NORTH:
+			case SOUTH:
+				harvestPos = new BlockPos(x - 1, y, z);
+				if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
+					area.add(harvestPos);
+				}
+				harvestPos = new BlockPos(x + 1, y, z);
+				if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
+					area.add(harvestPos);
+				}
+				harvestPos = new BlockPos(x, y - 1, z);
+				if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
+					area.add(harvestPos);
+				}
+				harvestPos = new BlockPos(x, y + 1, z);
+				if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
+					area.add(harvestPos);
+				}
+				break;
+			default:
+				harvestPos = new BlockPos(x, y - 1, z);
+				if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
+					area.add(harvestPos);
+				}
+				harvestPos = new BlockPos(x, y + 1, z);
+				if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
+					area.add(harvestPos);
+				}
+				harvestPos = new BlockPos(x, y, z - 1);
+				if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
+					area.add(harvestPos);
+				}
+				harvestPos = new BlockPos(x, y, z + 1);
+				if (canHarvestBlock(world.getBlockState(harvestPos), stack)) {
+					area.add(harvestPos);
+				}
+		}
+	}
+
 	public static final int CAPACITY_BASE = 40000;
 	public static final int XFER_BASE = 1000;
-
-	public static final int SINGLE = 0;
-	public static final int TUNNEL = 1;
-	public static final int AREA3 = 2;
-	public static final int CUBE3 = 3;
-	public static final int AREA5 = 4;
 
 }

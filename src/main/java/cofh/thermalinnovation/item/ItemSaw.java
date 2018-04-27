@@ -23,6 +23,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -143,7 +144,10 @@ public class ItemSaw extends ItemMultiRFTool implements IInitializer, IAOEBreakI
 	@Override
 	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
 
-		return enchantment.type.canEnchantItem(stack.getItem()) || enchantment != Enchantments.MENDING && enchantment.canApply(new ItemStack(Items.IRON_AXE));
+		if (EnumEnchantmentType.BREAKABLE.equals(enchantment.type)) {
+			return enchantment.equals(Enchantments.UNBREAKING);
+		}
+		return enchantment.type.canEnchantItem(this) || enchantment.canApply(new ItemStack(Items.IRON_AXE));
 	}
 
 	@Override
@@ -211,16 +215,16 @@ public class ItemSaw extends ItemMultiRFTool implements IInitializer, IAOEBreakI
 			switch (mode) {
 				case SINGLE:
 					break;
-				case TUNNEL:
+				case TUNNEL_3:
 					count += breakTunnel3(player, world, pos, traceResult, refStrength);
 					break;
-				case AREA3:
+				case AREA_3:
 					count += breakArea3(player, world, pos, traceResult, refStrength);
 					break;
-				case CUBE3:
+				case CUBE_3:
 					count += breakCube3(player, world, pos, traceResult, refStrength);
 					break;
-				case AREA5:
+				case AREA_5:
 					count += breakArea5(player, world, pos, traceResult, refStrength);
 					break;
 			}
@@ -356,16 +360,16 @@ public class ItemSaw extends ItemMultiRFTool implements IInitializer, IAOEBreakI
 		switch (mode) {
 			case SINGLE:
 				break;
-			case TUNNEL:
+			case TUNNEL_3:
 				getAOEBlocksTunnel3(stack, world, player, pos, traceResult, area);
 				break;
-			case AREA3:
+			case AREA_3:
 				getAOEBlocksArea3(stack, world, pos, traceResult, area);
 				break;
-			case CUBE3:
+			case CUBE_3:
 				getAOEBlocksCube3(stack, world, pos, traceResult, area);
 				break;
-			case AREA5:
+			case AREA_5:
 				getAOEBlocksArea5(stack, world, pos, traceResult, area);
 				break;
 		}
@@ -533,6 +537,12 @@ public class ItemSaw extends ItemMultiRFTool implements IInitializer, IAOEBreakI
 	}
 
 	private static TIntObjectHashMap<TypeEntry> typeMap = new TIntObjectHashMap<>();
+
+	public static final int SINGLE = 0;
+	public static final int TUNNEL_3 = 1;
+	public static final int AREA_3 = 2;
+	public static final int CUBE_3 = 3;
+	public static final int AREA_5 = 4;
 
 	public static final int[] HARVEST_LEVEL = { 2, 2, 3, 3, 4 };
 	public static final float[] EFFICIENCY = { 6.0F, 7.5F, 9.0F, 10.5F, 12.0F };

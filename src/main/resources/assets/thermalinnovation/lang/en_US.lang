@@ -49,6 +49,13 @@ item.thermalinnovation.drill.standard2.name=Fluxbore (Reinforced)
 item.thermalinnovation.drill.standard3.name=Fluxbore (Signalum)
 item.thermalinnovation.drill.standard4.name=Fluxbore (Resonant)
 
+item.thermalinnovation.laser.creative.name=Excavation Beam (Creative)
+item.thermalinnovation.laser.standard0.name=Excavation Beam (Basic)
+item.thermalinnovation.laser.standard1.name=Excavation Beam (Hardened)
+item.thermalinnovation.laser.standard2.name=Excavation Beam (Reinforced)
+item.thermalinnovation.laser.standard3.name=Excavation Beam (Signalum)
+item.thermalinnovation.laser.standard4.name=Excavation Beam (Resonant)
+
 item.thermalinnovation.magnet.creative.name=Fluxomagnet (Creative)
 item.thermalinnovation.magnet.name=Fluxomagnet
 item.thermalinnovation.magnet.standard0.name=Fluxomagnet (Basic)
