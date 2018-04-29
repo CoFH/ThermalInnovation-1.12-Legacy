@@ -167,7 +167,7 @@ public abstract class ItemMultiPotion extends ItemMulti implements IColorableIte
 		if (container.getTagCompound() == null) {
 			container.setTagCompound(new NBTTagCompound());
 		}
-		if (resource == null || resource.getFluid() != TFFluids.fluidPotion) {
+		if (resource == null || !TFFluids.isPotion(resource)) {
 			return 0;
 		}
 		int capacity = getCapacity(container);
@@ -209,7 +209,7 @@ public abstract class ItemMultiPotion extends ItemMulti implements IColorableIte
 		NBTTagCompound fluidTag = container.getTagCompound().getCompoundTag(CoreProps.FLUID);
 		FluidStack stack = FluidStack.loadFluidStackFromNBT(fluidTag);
 
-		if (!stack.isFluidEqual(resource)) {
+		if (stack == null || !stack.isFluidEqual(resource)) {
 			return 0;
 		}
 		int filled = capacity - stack.amount;
