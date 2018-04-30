@@ -167,7 +167,7 @@ public abstract class ItemMultiPotion extends ItemMulti implements IColorableIte
 		if (container.getTagCompound() == null) {
 			container.setTagCompound(new NBTTagCompound());
 		}
-		if (resource == null || !TFFluids.isPotion(resource)) {
+		if (resource == null || resource.amount <= 0 || !TFFluids.isPotion(resource)) {
 			return 0;
 		}
 		int capacity = getCapacity(container);
