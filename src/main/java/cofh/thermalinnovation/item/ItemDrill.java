@@ -6,7 +6,6 @@ import cofh.core.item.IAOEBreakItem;
 import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.RayTracer;
 import cofh.core.util.core.IInitializer;
-import cofh.core.util.crafting.FluidIngredientFactory.FluidIngredient;
 import cofh.core.util.helpers.ChatHelper;
 import cofh.core.util.helpers.ColorHelper;
 import cofh.core.util.helpers.ItemHelper;
@@ -113,7 +112,7 @@ public class ItemDrill extends ItemMultiRFTool implements IInitializer, IAOEBrea
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
 
-		if (isInCreativeTab(tab)) {
+		if (enable && isInCreativeTab(tab)) {
 			for (int metadata : itemList) {
 				if (metadata != CREATIVE) {
 					if (TFProps.showEmptyItems) {
@@ -428,6 +427,42 @@ public class ItemDrill extends ItemMultiRFTool implements IInitializer, IAOEBrea
 				'X', ItemMaterial.partDrillHead,
 				'Y', "ingotTin"
 		);
+		addShapedUpgradeRecipe(drillHardened,
+				" R ",
+				"IXI",
+				"RGR",
+				'G', "gearInvar",
+				'I', "ingotInvar",
+				'R', "ingotCopper",
+				'X', drillBasic
+		);
+		addShapedUpgradeRecipe(drillReinforced,
+				" R ",
+				"IXI",
+				"RGR",
+				'G', "gearElectrum",
+				'I', "ingotElectrum",
+				'R', "gemDiamond",
+				'X', drillHardened
+		);
+		addShapedUpgradeRecipe(drillSignalum,
+				" R ",
+				"IXI",
+				"RGR",
+				'G', "gearSignalum",
+				'I', "ingotSignalum",
+				'R', "dustPetrotheum",
+				'X', drillReinforced
+		);
+		addShapedUpgradeRecipe(drillResonant,
+				" R ",
+				"IXI",
+				"RGR",
+				'G', "gearEnderium",
+				'I', "ingotEnderium",
+				'R', "ingotLumium",
+				'X', drillSignalum
+		);
 		// @formatter:on
 
 		addColorRecipe(drillBasic, drillBasic, "dye");
@@ -436,11 +471,11 @@ public class ItemDrill extends ItemMultiRFTool implements IInitializer, IAOEBrea
 		addColorRecipe(drillSignalum, drillSignalum, "dye");
 		addColorRecipe(drillResonant, drillResonant, "dye");
 
-		addColorRemoveRecipe(drillBasic, drillBasic, new FluidIngredient("water"));
-		addColorRemoveRecipe(drillHardened, drillHardened, new FluidIngredient("water"));
-		addColorRemoveRecipe(drillReinforced, drillReinforced, new FluidIngredient("water"));
-		addColorRemoveRecipe(drillSignalum, drillSignalum, new FluidIngredient("water"));
-		addColorRemoveRecipe(drillResonant, drillResonant, new FluidIngredient("water"));
+		addColorRemoveRecipe(drillBasic, drillBasic);
+		addColorRemoveRecipe(drillHardened, drillHardened);
+		addColorRemoveRecipe(drillReinforced, drillReinforced);
+		addColorRemoveRecipe(drillSignalum, drillSignalum);
+		addColorRemoveRecipe(drillResonant, drillResonant);
 		return true;
 	}
 

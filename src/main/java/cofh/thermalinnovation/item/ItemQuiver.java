@@ -5,7 +5,6 @@ import cofh.core.init.CoreEnchantments;
 import cofh.core.init.CoreProps;
 import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.core.IInitializer;
-import cofh.core.util.crafting.FluidIngredientFactory.FluidIngredient;
 import cofh.core.util.helpers.*;
 import cofh.thermalfoundation.init.TFProps;
 import cofh.thermalinnovation.ThermalInnovation;
@@ -111,7 +110,7 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
 
-		if (isInCreativeTab(tab)) {
+		if (enable && isInCreativeTab(tab)) {
 			for (int metadata : itemList) {
 				if (metadata != CREATIVE) {
 					items.add(new ItemStack(this, 1, metadata));
@@ -388,6 +387,38 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 				'S', Items.STRING,
 				'X', "ingotCopper"
 		);
+		addShapedUpgradeRecipe(quiverHardened,
+				" R ",
+				"IXI",
+				"R R",
+				'I', "ingotInvar",
+				'R', "nuggetCopper",
+				'X', quiverBasic
+		);
+		addShapedUpgradeRecipe(quiverReinforced,
+				" R ",
+				"IXI",
+				"R R",
+				'I', "ingotElectrum",
+				'R', "nuggetInvar",
+				'X', quiverHardened
+		);
+		addShapedUpgradeRecipe(quiverSignalum,
+				" R ",
+				"IXI",
+				"R R",
+				'I', "ingotSignalum",
+				'R', "nuggetElectrum",
+				'X', quiverReinforced
+		);
+		addShapedUpgradeRecipe(quiverResonant,
+				" R ",
+				"IXI",
+				"R R",
+				'I', "ingotEnderium",
+				'R', "nuggetSignalum",
+				'X', quiverSignalum
+		);
 		// @formatter:on
 
 		addPotionFillRecipe(quiverBasic, quiverBasic, "cofh:potion");
@@ -409,11 +440,11 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 		addColorRecipe(quiverSignalum, quiverSignalum, "dye", "dye");
 		addColorRecipe(quiverResonant, quiverResonant, "dye", "dye");
 
-		addColorRemoveRecipe(quiverBasic, quiverBasic, new FluidIngredient("water"));
-		addColorRemoveRecipe(quiverHardened, quiverHardened, new FluidIngredient("water"));
-		addColorRemoveRecipe(quiverReinforced, quiverReinforced, new FluidIngredient("water"));
-		addColorRemoveRecipe(quiverSignalum, quiverSignalum, new FluidIngredient("water"));
-		addColorRemoveRecipe(quiverResonant, quiverResonant, new FluidIngredient("water"));
+		addColorRemoveRecipe(quiverBasic, quiverBasic);
+		addColorRemoveRecipe(quiverHardened, quiverHardened);
+		addColorRemoveRecipe(quiverReinforced, quiverReinforced);
+		addColorRemoveRecipe(quiverSignalum, quiverSignalum);
+		addColorRemoveRecipe(quiverResonant, quiverResonant);
 		return true;
 	}
 
@@ -421,6 +452,8 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 
 		String category = "Item.Quiver";
 		String comment;
+
+		enable = ThermalInnovation.CONFIG.get(category, "Enable", true);
 
 		int capacity = CAPACITY_ARROW_BASE;
 		comment = "Adjust this value to change the quantity of arrows stored by a Basic Alchemical Quiver. This base value will scale with item level.";

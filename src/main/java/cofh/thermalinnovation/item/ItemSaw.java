@@ -6,7 +6,6 @@ import cofh.core.item.IAOEBreakItem;
 import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.RayTracer;
 import cofh.core.util.core.IInitializer;
-import cofh.core.util.crafting.FluidIngredientFactory.FluidIngredient;
 import cofh.core.util.helpers.*;
 import cofh.thermalfoundation.init.TFProps;
 import cofh.thermalfoundation.item.ItemMaterial;
@@ -110,7 +109,7 @@ public class ItemSaw extends ItemMultiRFTool implements IInitializer, IAOEBreakI
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
 
-		if (isInCreativeTab(tab)) {
+		if (enable && isInCreativeTab(tab)) {
 			for (int metadata : itemList) {
 				if (metadata != CREATIVE) {
 					if (TFProps.showEmptyItems) {
@@ -455,6 +454,42 @@ public class ItemSaw extends ItemMultiRFTool implements IInitializer, IAOEBreakI
 				'X', ItemMaterial.partSawBlade,
 				'Y', "ingotTin"
 		);
+		addShapedUpgradeRecipe(sawHardened,
+				" R ",
+				"IXI",
+				"RGR",
+				'G', "gearInvar",
+				'I', "ingotInvar",
+				'R', "ingotCopper",
+				'X', sawBasic
+		);
+		addShapedUpgradeRecipe(sawReinforced,
+				" R ",
+				"IXI",
+				"RGR",
+				'G', "gearElectrum",
+				'I', "ingotElectrum",
+				'R', "gemDiamond",
+				'X', sawHardened
+		);
+		addShapedUpgradeRecipe(sawSignalum,
+				" R ",
+				"IXI",
+				"RGR",
+				'G', "gearSignalum",
+				'I', "ingotSignalum",
+				'R', "dustAerotheum",
+				'X', sawReinforced
+		);
+		addShapedUpgradeRecipe(sawResonant,
+				" R ",
+				"IXI",
+				"RGR",
+				'G', "gearEnderium",
+				'I', "ingotEnderium",
+				'R', "ingotLumium",
+				'X', sawSignalum
+		);
 		// @formatter:on
 
 		addColorRecipe(sawBasic, sawBasic, "dye");
@@ -463,11 +498,11 @@ public class ItemSaw extends ItemMultiRFTool implements IInitializer, IAOEBreakI
 		addColorRecipe(sawSignalum, sawSignalum, "dye");
 		addColorRecipe(sawResonant, sawResonant, "dye");
 
-		addColorRemoveRecipe(sawBasic, sawBasic, new FluidIngredient("water"));
-		addColorRemoveRecipe(sawHardened, sawHardened, new FluidIngredient("water"));
-		addColorRemoveRecipe(sawReinforced, sawReinforced, new FluidIngredient("water"));
-		addColorRemoveRecipe(sawSignalum, sawSignalum, new FluidIngredient("water"));
-		addColorRemoveRecipe(sawResonant, sawResonant, new FluidIngredient("water"));
+		addColorRemoveRecipe(sawBasic, sawBasic);
+		addColorRemoveRecipe(sawHardened, sawHardened);
+		addColorRemoveRecipe(sawReinforced, sawReinforced);
+		addColorRemoveRecipe(sawSignalum, sawSignalum);
+		addColorRemoveRecipe(sawResonant, sawResonant);
 		return true;
 	}
 

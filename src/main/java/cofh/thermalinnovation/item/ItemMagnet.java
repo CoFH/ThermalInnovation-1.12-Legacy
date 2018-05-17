@@ -9,7 +9,6 @@ import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.CoreUtils;
 import cofh.core.util.RayTracer;
 import cofh.core.util.core.IInitializer;
-import cofh.core.util.crafting.FluidIngredientFactory.FluidIngredient;
 import cofh.core.util.filter.ItemFilterWrapper;
 import cofh.core.util.helpers.*;
 import cofh.thermalfoundation.init.TFProps;
@@ -88,7 +87,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IBauble {
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
 
-		if (isInCreativeTab(tab)) {
+		if (enable && isInCreativeTab(tab)) {
 			for (int metadata : itemList) {
 				if (metadata != CREATIVE) {
 					if (TFProps.showEmptyItems) {
@@ -390,6 +389,38 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IBauble {
 				'R', "dustRedstone",
 				'X', "ingotLead"
 		);
+		addShapedUpgradeRecipe(magnetHardened,
+				" R ",
+				"IXI",
+				"R R",
+				'I', "ingotInvar",
+				'R', "nuggetCopper",
+				'X', magnetBasic
+		);
+		addShapedUpgradeRecipe(magnetReinforced,
+				" R ",
+				"IXI",
+				"R R",
+				'I', "ingotElectrum",
+				'R', "nuggetInvar",
+				'X', magnetHardened
+		);
+		addShapedUpgradeRecipe(magnetSignalum,
+				" R ",
+				"IXI",
+				"R R",
+				'I', "ingotSignalum",
+				'R', "nuggetElectrum",
+				'X', magnetReinforced
+		);
+		addShapedUpgradeRecipe(magnetResonant,
+				" R ",
+				"IXI",
+				"R R",
+				'I', "ingotEnderium",
+				'R', "nuggetSignalum",
+				'X', magnetSignalum
+		);
 		// @formatter:on
 
 		addColorRecipe(magnetBasic, magnetBasic, "dye");
@@ -398,11 +429,11 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IBauble {
 		addColorRecipe(magnetSignalum, magnetSignalum, "dye");
 		addColorRecipe(magnetResonant, magnetResonant, "dye");
 
-		addColorRemoveRecipe(magnetBasic, magnetBasic, new FluidIngredient("water"));
-		addColorRemoveRecipe(magnetHardened, magnetHardened, new FluidIngredient("water"));
-		addColorRemoveRecipe(magnetReinforced, magnetReinforced, new FluidIngredient("water"));
-		addColorRemoveRecipe(magnetSignalum, magnetSignalum, new FluidIngredient("water"));
-		addColorRemoveRecipe(magnetResonant, magnetResonant, new FluidIngredient("water"));
+		addColorRemoveRecipe(magnetBasic, magnetBasic);
+		addColorRemoveRecipe(magnetHardened, magnetHardened);
+		addColorRemoveRecipe(magnetReinforced, magnetReinforced);
+		addColorRemoveRecipe(magnetSignalum, magnetSignalum);
+		addColorRemoveRecipe(magnetResonant, magnetResonant);
 		return true;
 	}
 

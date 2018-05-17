@@ -41,20 +41,28 @@ public class TIItems {
 			init.preInit();
 		}
 		for (int i = 0; i < 5; i++) {
-			ItemStack iconStack = new ItemStack(itemDrill, 1, i);
-			TFProps.toolList.add(iconStack.copy());
+			ItemStack iconStack;
 
-			iconStack = new ItemStack(itemSaw, 1, i);
-			TFProps.toolList.add(iconStack.copy());
-
-			iconStack = new ItemStack(itemMagnet, 1, i);
-			TFProps.toolList.add(iconStack.copy());
-
-			iconStack = new ItemStack(itemInjector, 1, i);
-			TFProps.toolList.add(iconStack.copy());
-
-			iconStack = new ItemStack(itemQuiver, 1, i);
-			TFProps.toolList.add(iconStack.copy());
+			if (ItemDrill.enable) {
+				iconStack = new ItemStack(itemDrill, 1, i);
+				TFProps.toolList.add(iconStack.copy());
+			}
+			if (ItemSaw.enable) {
+				iconStack = new ItemStack(itemSaw, 1, i);
+				TFProps.toolList.add(iconStack.copy());
+			}
+			if (ItemMagnet.enable) {
+				iconStack = new ItemStack(itemMagnet, 1, i);
+				TFProps.toolList.add(iconStack.copy());
+			}
+			if (ItemInjector.enable) {
+				iconStack = new ItemStack(itemInjector, 1, i);
+				TFProps.toolList.add(iconStack.copy());
+			}
+			if (ItemQuiver.enable) {
+				iconStack = new ItemStack(itemQuiver, 1, i);
+				TFProps.toolList.add(iconStack.copy());
+			}
 		}
 		MinecraftForge.EVENT_BUS.register(INSTANCE);
 	}

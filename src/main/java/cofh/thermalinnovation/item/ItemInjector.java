@@ -7,7 +7,6 @@ import cofh.core.init.CoreProps;
 import cofh.core.key.KeyBindingItemMultiMode;
 import cofh.core.util.CoreUtils;
 import cofh.core.util.core.IInitializer;
-import cofh.core.util.crafting.FluidIngredientFactory.FluidIngredient;
 import cofh.core.util.helpers.*;
 import cofh.thermalfoundation.init.TFProps;
 import cofh.thermalinnovation.ThermalInnovation;
@@ -103,7 +102,7 @@ public class ItemInjector extends ItemMultiPotion implements IInitializer, IBaub
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
 
-		if (isInCreativeTab(tab)) {
+		if (enable && isInCreativeTab(tab)) {
 			for (int metadata : itemList) {
 				if (metadata != CREATIVE) {
 					items.add(new ItemStack(this, 1, metadata));
@@ -340,6 +339,38 @@ public class ItemInjector extends ItemMultiPotion implements IInitializer, IBaub
 				'R', "dustGlowstone",
 				'X', "ingotCopper"
 		);
+		addShapedUpgradeRecipe(injectorHardened,
+				" R ",
+				"IXI",
+				"R R",
+				'I', "ingotInvar",
+				'R', "nuggetCopper",
+				'X', injectorBasic
+		);
+		addShapedUpgradeRecipe(injectorReinforced,
+				" R ",
+				"IXI",
+				"R R",
+				'I', "ingotElectrum",
+				'R', "nuggetInvar",
+				'X', injectorHardened
+		);
+		addShapedUpgradeRecipe(injectorSignalum,
+				" R ",
+				"IXI",
+				"R R",
+				'I', "ingotSignalum",
+				'R', "nuggetElectrum",
+				'X', injectorReinforced
+		);
+		addShapedUpgradeRecipe(injectorResonant,
+				" R ",
+				"IXI",
+				"R R",
+				'I', "ingotEnderium",
+				'R', "nuggetSignalum",
+				'X', injectorSignalum
+		);
 		// @formatter:on
 
 		addPotionFillRecipe(injectorBasic, injectorBasic, "cofh:potion");
@@ -355,11 +386,11 @@ public class ItemInjector extends ItemMultiPotion implements IInitializer, IBaub
 		addColorRecipe(injectorSignalum, injectorSignalum, "dye");
 		addColorRecipe(injectorResonant, injectorResonant, "dye");
 
-		addColorRemoveRecipe(injectorBasic, injectorBasic, new FluidIngredient("water"));
-		addColorRemoveRecipe(injectorHardened, injectorHardened, new FluidIngredient("water"));
-		addColorRemoveRecipe(injectorReinforced, injectorReinforced, new FluidIngredient("water"));
-		addColorRemoveRecipe(injectorSignalum, injectorSignalum, new FluidIngredient("water"));
-		addColorRemoveRecipe(injectorResonant, injectorResonant, new FluidIngredient("water"));
+		addColorRemoveRecipe(injectorBasic, injectorBasic);
+		addColorRemoveRecipe(injectorHardened, injectorHardened);
+		addColorRemoveRecipe(injectorReinforced, injectorReinforced);
+		addColorRemoveRecipe(injectorSignalum, injectorSignalum);
+		addColorRemoveRecipe(injectorResonant, injectorResonant);
 		return true;
 	}
 
@@ -367,6 +398,8 @@ public class ItemInjector extends ItemMultiPotion implements IInitializer, IBaub
 
 		String category = "Item.Injector";
 		String comment;
+
+		enable = ThermalInnovation.CONFIG.get(category, "Enable", true);
 
 		int capacity = CAPACITY_BASE;
 		comment = "Adjust this value to change the amount of Fluid (in mB) stored by a Basic Hypoinfuser. This base value will scale with item level.";
