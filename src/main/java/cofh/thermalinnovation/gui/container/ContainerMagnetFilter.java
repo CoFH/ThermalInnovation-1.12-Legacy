@@ -17,7 +17,7 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerMagnetFilter extends ContainerCore implements IFilterable {
 
-	static final String NAME = "item.thermalinnovation.magnet.name";
+	public static final String NAME = "item.thermalinnovation.magnet.name";
 
 	protected final ItemFilterWrapper filterWrapper;
 	protected final EntityPlayer player;
@@ -36,8 +36,8 @@ public class ContainerMagnetFilter extends ContainerCore implements IFilterable 
 		int slots = ItemMagnet.getFilterSize(stack);
 		int rowSize = slots / rows;
 
-		int xOffset = 89 - 9 * rowSize;
-		int yOffset = filterIndex == 0 ? 26 : 17;
+		int xOffset = 62 - 9 * rowSize;
+		int yOffset = 44 - 9 * rows;
 
 		bindPlayerInventory(inventory);
 
@@ -69,7 +69,7 @@ public class ContainerMagnetFilter extends ContainerCore implements IFilterable 
 	@Override
 	protected int getPlayerInventoryVerticalOffset() {
 
-		return filterIndex > 1 ? 120 : 102;
+		return 84;
 	}
 
 	@Override
