@@ -15,7 +15,7 @@ import cofh.thermalfoundation.init.TFProps;
 import cofh.thermalfoundation.init.TFSounds;
 import cofh.thermalinnovation.ThermalInnovation;
 import cofh.thermalinnovation.gui.GuiHandler;
-import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
@@ -128,7 +128,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IBauble {
 
 		if (ServerHelper.isClientWorld(world)) {
 			for (EntityItem item : items) {
-				if (item.getEntityData().getBoolean(CONVEYOR_COMPAT)) {
+				if (item.getEntityData().getBoolean(CoreProps.CONVEYOR_COMPAT)) {
 					continue;
 				}
 				if (item.getPositionVector().squareDistanceTo(player.getPositionVector()) <= radSq && wrapper.getFilter().matches(item.getItem())) {
@@ -138,7 +138,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IBauble {
 		} else {
 			int itemCount = 0;
 			for (EntityItem item : items) {
-				if (item.getEntityData().getBoolean(CONVEYOR_COMPAT)) {
+				if (item.getEntityData().getBoolean(CoreProps.CONVEYOR_COMPAT)) {
 					continue;
 				}
 				if (item.getThrower() == null || !item.getThrower().equals(player.getName()) || item.age >= 2 * CoreProps.TIME_CONSTANT) {
@@ -295,7 +295,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IBauble {
 
 		if (ServerHelper.isClientWorld(world)) {
 			for (EntityItem item : items) {
-				if (item.getEntityData().getBoolean(CONVEYOR_COMPAT)) {
+				if (item.getEntityData().getBoolean(CoreProps.CONVEYOR_COMPAT)) {
 					continue;
 				}
 				if (item.getPositionVector().squareDistanceTo(player.getPositionVector()) <= radSq && wrapper.getFilter().matches(item.getItem())) {
@@ -305,7 +305,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IBauble {
 		} else {
 			int itemCount = 0;
 			for (EntityItem item : items) {
-				if (item.getEntityData().getBoolean(CONVEYOR_COMPAT)) {
+				if (item.getEntityData().getBoolean(CoreProps.CONVEYOR_COMPAT)) {
 					continue;
 				}
 				if (item.getThrower() == null || !item.getThrower().equals(player.getName()) || item.age >= 2 * CoreProps.TIME_CONSTANT) {
@@ -493,9 +493,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IBauble {
 		return addItem(metadata, name, rarity);
 	}
 
-	private static TIntObjectHashMap<TypeEntry> typeMap = new TIntObjectHashMap<>();
-
-	public static final String CONVEYOR_COMPAT = "PreventRemoteMovement";
+	private static Int2ObjectOpenHashMap<TypeEntry> typeMap = new Int2ObjectOpenHashMap<>();
 
 	public static final int CAPACITY_BASE = 40000;
 	public static final int XFER_BASE = 1000;
