@@ -1,0 +1,88 @@
+#ja_JP
+
+info.thermalinnovation.drill.a.0=RFの力でブロックを採掘します。
+info.thermalinnovation.drill.b.0=§e(%s)キーで採掘エリアを調節します。§r
+info.thermalinnovation.drill.c.0=単一ブロック
+info.thermalinnovation.drill.c.1=トンネル：1x2
+info.thermalinnovation.drill.c.2=エリア：3x3
+info.thermalinnovation.drill.c.3=エリア：3x3x3
+info.thermalinnovation.drill.c.4=エリア：5x5
+
+info.thermalinnovation.magnet.a.0=アイテムを使用者に引きつけます。
+info.thermalinnovation.magnet.a.1=使用するとアイテムをターゲットの位置に引きつけます。
+info.thermalinnovation.magnet.a.2=スニーク中に使うと設定が可能です。
+info.thermalinnovation.magnet.b.0=§b(%s)キーで引きつけを有効にします。§r
+info.thermalinnovation.magnet.b.1=§e(%s)キーで引きつけを無効にします。§r
+info.thermalinnovation.magnet.c.0=引きつけ：無効
+info.thermalinnovation.magnet.c.1=引きつけ：有効
+
+info.thermalinnovation.injector.a.0=ポーションを貯蔵して注入します。使用者にも注射できます。
+info.thermalinnovation.injector.a.1=使用するとエンティティに中身のポーションを注入します。
+info.thermalinnovation.injector.a.2=スニーク中は自分に注入します。
+info.thermalinnovation.injector.b.0=§b(%s)キーで自動注射を有効にします。§r
+info.thermalinnovation.injector.b.1=§e(%s)キーで自動注射を無効にします。§r
+info.thermalinnovation.injector.c.0=自動注射：無効
+info.thermalinnovation.injector.c.1=自動注射：有効
+info.thermalinnovation.injector.d=効果：
+
+info.thermalinnovation.quiver.a.0=矢にポーションの効果を付与できる矢筒です。
+info.thermalinnovation.quiver.a.1=使うとインベントリの矢を矢筒に入れます。
+info.thermalinnovation.quiver.a.2=スニーク中に使うと矢を矢筒から出します。
+info.thermalinnovation.quiver.b.0=§b(%s)キーで矢への付与を有効にします。§r
+info.thermalinnovation.quiver.b.1=§e(%s)キーで矢への付与を無効にします。§r
+info.thermalinnovation.quiver.c.0=付与：無効
+info.thermalinnovation.quiver.c.1=付与：有効
+info.thermalinnovation.quiver.d=効果：
+
+info.thermalinnovation.saw.a.0=RFの力でブロックを切ります。
+info.thermalinnovation.saw.b.0=§e(%s)キーで切るエリアを調節します。§r
+info.thermalinnovation.saw.c.0=単一ブロック
+info.thermalinnovation.saw.c.1=トンネル：1x3
+info.thermalinnovation.saw.c.2=エリア：3x3
+info.thermalinnovation.saw.c.3=エリア：3x3x3
+info.thermalinnovation.saw.c.4=エリア：5x5
+
+item.thermalinnovation.drill.creative.name=フラックス採掘機 (クリエイティブ)
+item.thermalinnovation.drill.standard0.name=フラックス採掘機 (ベーシック)
+item.thermalinnovation.drill.standard1.name=フラックス採掘機 (ハーデンド)
+item.thermalinnovation.drill.standard2.name=フラックス採掘機 (レインフォースド)
+item.thermalinnovation.drill.standard3.name=フラックス採掘機 (シグナルム)
+item.thermalinnovation.drill.standard4.name=フラックス採掘機 (レゾナント)
+
+item.thermalinnovation.laser.creative.name=掘削ビーム (クリエイティブ)
+item.thermalinnovation.laser.standard0.name=掘削ビーム (ベーシック)
+item.thermalinnovation.laser.standard1.name=掘削ビーム (ハーデンド)
+item.thermalinnovation.laser.standard2.name=掘削ビーム (レインフォースド)
+item.thermalinnovation.laser.standard3.name=掘削ビーム (シグナルム)
+item.thermalinnovation.laser.standard4.name=掘削ビーム (レゾナント)
+
+item.thermalinnovation.magnet.creative.name=フラックス磁石 (クリエイティブ)
+item.thermalinnovation.magnet.name=フラックス磁石
+item.thermalinnovation.magnet.standard0.name=フラックス磁石 (ベーシック)
+item.thermalinnovation.magnet.standard1.name=フラックス磁石 (ハーデンド)
+item.thermalinnovation.magnet.standard2.name=フラックス磁石 (レインフォースド)
+item.thermalinnovation.magnet.standard3.name=フラックス磁石 (シグナルム)
+item.thermalinnovation.magnet.standard4.name=フラックス磁石 (レゾナント)
+
+item.thermalinnovation.injector.creative.name=注射器 (クリエイティブ)
+item.thermalinnovation.injector.standard0.name=注射器 (ベーシック)
+item.thermalinnovation.injector.standard1.name=注射器 (ハーデンド)
+item.thermalinnovation.injector.standard2.name=注射器 (レインフォースド)
+item.thermalinnovation.injector.standard3.name=注射器 (シグナルム)
+item.thermalinnovation.injector.standard4.name=注射器 (レゾナント)
+
+item.thermalinnovation.quiver.creative.name=錬金術矢筒 (クリエイティブ)
+item.thermalinnovation.quiver.standard0.name=錬金術矢筒 (ベーシック)
+item.thermalinnovation.quiver.standard1.name=錬金術矢筒 (ハーデンド)
+item.thermalinnovation.quiver.standard2.name=錬金術矢筒 (レインフォースド)
+item.thermalinnovation.quiver.standard3.name=錬金術矢筒 (シグナルム)
+item.thermalinnovation.quiver.standard4.name=錬金術矢筒 (レゾナント)
+
+item.thermalinnovation.saw.creative.name=フラックスのこぎり (クリエイティブ)
+item.thermalinnovation.saw.standard0.name=フラックスのこぎり (ベーシック)
+item.thermalinnovation.saw.standard1.name=フラックスのこぎり (ハーデンド)
+item.thermalinnovation.saw.standard2.name=フラックスのこぎり (レインフォースド)
+item.thermalinnovation.saw.standard3.name=フラックスのこぎり (シグナルム)
+item.thermalinnovation.saw.standard4.name=フラックスのこぎり (レゾナント)
+
+itemGroup.thermalinnovation.creativeTab=Thermal Innovation
