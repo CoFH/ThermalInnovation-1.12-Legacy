@@ -128,7 +128,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IBauble {
 
 		if (ServerHelper.isClientWorld(world)) {
 			for (EntityItem item : items) {
-				if (item.getEntityData().getBoolean(CoreProps.CONVEYOR_COMPAT)) {
+				if (item.cannotPickup() || item.getEntityData().getBoolean(CoreProps.CONVEYOR_COMPAT)) {
 					continue;
 				}
 				if (item.getPositionVector().squareDistanceTo(player.getPositionVector()) <= radSq && wrapper.getFilter().matches(item.getItem())) {
@@ -138,7 +138,7 @@ public class ItemMagnet extends ItemMultiRF implements IInitializer, IBauble {
 		} else {
 			int itemCount = 0;
 			for (EntityItem item : items) {
-				if (item.getEntityData().getBoolean(CoreProps.CONVEYOR_COMPAT)) {
+				if (item.cannotPickup() || item.getEntityData().getBoolean(CoreProps.CONVEYOR_COMPAT)) {
 					continue;
 				}
 				if (item.getThrower() == null || !item.getThrower().equals(player.getName()) || item.age >= 2 * CoreProps.TIME_CONSTANT) {
