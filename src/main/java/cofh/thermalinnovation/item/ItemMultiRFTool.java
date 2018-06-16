@@ -165,6 +165,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 		BlockPos adjPos;
 		IBlockState adjState;
 		float strength;
+		float maxStrength = refStrength / CoreProps.AOE_BREAK_FACTOR;
 
 		switch (traceResult.sideHit) {
 			case DOWN:
@@ -174,7 +175,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 				adjPos = new BlockPos(pos.down());
 				adjState = world.getBlockState(adjPos);
 				strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-				if (strength > 0F && refStrength / strength <= 4F) {
+				if (strength > 0F && strength >= maxStrength) {
 					if (harvestBlock(world, adjPos, player)) {
 						return 1;
 					}
@@ -188,6 +189,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 		BlockPos adjPos;
 		IBlockState adjState;
 		float strength;
+		float maxStrength = refStrength / CoreProps.AOE_BREAK_FACTOR;
 		int count = 0;
 
 		int x = pos.getX();
@@ -202,7 +204,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 					adjPos = new BlockPos(x, y, z - 1);
 					adjState = world.getBlockState(adjPos);
 					strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-					if (strength > 0F && refStrength / strength <= 4F) {
+					if (strength > 0F && strength >= maxStrength) {
 						if (harvestBlock(world, adjPos, player)) {
 							count++;
 						}
@@ -210,7 +212,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 					adjPos = new BlockPos(x, y, z + 1);
 					adjState = world.getBlockState(adjPos);
 					strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-					if (strength > 0F && refStrength / strength <= 4F) {
+					if (strength > 0F && strength >= maxStrength) {
 						if (harvestBlock(world, adjPos, player)) {
 							count++;
 						}
@@ -219,7 +221,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 					adjPos = new BlockPos(x - 1, y, z);
 					adjState = world.getBlockState(adjPos);
 					strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-					if (strength > 0F && refStrength / strength <= 4F) {
+					if (strength > 0F && strength >= maxStrength) {
 						if (harvestBlock(world, adjPos, player)) {
 							count++;
 						}
@@ -227,7 +229,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 					adjPos = new BlockPos(x + 1, y, z);
 					adjState = world.getBlockState(adjPos);
 					strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-					if (strength > 0F && refStrength / strength <= 4F) {
+					if (strength > 0F && strength >= maxStrength) {
 						if (harvestBlock(world, adjPos, player)) {
 							count++;
 						}
@@ -238,7 +240,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 				adjPos = new BlockPos(x, y - 1, z);
 				adjState = world.getBlockState(adjPos);
 				strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-				if (strength > 0F && refStrength / strength <= 4F) {
+				if (strength > 0F && strength >= maxStrength) {
 					if (harvestBlock(world, adjPos, player)) {
 						count++;
 					}
@@ -246,7 +248,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 				adjPos = new BlockPos(x, y + 1, z);
 				adjState = world.getBlockState(adjPos);
 				strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-				if (strength > 0F && refStrength / strength <= 4F) {
+				if (strength > 0F && strength >= maxStrength) {
 					if (harvestBlock(world, adjPos, player)) {
 						count++;
 					}
@@ -260,6 +262,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 		BlockPos adjPos;
 		IBlockState adjState;
 		float strength;
+		float maxStrength = refStrength / CoreProps.AOE_BREAK_FACTOR;
 		int count = 0;
 
 		int x = pos.getX();
@@ -278,7 +281,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 						adjPos = new BlockPos(i, y, k);
 						adjState = world.getBlockState(adjPos);
 						strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-						if (strength > 0F && refStrength / strength <= 4F) {
+						if (strength > 0F && strength >= maxStrength) {
 							if (harvestBlock(world, adjPos, player)) {
 								count++;
 							}
@@ -296,7 +299,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 						adjPos = new BlockPos(i, j, z);
 						adjState = world.getBlockState(adjPos);
 						strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-						if (strength > 0F && refStrength / strength <= 4F) {
+						if (strength > 0F && strength >= maxStrength) {
 							if (harvestBlock(world, adjPos, player)) {
 								count++;
 							}
@@ -313,7 +316,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 						adjPos = new BlockPos(x, j, k);
 						adjState = world.getBlockState(adjPos);
 						strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-						if (strength > 0F && refStrength / strength <= 4F) {
+						if (strength > 0F && strength >= maxStrength) {
 							if (harvestBlock(world, adjPos, player)) {
 								count++;
 							}
@@ -330,6 +333,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 		BlockPos adjPos;
 		IBlockState adjState;
 		float strength;
+		float maxStrength = refStrength / CoreProps.AOE_BREAK_FACTOR;
 		int count = 0;
 
 		int x = pos.getX();
@@ -354,7 +358,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 							adjPos = new BlockPos(i, j, k);
 							adjState = world.getBlockState(adjPos);
 							strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-							if (strength > 0F && refStrength / strength <= 4F) {
+							if (strength > 0F && strength >= maxStrength) {
 								if (harvestBlock(world, adjPos, player)) {
 									count++;
 								}
@@ -376,7 +380,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 							adjPos = new BlockPos(i, j, k);
 							adjState = world.getBlockState(adjPos);
 							strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-							if (strength > 0F && refStrength / strength <= 4F) {
+							if (strength > 0F && strength >= maxStrength) {
 								if (harvestBlock(world, adjPos, player)) {
 									count++;
 								}
@@ -398,7 +402,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 							adjPos = new BlockPos(i, j, k);
 							adjState = world.getBlockState(adjPos);
 							strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-							if (strength > 0F && refStrength / strength <= 4F) {
+							if (strength > 0F && strength >= maxStrength) {
 								if (harvestBlock(world, adjPos, player)) {
 									count++;
 								}
@@ -416,6 +420,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 		BlockPos adjPos;
 		IBlockState adjState;
 		float strength;
+		float maxStrength = refStrength / CoreProps.AOE_BREAK_FACTOR;
 		int count = 0;
 
 		int x = pos.getX();
@@ -431,7 +436,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 						adjPos = new BlockPos(i, y, k);
 						adjState = world.getBlockState(adjPos);
 						strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-						if (strength > 0F && refStrength / strength <= 4F) {
+						if (strength > 0F && strength >= maxStrength) {
 							if (harvestBlock(world, adjPos, player)) {
 								count++;
 							}
@@ -451,7 +456,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 						adjPos = new BlockPos(i, j, z);
 						adjState = world.getBlockState(adjPos);
 						strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-						if (strength > 0F && refStrength / strength <= 4F) {
+						if (strength > 0F && strength >= maxStrength) {
 							if (harvestBlock(world, adjPos, player)) {
 								count++;
 							}
@@ -470,7 +475,7 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 						adjPos = new BlockPos(x, j, k);
 						adjState = world.getBlockState(adjPos);
 						strength = adjState.getPlayerRelativeBlockHardness(player, world, adjPos);
-						if (strength > 0F && refStrength / strength <= 4F) {
+						if (strength > 0F && strength >= maxStrength) {
 							if (harvestBlock(world, adjPos, player)) {
 								count++;
 							}
