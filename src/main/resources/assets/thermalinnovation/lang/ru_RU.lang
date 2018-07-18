@@ -49,6 +49,13 @@ item.thermalinnovation.drill.standard2.name=Флаксобур (укреплен
 item.thermalinnovation.drill.standard3.name=Флаксобур (синаловый)
 item.thermalinnovation.drill.standard4.name=Флаксобур (резонирующий)
 
+item.thermalinnovation.laser.creative.name=Землекопающий луч (творческий)
+item.thermalinnovation.laser.standard0.name=Землекопающий луч (основной)
+item.thermalinnovation.laser.standard1.name=Землекопающий луч (усиленный)
+item.thermalinnovation.laser.standard2.name=Землекопающий луч (укрепленный)
+item.thermalinnovation.laser.standard3.name=Землекопающий луч (синаловый)
+item.thermalinnovation.laser.standard4.name=Землекопающий луч (резонирующий)
+
 item.thermalinnovation.magnet.creative.name=Флаксомагнит (творческий)
 item.thermalinnovation.magnet.name=Флаксомагнит
 item.thermalinnovation.magnet.standard0.name=Флаксомагнит (основной)
