@@ -1,0 +1,91 @@
+#ko_KR
+
+info.thermalinnovation.drill.a.0=RF를 이용하여 블록을 채굴합니다.
+info.thermalinnovation.drill.b.0=§e채굴할 영역을 정하려면 (%s)를 누르세요.§r
+info.thermalinnovation.drill.c.0=싱글 블록
+info.thermalinnovation.drill.c.1=터널: 1x2
+info.thermalinnovation.drill.c.2=구역: 3x3
+info.thermalinnovation.drill.c.3=구역: 3x3x3
+info.thermalinnovation.drill.c.4=구역: 5x5
+
+info.thermalinnovation.magnet.a.0=아이템을 윌더에 끌입니다.
+info.thermalinnovation.magnet.a.1=특정 지역에서 아이템을 끌이는데 사용합니다.
+info.thermalinnovation.magnet.a.2=설정하는 동안 사용합니다.
+info.thermalinnovation.magnet.b.0=§b끌기를 활성화하고 싶으면 (%s)을 누르세요.§r
+info.thermalinnovation.magnet.b.1=§e끌기를 비활성화하고 싶으면 (%s)을 누르세요.§r
+info.thermalinnovation.magnet.c.0=끌기 비활성화
+info.thermalinnovation.magnet.c.1=끌기 활성화
+
+info.thermalinnovation.injector.a.0=물약을 저장하고 주입합니다. 윌더를 주입할 수 있습니다.
+info.thermalinnovation.injector.a.1=저장된 포션에 엔티티를 주입하는데 사용합니다.
+info.thermalinnovation.injector.a.2=스스로 주입하는 동안 사용합니다.
+info.thermalinnovation.injector.b.0=§b자동 주입을 하고 싶으면 (%s)을 누르세요.§r
+info.thermalinnovation.injector.b.1=§e자동 주입을 하고 싶지 않으면 (%s)을 누르세요.§r
+info.thermalinnovation.injector.c.0=자동 주입 비활성화
+info.thermalinnovation.injector.c.1=자동 주입 활성화
+info.thermalinnovation.injector.d=효과:
+
+info.thermalinnovation.quiver.a.0=포션으로 화살을 만듭니다.
+info.thermalinnovation.quiver.a.1=인벤토리에서 화살을 화살통에 넣는데 사용합니다.
+info.thermalinnovation.quiver.a.2=화살통에서 화살을 제거하는 동안 사용합니다.
+info.thermalinnovation.quiver.b.0=§b화살 생산을 하고 싶으면 (%s)을 누르세요.§r
+info.thermalinnovation.quiver.b.1=§e화살 생산을 하고 싶지 않으면 (%s)을 누르세요.§r
+info.thermalinnovation.quiver.c.0=화살 생산 비활성화
+info.thermalinnovation.quiver.c.1=화살 생산 활성화
+info.thermalinnovation.quiver.d=효과:
+
+info.thermalinnovation.saw.a.0=RF를 사용해서 블록을 자릅니다..
+info.thermalinnovation.saw.b.0=§e자를 구역을 정하고 싶으면 (%s)을 누르세요.§r
+info.thermalinnovation.saw.c.0=싱글 블록
+info.thermalinnovation.saw.c.1=터널: 1x3
+info.thermalinnovation.saw.c.2=구역: 3x3
+info.thermalinnovation.saw.c.3=구역: 3x3x3
+info.thermalinnovation.saw.c.4=구역: 5x5
+
+item.thermalinnovation.drill.creative.name=크리에이트브 플럭스구경
+item.thermalinnovation.drill.standard0.name=플럭스구경
+item.thermalinnovation.drill.standard1.name=경화 플럭스구경
+item.thermalinnovation.drill.standard2.name=강화 플럭스구경
+item.thermalinnovation.drill.standard3.name=시그날륨 플럭스구경
+item.thermalinnovation.drill.standard4.name=공명 플럭스구경
+
+item.thermalinnovation.laser.creative.name=크리에이티브 굴착빔
+item.thermalinnovation.laser.standard0.name=굴착빔
+item.thermalinnovation.laser.standard1.name=경화 굴착빔
+item.thermalinnovation.laser.standard2.name=강화 굴착빔
+item.thermalinnovation.laser.standard3.name=시그날륨 굴착빔
+item.thermalinnovation.laser.standard4.name=공명 굴착빔
+
+item.thermalinnovation.magnet.creative.name=크리에이티브 플럭스자석
+item.thermalinnovation.magnet.name=플럭스자석
+item.thermalinnovation.magnet.standard0.name=플럭스자석
+item.thermalinnovation.magnet.standard1.name=경화 플럭스자석
+item.thermalinnovation.magnet.standard2.name=강화 플럭스자석
+item.thermalinnovation.magnet.standard3.name=시그날륨 플럭스자석
+item.thermalinnovation.magnet.standard4.name=공명 플럭스자석
+
+item.thermalinnovation.injector.creative.name=크리에이티브 하이포주입기
+item.thermalinnovation.injector.standard0.name=하이포주입기
+item.thermalinnovation.injector.standard1.name=경화 하이포주입기
+item.thermalinnovation.injector.standard2.name=강화 하이포주입기
+item.thermalinnovation.injector.standard3.name=시그날륨 하이포주입기
+item.thermalinnovation.injector.standard4.name=공명 하이포주입기
+
+item.thermalinnovation.quiver.creative.name=크리에이티브 화학 화살통
+item.thermalinnovation.quiver.standard0.name=화학 화살통
+item.thermalinnovation.quiver.standard1.name=경화 화학 화살통
+item.thermalinnovation.quiver.standard2.name=강화 화학 화살통
+item.thermalinnovation.quiver.standard3.name=시그날륨 화학 화살통
+item.thermalinnovation.quiver.standard4.name=공명 화학 화살통
+
+item.thermalinnovation.saw.creative.name=크리에이티브 흐름톱
+item.thermalinnovation.saw.standard0.name=흐름톱
+item.thermalinnovation.saw.standard1.name=경화 흐름톱
+item.thermalinnovation.saw.standard2.name=강화 흐름톱
+item.thermalinnovation.saw.standard3.name=시그날륨 흐름톱
+item.thermalinnovation.saw.standard4.name=공명 흐름톱
+
+itemGroup.thermalinnovation.creativeTab=써멀 이노베이션
+
+tab.thermalinnovation.magnet.filter.0=이 플럭스자석이 끌어 올 수 있는 항목을 구성합니다.
+tab.thermalinnovation.magnet.filter.1=잘해요.
