@@ -383,8 +383,8 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 				"XLS",
 				"LXS",
 				'B', Items.GLASS_BOTTLE,
-				'L', Items.LEATHER,
-				'S', Items.STRING,
+				'L', "leather",
+				'S', "string",
 				'X', "ingotCopper"
 		);
 		addShapedUpgradeRecipe(quiverHardened,
