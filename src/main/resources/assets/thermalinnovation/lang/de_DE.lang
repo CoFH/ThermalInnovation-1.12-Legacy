@@ -1,0 +1,91 @@
+#de_DE
+
+info.thermalinnovation.drill.a.0=Baut mithilfe von Redstone Flux Blöcke ab.
+info.thermalinnovation.drill.b.0=§eDrücke (%s) um den Arbeitsbereich einzustellen.§r
+info.thermalinnovation.drill.c.0=Einzelner Block
+info.thermalinnovation.drill.c.1=Tunnel: 1x2
+info.thermalinnovation.drill.c.2=Bereich: 3x3
+info.thermalinnovation.drill.c.3=Bereich: 3x3x3
+info.thermalinnovation.drill.c.4=Bereich: 5x5
+
+info.thermalinnovation.magnet.a.0=Zieht Items zu dir.
+info.thermalinnovation.magnet.a.1=Recktsklick um Items am anvisierten Ort anzuziehen.
+info.thermalinnovation.magnet.a.2=SHIFT+Rechtsklick zum Konfigurieren.
+info.thermalinnovation.magnet.b.0=§bDrücke (%s) um den Magnet zu aktivieren.§r
+info.thermalinnovation.magnet.b.1=§eDrücke (%s) um den Magnet zu deaktivieren.§r
+info.thermalinnovation.magnet.c.0=Magnet aktiviert
+info.thermalinnovation.magnet.c.1=Magnet deaktiviert
+
+info.thermalinnovation.injector.a.0=Speichert und injiziert Tränke.
+info.thermalinnovation.injector.a.1=Rechtsklick auf ein Lebewesen um den Trank zu injizieren.
+info.thermalinnovation.injector.a.2=SHIFT+Rechtsklick um den Trank dir selbst zu injizieren.
+info.thermalinnovation.injector.b.0=§bDrücke (%s) um die Auto-Injektion zu aktivieren.§r
+info.thermalinnovation.injector.b.1=§eDrücke (%s) um die Auto-Injektion zu deaktivieren.§r
+info.thermalinnovation.injector.c.0=Auto-Injektion aktiviert
+info.thermalinnovation.injector.c.1=Auto-Injektion deaktiviert
+info.thermalinnovation.injector.d=Effekte:
+
+info.thermalinnovation.quiver.a.0=Versieht Pfeile mit Tränken.
+info.thermalinnovation.quiver.a.1=Rechtsklick um Pfeile aus deinem Inventar hinzuzufügen.
+info.thermalinnovation.quiver.a.2=SHIFT+Rechtsklick um Pfeile zu entnehmen.
+info.thermalinnovation.quiver.b.0=§bDrücke (%s) um die Trankeffekte zu aktivieren.§r
+info.thermalinnovation.quiver.b.1=§eDrücke (%s) um die Trankeffekte zu deaktivieren.§r
+info.thermalinnovation.quiver.c.0=Trankeffekte aktiviert
+info.thermalinnovation.quiver.c.1=Trankeffekte deaktiviert
+info.thermalinnovation.quiver.d=Effekte:
+
+info.thermalinnovation.saw.a.0=Schneidet Blöcke mit Redstone Flux.
+info.thermalinnovation.saw.b.0=§eDrücke (%s) um den Arbeitsbereich einzustellen.§r
+info.thermalinnovation.saw.c.0=Einzelner Block
+info.thermalinnovation.saw.c.1=Tunnel: 1x3
+info.thermalinnovation.saw.c.2=Bereich: 3x3
+info.thermalinnovation.saw.c.3=Bereich: 3x3x3
+info.thermalinnovation.saw.c.4=Bereich: 5x5
+
+item.thermalinnovation.drill.creative.name=Fluxbohrer (Kreativ)
+item.thermalinnovation.drill.standard0.name=Fluxbohrer (Basis)
+item.thermalinnovation.drill.standard1.name=Fluxbohrer (Gehärtet)
+item.thermalinnovation.drill.standard2.name=Fluxbohrer (Verstärkt)
+item.thermalinnovation.drill.standard3.name=Fluxbohrer (Signalum)
+item.thermalinnovation.drill.standard4.name=Fluxbohrer (Resonant)
+
+item.thermalinnovation.laser.creative.name=Laser (Kreativ)
+item.thermalinnovation.laser.standard0.name=Laser (Basis)
+item.thermalinnovation.laser.standard1.name=Laser (Gehärtet)
+item.thermalinnovation.laser.standard2.name=Laser (Verstärkt)
+item.thermalinnovation.laser.standard3.name=Laser (Signalum)
+item.thermalinnovation.laser.standard4.name=Laser (Resonant)
+
+item.thermalinnovation.magnet.creative.name=Fluxomagnet (Kreativ)
+item.thermalinnovation.magnet.name=Fluxomagnet
+item.thermalinnovation.magnet.standard0.name=Fluxomagnet (Basis)
+item.thermalinnovation.magnet.standard1.name=Fluxomagnet (Gehärtet)
+item.thermalinnovation.magnet.standard2.name=Fluxomagnet (Verstärkt)
+item.thermalinnovation.magnet.standard3.name=Fluxomagnet (Signalum)
+item.thermalinnovation.magnet.standard4.name=Fluxomagnet (Resonant)
+
+item.thermalinnovation.injector.creative.name=Hypoinfuser (Kreativ)
+item.thermalinnovation.injector.standard0.name=Hypoinfuser (Basis)
+item.thermalinnovation.injector.standard1.name=Hypoinfuser (Gehärtet)
+item.thermalinnovation.injector.standard2.name=Hypoinfuser (Verstärkt)
+item.thermalinnovation.injector.standard3.name=Hypoinfuser (Signalum)
+item.thermalinnovation.injector.standard4.name=Hypoinfuser (Resonant)
+
+item.thermalinnovation.quiver.creative.name=Alchemischer Köcher (Kreativ)
+item.thermalinnovation.quiver.standard0.name=Alchemischer Köcher (Basis)
+item.thermalinnovation.quiver.standard1.name=Alchemischer Köcher (Gehärtet)
+item.thermalinnovation.quiver.standard2.name=Alchemischer Köcher (Verstärkt)
+item.thermalinnovation.quiver.standard3.name=Alchemischer Köcher (Signalum)
+item.thermalinnovation.quiver.standard4.name=Alchemischer Köcher (Resonant)
+
+item.thermalinnovation.saw.creative.name=Fluxsäge (Kreativ)
+item.thermalinnovation.saw.standard0.name=Fluxsäge (Basis)
+item.thermalinnovation.saw.standard1.name=Fluxsäge (Gehärtet)
+item.thermalinnovation.saw.standard2.name=Fluxsäge (Verstärkt)
+item.thermalinnovation.saw.standard3.name=Fluxsäge (Signalum)
+item.thermalinnovation.saw.standard4.name=Fluxsäge (Resonant)
+
+itemGroup.thermalinnovation.creativeTab=Thermal Innovation
+
+tab.thermalinnovation.magnet.filter.0=Konfiguriere welche Items der Fluxomagnet anziehen kann.
+tab.thermalinnovation.magnet.filter.1=Clever, was?
