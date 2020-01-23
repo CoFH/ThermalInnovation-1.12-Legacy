@@ -1,5 +1,7 @@
 package cofh.thermalinnovation.item;
 
+import baubles.api.BaubleType;
+import baubles.api.IBauble;
 import cofh.api.item.IToolQuiver;
 import cofh.core.init.CoreEnchantments;
 import cofh.core.init.CoreProps;
@@ -42,7 +44,7 @@ import java.util.Map;
 import static cofh.core.util.helpers.RecipeHelper.*;
 import static cofh.thermalfoundation.util.TFCrafting.addPotionFillRecipe;
 
-public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQuiver {
+public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQuiver, IBaubleItem {
 
 	public ItemQuiver() {
 
@@ -462,6 +464,17 @@ public class ItemQuiver extends ItemMultiPotion implements IInitializer, IToolQu
 		for (int i = 0; i < CAPACITY_FLUID.length; i++) {
 			CAPACITY_FLUID[i] *= capacity;
 		}
+	}
+
+	/* IBauble */
+	@override
+	public BaubleType getBaubleType(ItemStack itemstack) {
+		return BaubleType.BODY;
+	}
+
+	@override
+	public default boolean willAutoSync(ItemStack itemstack, EntityLivingBase player) {
+		return true;
 	}
 
 	/* ENTRY */
