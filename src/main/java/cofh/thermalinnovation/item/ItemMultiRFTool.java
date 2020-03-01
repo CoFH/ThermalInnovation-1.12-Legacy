@@ -18,6 +18,7 @@ import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketPlayerDigging;
 import net.minecraft.network.play.server.SPacketBlockChange;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
@@ -111,11 +112,12 @@ public abstract class ItemMultiRFTool extends ItemMultiRF {
 			}
 		}
 		if (!world.isRemote) {
+			TileEntity tile = world.getTileEntity(pos);
 			if (block.removedByPlayer(state, world, pos, player, !player.capabilities.isCreativeMode)) {
 				block.onBlockDestroyedByPlayer(world, pos, state);
 
 				if (!player.capabilities.isCreativeMode) {
-					block.harvestBlock(world, player, pos, state, world.getTileEntity(pos), player.getHeldItemMainhand());
+					block.harvestBlock(world, player, pos, state, tile, player.getHeldItemMainhand());
 					if (xpToDrop > 0) {
 						block.dropXpOnBlockBreak(world, pos, xpToDrop);
 					}
